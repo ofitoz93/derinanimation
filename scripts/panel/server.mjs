@@ -251,7 +251,7 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { ok: true });
     }
 
-    if (req.method === "GET" && url.pathname === "/api/voices") return send(res, 200, { voices: await listVoices() });
+    if (req.method === "GET" && url.pathname === "/api/voices") return send(res, 200, await listVoices());
 
     if (req.method === "GET" && url.pathname === "/api/voices/library") {
       const pick = (v, re) => (re.test(v ?? "") ? v : "");

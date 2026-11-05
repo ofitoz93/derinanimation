@@ -121,7 +121,7 @@ h3{font-size:14px;font-weight:500;margin:18px 0 8px;color:var(--t)}
 <script>
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-let S = null, voices = null, voicesErr = "";
+let S = null, voices = null, voicesErr = "", voiceTier = "unknown";
 let film = new URLSearchParams(location.search).get("film") || (() => { try { return localStorage.getItem("film"); } catch { return null; } })();
 const ui = { lib: {}, changing: {}, open: {}, picks: {}, filter: {}, preview: {}, busy: {}, err: {}, tab: {}, editKey: false, docs: {}, sbusy: {}, serr: {}, forms: {} };
 let audioEl = new Audio();
@@ -303,6 +303,7 @@ function voiceSection(c) {
     const v = voices?.find((x) => x.voice_id === c.voice.voice_id);
     return `<div class="row between"><div><div class="tiny muted">Ses</div><div>${esc(voiceName(c.voice.voice_id))}</div></div>
       <div class="row">${v?.preview_url ? `<button class="icon" title="Dinle" onclick="play('${esc(v.preview_url)}')">▶</button>` : ""}<span class="pill warm"><span class="dot"></span>Ses kilitli</span></div></div>
+      ${v && v.usable === false ? `<div class="err">Bu ses ElevenLabs planında API ile kullanılamıyor (ücretsiz planda ses kütüphanesi sesleri kullanılamaz). "Sesi değiştir" ile hazır bir ses seç.</div>` : ""}
       ${S.elevenlabs.connected ? `<button class="ghost" style="margin-top:8px" onclick="ui.changing['${c.id}']=true;ui.open['v-${c.id}']=true;renderAll()">Sesi değiştir</button>` : ""}`;
   }
   if (!S.elevenlabs.connected) return `<div class="muted small">Ses seçmek için Ayarlar'dan ElevenLabs anahtarını ekle.</div>`;
@@ -321,7 +322,8 @@ function voiceSection(c) {
     <div class="vlist">${list.map((v) => `<div class="vrow ${pick === v.voice_id ? "sel" : ""}">
       ${v.preview_url ? `<button class="icon" title="Örneği dinle (ücretsiz)" onclick="play('${esc(v.preview_url)}')">▶</button>` : `<span style="width:34px"></span>`}
       <div class="nm"><b>${esc(v.name)}</b><span class="tiny muted">${esc(labels(v) || v.category || "")}</span></div>
-      <button onclick="ui.picks['${c.id}']='${esc(v.voice_id)}';ui.preview['${c.id}']=null;ui.err['${c.id}']='';renderAll()">${pick === v.voice_id ? "Seçildi" : "Seç"}</button></div>`).join("") || `<div class="vrow muted small">Eşleşen ses yok</div>`}</div>`;
+      ${v.usable === false ? `<span class="pill" title="Ücretsiz planda ses kütüphanesi sesleri API ile kullanılamaz">Ücretli plan</span>` : `<button onclick="ui.picks['${c.id}']='${esc(v.voice_id)}';ui.preview['${c.id}']=null;ui.err['${c.id}']='';renderAll()">${pick === v.voice_id ? "Seçildi" : "Seç"}</button>`}</div>`).join("") || `<div class="vrow muted small">Eşleşen ses yok</div>`}</div>
+    ${voiceTier === "free" ? `<div class="note">Ücretsiz plandasın: yalnızca ElevenLabs'in hazır sesleri kullanılabilir. Bunlar Türkçeyi de konuşur; "Kendi repliğiyle dene" ile dinleyerek seç.</div>` : ""}`;
   } else {
     const opt = (k, v, t) => `<option value="${v}" ${lib[k] === v ? "selected" : ""}>${t}</option>`;
     body = `<div class="row" style="margin-top:10px">
@@ -330,11 +332,12 @@ function voiceSection(c) {
         <select onchange="ui.lib['${c.id}'].gender=this.value">${opt("gender", "", "Cinsiyet")}${opt("gender", "female", "Kadın")}${opt("gender", "male", "Erkek")}${opt("gender", "neutral", "Nötr")}</select>
         <select onchange="ui.lib['${c.id}'].age=this.value">${opt("age", "", "Yaş")}${opt("age", "young", "Genç")}${opt("age", "middle_aged", "Orta yaş")}${opt("age", "old", "Yaşlı")}</select>
         <button onclick="searchLib('${c.id}',0)" ${lib.loading ? "disabled" : ""}>${lib.loading ? "Aranıyor…" : "Ara"}</button></div>
+      ${voiceTier === "free" ? `<div class="err">Ücretsiz planda ses kütüphanesindeki sesler API ile kullanılamaz; burada yalnızca dinleyebilirsin. Kullanmak için ElevenLabs'te ücretli bir plana geçmen gerekir.</div>` : ""}
       ${lib.err ? `<div class="err">${esc(lib.err)}</div>` : ""}
       ${lib.results ? `<div class="vlist">${lib.results.map((v, i) => `<div class="vrow">
         ${v.preview_url ? `<button class="icon" title="Örneği dinle (ücretsiz)" onclick="play('${esc(v.preview_url)}')">▶</button>` : `<span style="width:34px"></span>`}
         <div class="nm"><b>${esc(v.name)}</b><span class="tiny muted">${esc([v.labels.gender, v.labels.age, v.labels.accent, v.labels.tone].filter(Boolean).join(" · "))}</span></div>
-        <button onclick="addLib('${c.id}',${i})">Ekle ve seç</button></div>`).join("") || `<div class="vrow muted small">Sonuç yok; filtreleri gevşetmeyi dene.</div>`}</div>
+        <button ${voiceTier === "free" ? `disabled title="Ücretsiz planda kütüphane sesleri API ile kullanılamaz"` : ""} onclick="addLib('${c.id}',${i})">Ekle ve seç</button></div>`).join("") || `<div class="vrow muted small">Sonuç yok; filtreleri gevşetmeyi dene.</div>`}</div>
         <div class="row" style="margin-top:8px">${lib.page > 0 ? `<button class="ghost" onclick="searchLib('${c.id}',${lib.page - 1})">← Önceki</button>` : ""}${lib.hasMore ? `<button class="ghost" onclick="searchLib('${c.id}',${lib.page + 1})">Sonraki →</button>` : ""}</div>` : `<div class="note">ElevenLabs'in ses kütüphanesinde binlerce ses var. Dil, cinsiyet ve yaşa göre süzüp ▶ ile ücretsiz dinleyebilirsin. Beğendiğin ses hesabına eklenir ve bu karakter için seçilir.</div>`}`;
   }
   return `${changeNote}<div class="tiny muted" style="margin-bottom:8px">${locked ? "Yeni ses seç" : "Ses seç"}</div>${tabs}${body}
@@ -360,7 +363,7 @@ async function addLib(id, i) {
   lib.err = ""; lib.loading = true; renderAll();
   try {
     const r = await api("/api/voices/add", { method: "POST", body: { publicOwnerId: v.public_owner_id, voiceId: v.voice_id, name: v.name } });
-    voices = (await api("/api/voices")).voices;
+    const rv = await api("/api/voices"); voices = rv.voices; voiceTier = rv.tier;
     ui.picks[id] = r.voice_id; ui.preview[id] = null; ui.err[id] = ""; lib.tab = "mine";
     toast(`${v.name} hesabına eklendi`);
   } catch (e) { lib.err = `${e.message}${/40[23]/.test(e.message) ? " — Kütüphane seslerini API ile kullanmak ya da daha fazla ses eklemek planına bağlı olabilir." : ""}`; }
@@ -369,7 +372,7 @@ async function addLib(id, i) {
 async function loadVoices() {
   if (!S?.elevenlabs.connected) return;
   voicesErr = "";
-  try { voices = (await api("/api/voices")).voices; } catch (e) { voicesErr = e.message; voices = null; }
+  try { const r = await api("/api/voices"); voices = r.voices; voiceTier = r.tier; } catch (e) { voicesErr = e.message; voices = null; }
   renderAll();
 }
 async function tryVoice(id) {

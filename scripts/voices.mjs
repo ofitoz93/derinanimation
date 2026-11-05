@@ -47,9 +47,32 @@ async function tts(voiceId, text, settings) {
 
 const registryPath = (proj) => projectDir(proj, "characters", "registry.json");
 
+// Hesabın planı ("free", "starter", "creator"…). Ücretsiz planda yalnızca hazır sesler API ile kullanılabilir.
+export async function subscriptionTier() {
+  try {
+    const s = await api("/user/subscription");
+    return String(s.tier ?? "unknown");
+  } catch {
+    return "unknown";
+  }
+}
+const FREE_OK = new Set(["premade", "generated", "cloned"]);
+
 export async function listVoices() {
-  const { voices } = await api("/voices");
-  return voices.map((v) => ({ voice_id: v.voice_id, name: v.name, labels: v.labels ?? {}, category: v.category, preview_url: v.preview_url }));
+  const [{ voices }, tier] = await Promise.all([api("/voices"), subscriptionTier()]);
+  const free = tier === "free";
+  return {
+    tier,
+    voices: voices.map((v) => ({
+      voice_id: v.voice_id,
+      name: v.name,
+      labels: v.labels ?? {},
+      category: v.category,
+      preview_url: v.preview_url,
+      // Ücretsiz planda kütüphaneden eklenmiş (professional/famous/high_quality) sesler API ile kullanılamaz
+      usable: !free || FREE_OK.has(v.category),
+    })),
+  };
 }
 
 // ElevenLabs ses kütüphanesi (topluluğun paylaştığı sesler): dil, cinsiyet, yaş ve aramayla
@@ -84,7 +107,7 @@ export async function addLibraryVoice(publicOwnerId, voiceId, name) {
 }
 
 async function list() {
-  const voices = await listVoices();
+  const { voices } = await listVoices();
   for (const v of voices) console.log(`${v.voice_id}  ${v.name}  ${Object.values(v.labels ?? {}).join(", ")}`);
 }
 
@@ -141,7 +164,21 @@ export async function generate(ref) {
       const file = `${info.audioRel}/${id}.mp3`;
       if (timing[id]?.textHash === textHash && fs.existsSync(p("public", file))) continue;
       process.stdout.write(`  ${id} (${line.speaker}) seslendiriliyor… `);
-      const { audio, duration } = await tts(v.voice_id, line.text, settings);
+      let result;
+      try {
+        result = await tts(v.voice_id, line.text, settings);
+      } catch (e) {
+        // Bu ses hesabın planında kullanılamıyorsa o karakteri atla, taslağı durdurma
+        if (/402|paid_plan_required|payment_required/.test(String(e.message))) {
+          console.log("atlandı");
+          console.log(`• ${line.speaker} için kilitli ses ElevenLabs planında kullanılamıyor (ücretsiz planda ses kütüphanesi sesleri API ile kullanılamaz). Panelde "Sesi değiştir" ile hazır bir ses seç; bu taslakta ${line.speaker} seslendirmesiz kalacak.`);
+          skipped.add(line.speaker);
+          voices[line.speaker] = { status: "unusable" };
+          continue;
+        }
+        throw e;
+      }
+      const { audio, duration } = result;
       fs.writeFileSync(p("public", file), audio);
       timing[id] = { file, duration, textHash };
       console.log(`${duration.toFixed(1)} sn`);
