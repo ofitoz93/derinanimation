@@ -10,12 +10,11 @@ import { renderMedia, selectComposition } from "@remotion/renderer";
 import { checkLocks } from "./locks.mjs";
 import { generate } from "./voices.mjs";
 import { autofill } from "./sounds.mjs";
-import { fail, loadEnv, ok, p, readJson, runCli, sha256, writeJson } from "./lib.mjs";
+import { fail, latestRender, loadEnv, newRenderPath, ok, p, pruneRenders, readJson, runCli, sha256, writeJson } from "./lib.mjs";
 
 loadEnv();
 
 const RES = { draft: [854, 480], final: [3840, 2160] };
-const out = (ep, kind) => p("out", kind === "draft" ? `${ep}_taslak_480p.mp4` : `${ep}_final_4k.mp4`);
 const scenesPath = (ep) => p("episodes", ep, "scenes.json");
 const sceneHash = (ep) => sha256(fs.readFileSync(scenesPath(ep), "utf8").replace(/\r\n/g, "\n").replace(/"status": "[^"]*",?\s*/g, "").replace(/"approved_at": "[^"]*",?\s*/g, ""));
 
@@ -47,6 +46,7 @@ function writeManifest() {
 
 async function render(ep, kind) {
   const [width, height] = RES[kind];
+  const target = newRenderPath(ep, kind);
   console.log(`\n▶ ${ep} · ${kind === "draft" ? "480p taslak" : "4K final"} hazırlanıyor`);
   const serveUrl = await bundle({ entryPoint: p("src", "index.ts") });
   const browserExecutable = process.env.REMOTION_BROWSER || null;
@@ -59,7 +59,7 @@ async function render(ep, kind) {
     browserExecutable,
     codec: "h264",
     crf: kind === "draft" ? 28 : 16,
-    outputLocation: out(ep, kind),
+    outputLocation: target,
     onProgress: ({ progress }) => {
       const pct = Math.floor(progress * 100);
       if (pct !== last && pct % 5 === 0) {
@@ -69,7 +69,8 @@ async function render(ep, kind) {
     },
   });
   console.log("");
-  ok(`Hazır: ${path.relative(p(), out(ep, kind))} (${Math.round(comp.durationInFrames / comp.fps)} sn)`);
+  ok(`Hazır: ${path.relative(p(), target)} (${Math.round(comp.durationInFrames / comp.fps)} sn)`);
+  pruneRenders(ep, kind, 3);
 }
 
 async function draft(ep) {
@@ -85,7 +86,7 @@ async function draft(ep) {
 }
 
 function approve(ep) {
-  if (!fs.existsSync(out(ep, "draft"))) fail(`Önce taslak üretilmeli: npm run draft -- ${ep}`);
+  if (!latestRender(ep, "draft")) fail(`Önce taslak üretilmeli: npm run draft -- ${ep}`);
   const s = readJson(scenesPath(ep));
   s.status = "approved";
   s.approved_at = new Date().toISOString();

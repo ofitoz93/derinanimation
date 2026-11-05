@@ -5,7 +5,7 @@ import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
 import { spawn, exec } from "node:child_process";
-import { loadEnv, p, readJson, UserError } from "../lib.mjs";
+import { latestRender, loadEnv, p, readJson, UserError } from "../lib.mjs";
 import { lockProblems } from "../locks.mjs";
 import { listVoices, lock as lockVoice, preview as previewVoice } from "../voices.mjs";
 import { chooseVariant, lockSound, makeVariants, setPrompt, soundsState } from "../sounds.mjs";
@@ -42,9 +42,8 @@ function episodes() {
     .filter((d) => fs.existsSync(path.join(dir, d, "scenes.json")))
     .map((d) => {
       const s = readJson(path.join(dir, d, "scenes.json"));
-      const draft = p("out", `${d}_taslak_480p.mp4`);
-      const final = p("out", `${d}_final_4k.mp4`);
-      const stat = (f) => (fs.existsSync(f) ? fs.statSync(f).mtimeMs : null);
+      const draft = latestRender(d, "draft");
+      const final = latestRender(d, "final");
       const lines = s.scenes.reduce((n, sc) => n + (sc.lines?.length ?? 0), 0);
       return {
         id: d,
@@ -54,8 +53,8 @@ function episodes() {
         scenes: s.scenes.length,
         lines,
         speakers: [...new Set(s.scenes.flatMap((sc) => (sc.lines ?? []).map((l) => l.speaker)))],
-        draft: stat(draft) ? { url: `/files/out/${d}_taslak_480p.mp4`, mtime: stat(draft) } : null,
-        final: stat(final) ? { url: `/files/out/${d}_final_4k.mp4`, mtime: stat(final) } : null,
+        draft: draft ? { url: `/files/out/${encodeURIComponent(draft.file)}`, mtime: draft.mtime, file: draft.file } : null,
+        final: final ? { url: `/files/out/${encodeURIComponent(final.file)}`, mtime: final.mtime, file: final.file } : null,
       };
     });
 }

@@ -55,3 +55,38 @@ export async function runCli(fn) {
 }
 
 export const ok = (msg) => console.log(`✔ ${msg}`);
+
+// ---------- render çıktıları ----------
+// Her render tarih-saatli yeni bir dosyaya yazılır. Windows açık bir dosyanın
+// (ör. panelde oynayan eski taslak) üzerine yazılmasına izin vermediği için
+// eski dosyayı değiştirmeye çalışmayız; en yenisi her zaman geçerli olandır.
+const KIND_TAG = { draft: "taslak_480p", final: "final_4k" };
+
+export function newRenderPath(ep, kind) {
+  const d = new Date();
+  const z = (n) => String(n).padStart(2, "0");
+  const stamp = `${d.getFullYear()}${z(d.getMonth() + 1)}${z(d.getDate())}-${z(d.getHours())}${z(d.getMinutes())}${z(d.getSeconds())}`;
+  return p("out", `${ep}_${KIND_TAG[kind]}_${stamp}.mp4`);
+}
+
+export function rendersOf(ep, kind) {
+  const dir = p("out");
+  if (!fs.existsSync(dir)) return [];
+  const re = new RegExp(`^${ep.replace(/[^a-zA-Z0-9_-]/g, "")}_${KIND_TAG[kind]}(_\\d{8}-\\d{6})?\\.mp4$`);
+  return fs
+    .readdirSync(dir)
+    .filter((f) => re.test(f))
+    .map((f) => ({ file: f, path: path.join(dir, f), mtime: fs.statSync(path.join(dir, f)).mtimeMs }))
+    .sort((a, b) => b.mtime - a.mtime);
+}
+
+export const latestRender = (ep, kind) => rendersOf(ep, kind)[0] ?? null;
+
+// En yeni `keep` dosya dışındakileri silmeyi dener; açık olanlar sessizce kalır.
+export function pruneRenders(ep, kind, keep = 3) {
+  for (const r of rendersOf(ep, kind).slice(keep)) {
+    try {
+      fs.rmSync(r.path);
+    } catch {}
+  }
+}

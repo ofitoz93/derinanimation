@@ -68,9 +68,9 @@ node scripts/sounds.mjs autofill pilot         # eksikleri üretip uygula
 ### Bölüm üretimi
 
 ```
-npm run draft -- pilot      # kilit kontrolü → seslendirme → montaj → out/pilot_taslak_480p.mp4
+npm run draft -- pilot      # kilit kontrolü → seslendirme → montaj → out/pilot_taslak_480p_<tarih-saat>.mp4
 npm run approve -- pilot    # taslağı beğendiysen bölümü onayla ve mühürle
-npm run final -- pilot      # yalnızca onaylı bölüm için → out/pilot_final_4k.mp4
+npm run final -- pilot      # yalnızca onaylı bölüm için → out/pilot_final_4k_<tarih-saat>.mp4
 ```
 
 - Replikler yalnızca metni değiştiğinde yeniden seslendirilir; tekrar taslak almak ElevenLabs kredisini boşa harcamaz.
