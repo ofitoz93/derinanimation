@@ -1,0 +1,44 @@
+{
+  "id": "kuyu-odasi",
+  "name": "Kuyu Odası",
+  "version": "1.0.0",
+  "status": "locked",
+  "approved_at": "2026-11-05T16:05:00+03:00",
+  "approved_by": "kullanıcı",
+  "style": "lumen",
+  "component": "KuyuOdasi.tsx",
+  "canvas": { "width": 680, "height": 400 },
+  "description": "12. katın en dibinde, kayaya oyulmuş yuvarlak oda. Ada'nın çalıştığı yer.",
+  "elements": {
+    "well": { "center": [340, 300], "rim_rx": 92, "rim_ry": 24, "note": "Taş bilezikli derin kuyu" },
+    "frame": "Kuyunun üstünde iki ahşap direk, yatay kiriş ve makara",
+    "rope_bucket": "Makaradan sarkan halat; sağ kenarda demir çemberli ahşap kova",
+    "notches": { "area": [70, 140, 210, 270], "note": "Sol duvarda kuşaklar boyu kazınmış su seviyesi çentikleri. En alt satır Ada'nın. Hikâyede ipucu taşıyıcıdır." },
+    "vent": { "position": [520, 64], "note": "Sağ üstte havalandırma ızgarası; fener sönünce tek soluk ışık buradan sızar" },
+    "default_lantern": [212, 328]
+  },
+  "palette": {
+    "wall": "#3b312b",
+    "wall_dark": "#332a25",
+    "wall_light": "#433832",
+    "chisel": "#241d19",
+    "floor": "#2a231f",
+    "floor_ring": "#1e1915",
+    "stone": "#463c34",
+    "rim": "#5e5248",
+    "water": "#0b3431",
+    "water_glint": "#78e6c8",
+    "wood": "#4a3424",
+    "wood_dark": "#3a281b",
+    "rope": "#8a7350",
+    "iron": "#2b2b2e",
+    "darkness": "#040304"
+  },
+  "lighting_rules": [
+    "Odada sabit ışık kaynağı yoktur; tek ışık Ada'nın feneridir",
+    "Fener sönükse oda neredeyse tamamen karanlıktır; yalnızca havalandırmadan çok soluk soğuk ışık sızar",
+    "Karakterler mekânın içinde, ışık katmanının altında çizilir ki aynı ışığı alsınlar"
+  ],
+  "sound_bed": ["Kuyuya damlayan su", "Uzaktan havalandırma uğultusu"],
+  "lock_policy": "Bu dosya ve KuyuOdasi.tsx kilitlidir. Değişiklik yalnızca yeni sürüm olarak önerilir ve kullanıcı onayı olmadan sahnelerde kullanılmaz."
+}
