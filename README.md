@@ -22,11 +22,30 @@ Lumen stilinde, Remotion ile kodla üretilen mini dizi. Senaryo verilir; sistem 
    cd derinanimation
    npm install
    ```
-3. `.env.example` dosyasını `.env` adıyla kopyala ve ElevenLabs API anahtarını yaz.
+3. Paneli aç:
+   ```
+   npm run panel
+   ```
 
 İlk render sırasında Remotion kendi Chrome'unu ve ffmpeg'ini otomatik indirir; ayrıca bir şey kurman gerekmez.
 
-## Sesleri seçme ve kilitleme
+## Üretim paneli
+
+`npm run panel` tarayıcıda `http://localhost:4317` adresini açar. Panel yalnızca bu bilgisayardan erişilir; komut satırına gerek kalmadan:
+
+- ElevenLabs API anahtarını ekler (yalnızca yerel `.env` dosyasına yazılır)
+- Hesabındaki sesleri listeler; ▶ ile örneklerini ücretsiz dinletir
+- Seçtiğin sesi karakterin kendi repliğiyle dener ve onaylarsan karaktere kilitler
+- Bölümün 480p taslağını üretir, ilerlemesini gösterir ve videoyu panelde oynatır
+- Taslağı onaylar ve 4K final render'ı başlatır
+
+Paneli kapatmak için açtığın terminal penceresinde Ctrl+C.
+
+## Komut satırından (isteğe bağlı)
+
+Panelin yaptığı her şey komutla da yapılabilir.
+
+### Sesleri seçme ve kilitleme
 
 ```
 npm run voices:list                       # hesabındaki sesler ve id'leri
@@ -36,7 +55,7 @@ npm run voice:lock -- ada <voice_id>      # beğendiğin sesi kilitle
 
 Aynısını `saim` için de yap. Kilitli bir ses bir daha değiştirilemez; değişiklik bilinçli bir sürüm kararıdır.
 
-## Bölüm üretimi
+### Bölüm üretimi
 
 ```
 npm run draft -- pilot      # kilit kontrolü → seslendirme → montaj → out/pilot_taslak_480p.mp4

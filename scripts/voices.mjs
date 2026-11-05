@@ -5,7 +5,7 @@
 //   npm run voice:lock -- ada <voice_id>        → sesi Ada'ya bağlar ve kilitler
 //   npm run voices:generate -- pilot            → bölümün tüm repliklerini seslendirir
 import fs from "node:fs";
-import { fail, loadEnv, ok, p, readJson, sha256, writeJson } from "./lib.mjs";
+import { fail, loadEnv, ok, p, readJson, runCli, sha256, writeJson } from "./lib.mjs";
 
 loadEnv();
 const API = "https://api.elevenlabs.io/v1";
@@ -42,12 +42,17 @@ async function tts(voiceId, text, settings) {
 
 const registryPath = p("characters", "registry.json");
 
-async function list() {
+export async function listVoices() {
   const { voices } = await api("/voices");
+  return voices.map((v) => ({ voice_id: v.voice_id, name: v.name, labels: v.labels ?? {}, category: v.category, preview_url: v.preview_url }));
+}
+
+async function list() {
+  const voices = await listVoices();
   for (const v of voices) console.log(`${v.voice_id}  ${v.name}  ${Object.values(v.labels ?? {}).join(", ")}`);
 }
 
-async function preview(charId, voiceId) {
+export async function preview(charId, voiceId) {
   if (!charId || !voiceId) fail("Kullanım: npm run voice:preview -- <karakter> <voice_id>");
   const text = SAMPLE[charId] ?? "Bu bir deneme kaydıdır.";
   const { audio } = await tts(voiceId, text, BASE_SETTINGS);
@@ -55,9 +60,10 @@ async function preview(charId, voiceId) {
   fs.mkdirSync(p("public", "audio", "previews"), { recursive: true });
   fs.writeFileSync(out, audio);
   ok(`Deneme kaydı hazır: ${out}`);
+  return `audio/previews/${charId}_${voiceId}.mp3`;
 }
 
-function lock(charId, voiceId) {
+export function lock(charId, voiceId) {
   if (!charId || !voiceId) fail("Kullanım: npm run voice:lock -- <karakter> <voice_id>");
   const reg = readJson(registryPath);
   const c = reg.characters.find((x) => x.id === charId);
@@ -101,9 +107,11 @@ export async function generate(episode = "pilot") {
 
 if (process.argv[1]?.endsWith("voices.mjs")) {
   const [cmd, a, b] = process.argv.slice(2);
-  if (cmd === "list") await list();
-  else if (cmd === "preview") await preview(a, b);
-  else if (cmd === "lock") lock(a, b);
-  else if (cmd === "generate") await generate(a);
-  else fail("Komutlar: list | preview <karakter> <voice_id> | lock <karakter> <voice_id> | generate <bölüm>");
+  await runCli(async () => {
+    if (cmd === "list") await list();
+    else if (cmd === "preview") await preview(a, b);
+    else if (cmd === "lock") lock(a, b);
+    else if (cmd === "generate") await generate(a);
+    else fail("Komutlar: list | preview <karakter> <voice_id> | lock <karakter> <voice_id> | generate <bölüm>");
+  });
 }

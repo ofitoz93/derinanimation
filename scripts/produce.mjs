@@ -9,7 +9,7 @@ import { bundle } from "@remotion/bundler";
 import { renderMedia, selectComposition } from "@remotion/renderer";
 import { checkLocks } from "./locks.mjs";
 import { generate } from "./voices.mjs";
-import { fail, loadEnv, ok, p, readJson, sha256, writeJson } from "./lib.mjs";
+import { fail, loadEnv, ok, p, readJson, runCli, sha256, writeJson } from "./lib.mjs";
 
 loadEnv();
 
@@ -104,7 +104,9 @@ async function final(ep) {
 }
 
 const [cmd, ep = "pilot"] = process.argv.slice(2);
-if (cmd === "draft") await draft(ep);
-else if (cmd === "approve") approve(ep);
-else if (cmd === "final") await final(ep);
-else fail("Komutlar: draft | approve | final  (ör. npm run draft -- pilot)");
+await runCli(async () => {
+  if (cmd === "draft") await draft(ep);
+  else if (cmd === "approve") approve(ep);
+  else if (cmd === "final") await final(ep);
+  else fail("Komutlar: draft | approve | final  (ör. npm run draft -- pilot)");
+});

@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Derin · Üretim Paneli</title>
+<style>
+:root{--bg:#0d0b0a;--s1:#161311;--s2:#1d1916;--b:#2c2622;--b2:#3d3530;--t:#ece4d8;--m:#a0958a;--d:#6f665e;--warm:#e2a65c;--warm-bg:#2e2116;--cold:#9fc4d6;--cold-bg:#16222a;--ok:#5dcaa5;--ok-bg:#12261f;--bad:#e7836f;--bad-bg:#2c1612;--r:10px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--t);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 24px 60px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px;flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:14px}
+.brand h1{font:500 30px/1 Georgia,serif;letter-spacing:10px;margin:0}
+.brand span{color:var(--m);font-size:14px}
+h2{font-size:13px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--m);margin:34px 0 12px}
+.card{background:var(--s1);border:1px solid var(--b);border-radius:14px;padding:18px 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.between{justify-content:space-between}
+.muted{color:var(--m)}.small{font-size:13px}.tiny{font-size:12px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:3px 10px;border-radius:999px;border:1px solid var(--b2);color:var(--m);white-space:nowrap}
+.pill.ok{background:var(--ok-bg);border-color:#1f4a3b;color:var(--ok)}
+.pill.warm{background:var(--warm-bg);border-color:#5a4024;color:var(--warm)}
+.pill.cold{background:var(--cold-bg);border-color:#2a4352;color:var(--cold)}
+.pill.bad{background:var(--bad-bg);border-color:#5a2a22;color:var(--bad)}
+.dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+button{font:inherit;font-size:14px;color:var(--t);background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);padding:8px 14px;cursor:pointer;transition:background .15s,border-color .15s}
+button:hover:not(:disabled){background:#26211d;border-color:#544840}
+button:disabled{opacity:.4;cursor:not-allowed}
+button.primary{background:var(--warm);color:#1d1208;border-color:var(--warm)}
+button.primary:hover:not(:disabled){background:#efb676;border-color:#efb676}
+button.ghost{background:transparent;border-color:transparent;color:var(--m);padding:6px 8px}
+button.ghost:hover:not(:disabled){color:var(--t);background:var(--s2)}
+button.icon{width:34px;height:34px;padding:0;display:inline-grid;place-items:center;border-radius:50%}
+input{font:inherit;color:var(--t);background:var(--bg);border:1px solid var(--b2);border-radius:var(--r);padding:8px 12px;outline:none;min-width:0}
+input:focus{border-color:var(--warm)}
+.char-head{display:flex;gap:14px;align-items:flex-start}
+.swatches{display:grid;grid-template-columns:repeat(3,14px);gap:4px;flex-shrink:0;margin-top:4px}
+.swatches i{width:14px;height:14px;border-radius:4px;display:block}
+.char-name{font:500 20px/1.2 Georgia,serif}
+.sig{margin:10px 0 0;padding-left:18px;color:var(--m);font-size:13px}
+.voice-box{margin-top:16px;padding-top:14px;border-top:1px solid var(--b)}
+.vlist{max-height:260px;overflow:auto;border:1px solid var(--b);border-radius:var(--r);margin-top:10px}
+.vrow{display:flex;align-items:center;gap:10px;padding:8px 10px;border-bottom:1px solid var(--b)}
+.vrow:last-child{border-bottom:0}
+.vrow.sel{background:var(--warm-bg)}
+.vrow .nm{flex:1;min-width:0}
+.vrow .nm b{font-weight:500;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chosen{margin-top:12px;padding:12px;border-radius:var(--r);background:var(--s2);border:1px solid var(--b2)}
+audio{width:100%;height:36px;margin-top:10px}
+video{width:100%;border-radius:10px;background:#000;margin-top:14px;display:block}
+.ep-title{font:500 22px/1.2 Georgia,serif}
+.stats{display:flex;gap:18px;margin-top:6px}
+.log{background:#090807;border:1px solid var(--b);border-radius:var(--r);padding:12px 14px;font:12.5px/1.6 ui-monospace,Consolas,monospace;color:#cfc5b8;max-height:300px;overflow:auto;white-space:pre-wrap;margin:12px 0 0}
+.bar{height:6px;border-radius:3px;background:var(--b);overflow:hidden;margin-top:12px}
+.bar i{display:block;height:100%;background:var(--warm);transition:width .4s}
+.note{font-size:13px;color:var(--m);margin-top:8px}
+.err{color:var(--bad);font-size:13px;margin-top:8px}
+.tabs{display:flex;gap:6px;margin-top:14px}
+.tabs button{padding:5px 12px;font-size:13px}
+.tabs button.on{border-color:var(--warm);color:var(--warm)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--s2);border:1px solid var(--b2);padding:10px 16px;border-radius:var(--r);font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+@media (max-width:560px){.grid{grid-template-columns:1fr}.wrap{padding:20px 16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand"><h1>DERİN</h1><span>Üretim paneli</span></div>
+    <div id="lockPill"></div>
+  </header>
+
+  <h2>ElevenLabs</h2>
+  <div class="card" id="keyCard"></div>
+
+  <h2>Karakterler</h2>
+  <div class="grid" id="chars"></div>
+
+  <h2>Bölümler</h2>
+  <div class="grid" id="eps"></div>
+
+  <div id="jobWrap"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = (s, el = document) => el.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+let S = null;
+let voices = null;
+let voicesErr = "";
+const ui = { picks: {}, filter: {}, preview: {}, busy: {}, err: {}, tab: {}, editKey: false };
+let audioEl = new Audio();
+
+async function api(url, opts = {}) {
+  const res = await fetch(url, { headers: { "Content-Type": "application/json" }, ...opts, body: opts.body ? JSON.stringify(opts.body) : undefined });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || "Bir hata oluştu");
+  return data;
+}
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("on"), 2600); }
+
+// Yalnızca değişen bölümleri yeniden çiz: oynayan video ve ses kesilmesin.
+const last = {};
+async function refresh() {
+  try { S = await api("/api/state"); } catch (e) { return; }
+  const parts = { key: S.elevenlabs, chars: S.characters, eps: [S.episodes, S.job?.status], locks: S.locks };
+  const draw = { key: renderKey, chars: renderChars, eps: renderEps, locks: renderLocks };
+  for (const k in parts) { const j = JSON.stringify(parts[k]); if (last[k] !== j) { last[k] = j; draw[k](); } }
+  renderJob();
+}
+
+function render() {
+  renderLocks(); renderKey(); renderChars(); renderEps(); renderJob();
+}
+
+function renderLocks() {
+  const n = S.locks.problems.length;
+  $("#lockPill").innerHTML = n
+    ? `<span class="pill bad" title="${esc(S.locks.problems.join("\n"))}"><span class="dot"></span>Kilit sorunu: ${n}</span>`
+    : `<span class="pill ok"><span class="dot"></span>Kilitler sağlam</span>`;
+}
+
+function renderKey() {
+  const k = S.elevenlabs;
+  if (k.connected && !ui.editKey) {
+    $("#keyCard").innerHTML = `<div class="row between"><div class="row"><span class="pill ok"><span class="dot"></span>Bağlı</span><span class="muted small">API anahtarı ${esc(k.hint)}</span></div>
+      <div class="row"><button class="ghost" onclick="ui.editKey=true;renderKey()">Anahtarı değiştir</button><button class="ghost" onclick="removeKey()">Kaldır</button></div></div>`;
+  } else {
+    $("#keyCard").innerHTML = `<div class="row"><input id="keyIn" type="password" placeholder="ElevenLabs API anahtarı" style="flex:1;min-width:220px" autocomplete="off">
+      <button class="primary" onclick="saveKey()">Kaydet</button>${k.connected ? `<button class="ghost" onclick="ui.editKey=false;renderKey()">Vazgeç</button>` : ""}</div>
+      <div class="note">Anahtar yalnızca bu bilgisayardaki .env dosyasına yazılır, GitHub'a gönderilmez. ElevenLabs'te Profil → API Keys bölümünden alabilirsin.</div>`;
+  }
+}
+async function saveKey() {
+  const v = $("#keyIn").value.trim();
+  if (!v) return toast("Önce anahtarı yapıştır");
+  await api("/api/key", { method: "POST", body: { key: v } });
+  ui.editKey = false; voices = null; voicesErr = ""; toast("Anahtar kaydedildi"); await refresh(); loadVoices();
+}
+async function removeKey() {
+  if (!confirm("ElevenLabs anahtarı bu bilgisayardan silinsin mi?")) return;
+  await api("/api/key", { method: "POST", body: { key: "" } }); voices = null; toast("Anahtar silindi"); refresh();
+}
+async function loadVoices() {
+  if (!S?.elevenlabs.connected) return;
+  voicesErr = "";
+  try { voices = (await api("/api/voices")).voices; } catch (e) { voicesErr = e.message; voices = null; }
+  renderChars();
+}
+
+function voiceName(id) { return voices?.find((v) => v.voice_id === id)?.name ?? id; }
+function labels(v) { return Object.values(v.labels || {}).filter(Boolean).slice(0, 3).join(" · "); }
+
+function renderChars() {
+  $("#chars").innerHTML = S.characters.map((c) => {
+    const sw = Object.entries(c.palette).filter(([k]) => !/shadow|dark|eyes|lips|fold|cuff|patch/.test(k)).slice(0, 9).map(([, v]) => `<i style="background:${esc(v)}"></i>`).join("");
+    const locked = c.status === "locked";
+    return `<div class="card">
+      <div class="char-head"><div class="swatches">${sw}</div>
+        <div style="flex:1;min-width:0"><div class="row between"><div class="char-name">${esc(c.name)}</div>
+          ${locked ? `<span class="pill ok"><span class="dot"></span>Kilitli · v${esc(c.version)}</span>` : `<span class="pill">Taslak</span>`}</div>
+          <div class="muted small">${esc(c.role)}</div></div></div>
+      ${c.signature.length ? `<ul class="sig">${c.signature.slice(0, 3).map((s) => `<li>${esc(s)}</li>`).join("")}</ul>` : ""}
+      <div class="voice-box">${voiceSection(c)}</div></div>`;
+  }).join("");
+  S.characters.forEach((c) => { const el = $(`#f-${c.id}`); if (el && ui.focus === c.id) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); } });
+}
+
+function voiceSection(c) {
+  if (c.voice?.status === "locked") {
+    const v = voices?.find((x) => x.voice_id === c.voice.voice_id);
+    return `<div class="row between"><div><div class="tiny muted">Ses</div><div>${esc(voiceName(c.voice.voice_id))}</div></div>
+      <div class="row">${v?.preview_url ? `<button class="icon" title="Dinle" onclick="play('${esc(v.preview_url)}')">▶</button>` : ""}<span class="pill warm"><span class="dot"></span>Ses kilitli</span></div></div>`;
+  }
+  if (!S.elevenlabs.connected) return `<div class="muted small">Ses seçmek için önce ElevenLabs anahtarını ekle.</div>`;
+  if (voicesErr) return `<div class="err">${esc(voicesErr)}</div><button style="margin-top:8px" onclick="loadVoices()">Tekrar dene</button>`;
+  if (!voices) return `<div class="muted small">Sesler yükleniyor…</div>`;
+  const f = (ui.filter[c.id] || "").toLowerCase();
+  const list = voices.filter((v) => !f || (v.name + " " + labels(v)).toLowerCase().includes(f));
+  const pick = ui.picks[c.id];
+  return `<div class="row between"><div class="tiny muted">Ses seç · ${voices.length} ses</div></div>
+    <input id="f-${c.id}" placeholder="Ara: isim, cinsiyet, aksan" value="${esc(ui.filter[c.id] || "")}" oninput="ui.filter['${c.id}']=this.value;ui.focus='${c.id}';renderChars()" style="width:100%;margin-top:8px">
+    <div class="vlist">${list.map((v) => `<div class="vrow ${pick === v.voice_id ? "sel" : ""}">
+      ${v.preview_url ? `<button class="icon" title="Örneği dinle (ücretsiz)" onclick="play('${esc(v.preview_url)}')">▶</button>` : `<span style="width:34px"></span>`}
+      <div class="nm"><b>${esc(v.name)}</b><span class="tiny muted">${esc(labels(v) || v.category || "")}</span></div>
+      <button onclick="ui.picks['${c.id}']='${esc(v.voice_id)}';ui.preview['${c.id}']=null;ui.err['${c.id}']='';renderChars()">${pick === v.voice_id ? "Seçildi" : "Seç"}</button></div>`).join("") || `<div class="vrow muted small">Eşleşen ses yok</div>`}</div>
+    ${pick ? `<div class="chosen"><div class="row between"><div><div class="tiny muted">Seçilen</div><div>${esc(voiceName(pick))}</div></div></div>
+      <div class="row" style="margin-top:10px"><button ${ui.busy[c.id] ? "disabled" : ""} onclick="tryVoice('${c.id}')">${ui.busy[c.id] ? "Hazırlanıyor…" : "Kendi repliğiyle dene"}</button>
+      <button class="primary" onclick="lockVoice('${c.id}')">Bu sesi kilitle</button></div>
+      <div class="note">Deneme, karakterin kendi repliğini bu sesle okutur ve az miktarda ElevenLabs kredisi kullanır. ▶ ile dinlemek ücretsizdir.</div>
+      ${ui.preview[c.id] ? `<audio controls autoplay src="${esc(ui.preview[c.id])}"></audio>` : ""}
+      ${ui.err[c.id] ? `<div class="err">${esc(ui.err[c.id])}</div>` : ""}</div>` : ""}`;
+}
+
+function play(url) { audioEl.pause(); audioEl = new Audio(url); audioEl.play().catch(() => toast("Ses çalınamadı")); }
+async function tryVoice(id) {
+  ui.busy[id] = true; ui.err[id] = ""; renderChars();
+  try { ui.preview[id] = (await api("/api/voice/preview", { method: "POST", body: { character: id, voiceId: ui.picks[id] } })).url; }
+  catch (e) { ui.err[id] = e.message; }
+  ui.busy[id] = false; renderChars();
+}
+async function lockVoice(id) {
+  const c = S.characters.find((x) => x.id === id);
+  if (!confirm(`"${voiceName(ui.picks[id])}" sesi ${c.name} için kilitlensin mi?\n\nKilitlenen ses bütün bölümlerde kullanılır ve buradan değiştirilemez.`)) return;
+  try { await api("/api/voice/lock", { method: "POST", body: { character: id, voiceId: ui.picks[id] } }); delete ui.picks[id]; toast(`${c.name} sesi kilitlendi`); refresh(); }
+  catch (e) { ui.err[id] = e.message; renderChars(); }
+}
+
+function renderEps() {
+  const running = S.job?.status === "running";
+  $("#eps").innerHTML = S.episodes.map((e) => {
+    const missing = e.speakers.filter((sp) => S.characters.find((c) => c.id === sp)?.voice?.status !== "locked");
+    const approved = e.status === "approved";
+    const tab = ui.tab[e.id] || (e.final ? "final" : "draft");
+    const vid = tab === "final" ? e.final : e.draft;
+    return `<div class="card" style="grid-column:1/-1">
+      <div class="row between"><div><div class="tiny muted">${esc(e.id)}</div><div class="ep-title">${esc(e.title)}</div></div>
+        ${approved ? `<span class="pill ok"><span class="dot"></span>Onaylı</span>` : `<span class="pill">Taslak aşamasında</span>`}</div>
+      <div class="stats muted small"><span>${e.scenes} sahne</span><span>${e.lines} replik</span></div>
+      ${missing.length ? `<div class="note">Sesi kilitlenmemiş karakterler: ${missing.map((m) => esc(S.characters.find((c) => c.id === m)?.name ?? m)).join(", ")}. Taslak yine üretilir ama seslendirmesiz olur.</div>` : `<div class="note">Bütün karakterlerin sesleri hazır.</div>`}
+      <div class="row" style="margin-top:14px">
+        <button class="primary" ${running ? "disabled" : ""} onclick="job('draft','${e.id}')">${e.draft ? "Taslağı yeniden üret" : "Taslak üret"} · 480p</button>
+        <button ${running || !e.draft || approved ? "disabled" : ""} onclick="approve('${e.id}')">Onayla</button>
+        <button ${running || !approved ? "disabled" : ""} onclick="job('final','${e.id}')">4K render</button>
+      </div>
+      ${e.draft && e.final ? `<div class="tabs"><button class="${tab === "draft" ? "on" : ""}" onclick="ui.tab['${e.id}']='draft';renderEps()">Taslak 480p</button><button class="${tab === "final" ? "on" : ""}" onclick="ui.tab['${e.id}']='final';renderEps()">Final 4K</button></div>` : ""}
+      ${vid ? `<video controls preload="metadata" src="${esc(vid.url)}?v=${vid.mtime}"></video><div class="tiny muted" style="margin-top:6px">${tab === "final" ? "4K final" : "480p taslak"} · ${new Date(vid.mtime).toLocaleString("tr-TR")}</div>` : `<div class="note">Henüz video yok. "Taslak üret" ile başla.</div>`}
+    </div>`;
+  }).join("");
+}
+async function job(cmd, episode) {
+  try { await api("/api/job", { method: "POST", body: { cmd, episode } }); toast("İşlem başladı"); refresh(); }
+  catch (e) { toast(e.message); }
+}
+async function approve(ep) {
+  if (!confirm("Taslağı izledin ve beğendin mi?\n\nOnaylanan bölüm mühürlenir. Sonradan senaryoda değişiklik yapılırsa 4K için yeniden taslak ve onay gerekir.")) return;
+  job("approve", ep);
+}
+
+function renderJob() {
+  const j = S.job;
+  if (!j) { $("#jobWrap").innerHTML = ""; return; }
+  const pctLine = [...j.log].reverse().find((l) => /render %\d+/.test(l));
+  const pct = pctLine ? Number(pctLine.match(/%(\d+)/)[1]) : j.status === "succeeded" ? 100 : 0;
+  const secs = Math.round(((j.endedAt || Date.now()) - j.startedAt) / 1000);
+  const st = j.status === "running" ? `<span class="pill warm"><span class="dot"></span>Sürüyor · ${Math.floor(secs / 60)} dk ${secs % 60} sn</span>`
+    : j.status === "succeeded" ? `<span class="pill ok"><span class="dot"></span>Tamamlandı</span>` : `<span class="pill bad"><span class="dot"></span>Hata</span>`;
+  const keepBottom = (() => { const l = $("#log"); return !l || l.scrollTop + l.clientHeight >= l.scrollHeight - 20; })();
+  $("#jobWrap").innerHTML = `<h2>Son işlem</h2><div class="card"><div class="row between"><div><b style="font-weight:500">${esc(j.label)}</b>${j.episode ? ` <span class="muted">· ${esc(j.episode)}</span>` : ""}</div>${st}</div>
+    ${j.cmd === "draft" || j.cmd === "final" ? `<div class="bar"><i style="width:${pct}%"></i></div>` : ""}
+    <pre class="log" id="log">${esc(j.log.join("\n"))}</pre></div>`;
+  if (keepBottom) { const l = $("#log"); l.scrollTop = l.scrollHeight; }
+}
+
+let timer;
+async function loop() {
+  await refresh();
+  clearTimeout(timer);
+  timer = setTimeout(loop, S?.job?.status === "running" ? 1500 : 8000);
+}
+loop().then(loadVoices);
+</script>
+</body>
+</html>

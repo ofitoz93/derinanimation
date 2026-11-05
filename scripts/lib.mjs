@@ -38,9 +38,20 @@ export function hashDir(dir) {
   return h.digest("hex");
 }
 
+// Hata fırlatır. Komut satırından çalışırken runCli bunu yakalayıp
+// mesajı yazar ve çıkar; panelden çağrıldığında hata panele döner.
+export class UserError extends Error {}
 export function fail(msg) {
-  console.error(`\n✖ ${msg}\n`);
-  process.exit(1);
+  throw new UserError(msg);
+}
+
+export async function runCli(fn) {
+  try {
+    await fn();
+  } catch (e) {
+    console.error(`\n✖ ${e instanceof UserError ? e.message : e?.stack ?? e}\n`);
+    process.exit(1);
+  }
 }
 
 export const ok = (msg) => console.log(`✔ ${msg}`);
