@@ -1,0 +1,5 @@
+node_modules/
+out/
+.env
+.remotion/
+public/audio/previews/

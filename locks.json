@@ -1,0 +1,20 @@
+{
+  "items": {
+    "ada": {
+      "version": "2.0.0",
+      "hash": "a2eca2322e26012cea43dfcf78fe41694eef4db4a092edab27a95b2df958aacf",
+      "sealed_at": "2026-11-05T13:17:48.930Z"
+    },
+    "saim": {
+      "version": "1.0.0",
+      "hash": "48110363fa5000d645645db0f4113aa527525fc2c61887aaeff189fd4734af6b",
+      "sealed_at": "2026-11-05T13:17:48.968Z"
+    },
+    "kuyu-odasi": {
+      "version": "1.0.0",
+      "hash": "72dd4497b9599ba6b4e0ff9cc1dc7234808b5a19d35a726c38e81863012f02e1",
+      "sealed_at": "2026-11-05T13:17:49.007Z"
+    }
+  },
+  "episodes": {}
+}

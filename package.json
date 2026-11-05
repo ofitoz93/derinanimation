@@ -1,0 +1,31 @@
+{
+  "name": "derin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Derin mini dizisi — lumen stili, Remotion ile kodla üretim hattı",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "locks:check": "node scripts/locks.mjs check",
+    "voices:list": "node scripts/voices.mjs list",
+    "voice:preview": "node scripts/voices.mjs preview",
+    "voice:lock": "node scripts/voices.mjs lock",
+    "voices:generate": "node scripts/voices.mjs generate",
+    "draft": "node scripts/produce.mjs draft",
+    "approve": "node scripts/produce.mjs approve",
+    "final": "node scripts/produce.mjs final"
+  },
+  "dependencies": {
+    "@remotion/bundler": "4.0.541",
+    "@remotion/cli": "4.0.541",
+    "@remotion/renderer": "4.0.541",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "4.0.541"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "typescript": "^5.6.3"
+  }
+}

@@ -4,29 +4,86 @@
   "version": "1.0.0",
   "status": "draft",
   "fps": 30,
-  "resolution": { "draft": [854, 480], "final": [3840, 2160] },
-  "locations": ["kuyu-odasi"],
-  "characters": ["ada", "saim"],
+  "resolution": {
+    "draft": [
+      854,
+      480
+    ],
+    "final": [
+      3840,
+      2160
+    ]
+  },
+  "locations": [
+    "kuyu-odasi"
+  ],
+  "characters": [
+    "ada",
+    "saim"
+  ],
   "scenes": [
     {
       "id": "s1",
       "name": "Karanlık",
       "duration_s": 25,
       "location": "kuyu-odasi",
-      "light": { "type": "lantern", "x": 212, "y": 328, "onFloor": true, "lit": false, "lightAt_s": 12 },
+      "light": {
+        "type": "lantern",
+        "x": 212,
+        "y": 328,
+        "onFloor": true,
+        "lit": false,
+        "lightAt_s": 12
+      },
       "cast": [
-        { "id": "ada", "view": "side", "expression": "sakin", "x": 150, "y": 160, "scale": 0.9, "enterAt_s": 12 }
+        {
+          "id": "ada",
+          "view": "side",
+          "expression": "sakin",
+          "x": 150,
+          "y": 160,
+          "scale": 0.9,
+          "enterAt_s": 12
+        }
       ],
       "camera": [
-        { "at_s": 0, "zoom": 3.0, "focus": [212, 328] },
-        { "at_s": 25, "zoom": 1.6, "focus": [230, 280], "ease": "slow" }
+        {
+          "at_s": 0,
+          "zoom": 3.0,
+          "focus": [
+            212,
+            328
+          ]
+        },
+        {
+          "at_s": 25,
+          "zoom": 1.5,
+          "focus": [
+            230,
+            235
+          ],
+          "ease": "slow"
+        }
       ],
       "lines": [],
       "sfx": [
-        { "at_s": 2, "id": "damla" },
-        { "at_s": 0, "id": "uguldu", "loop": true },
-        { "at_s": 9, "id": "kibrit" },
-        { "at_s": 12, "id": "fitil" }
+        {
+          "at_s": 2,
+          "id": "damla"
+        },
+        {
+          "at_s": 0,
+          "id": "uguldu",
+          "loop": true
+        },
+        {
+          "at_s": 9,
+          "id": "kibrit"
+        },
+        {
+          "at_s": 12,
+          "id": "fitil"
+        }
       ],
       "music": null
     },
@@ -35,119 +92,459 @@
       "name": "Rutin",
       "duration_s": 50,
       "location": "kuyu-odasi",
-      "light": { "type": "lantern", "held_by": "ada", "lit": true },
+      "light": {
+        "type": "lantern",
+        "held_by": "ada",
+        "lit": true
+      },
       "cast": [
-        { "id": "ada", "view": "side", "expression": "sakin", "path": [[180, 160], [60, 120]], "scale": 0.9, "action": "carve_notch" }
+        {
+          "id": "ada",
+          "view": "side",
+          "expression": "sakin",
+          "path": [
+            [
+              180,
+              160
+            ],
+            [
+              60,
+              120
+            ]
+          ],
+          "scale": 0.9,
+          "action": "carve_notch"
+        }
       ],
       "camera": [
-        { "at_s": 0, "zoom": 1.6, "focus": [230, 260] },
-        { "at_s": 20, "zoom": 2.6, "focus": [140, 200], "ease": "slow" },
-        { "at_s": 38, "zoom": 3.4, "focus": "ada.bracelet", "ease": "slow" }
+        {
+          "at_s": 0,
+          "zoom": 1.6,
+          "focus": [
+            230,
+            260
+          ]
+        },
+        {
+          "at_s": 20,
+          "zoom": 2.6,
+          "focus": [
+            140,
+            200
+          ],
+          "ease": "slow"
+        },
+        {
+          "at_s": 38,
+          "zoom": 3.4,
+          "focus": "ada.bracelet",
+          "ease": "slow"
+        }
       ],
       "lines": [
-        { "speaker": "ada", "type": "vo", "text": "Derin'de güneş yok. Takvim de yok. Bizim tek takvimimiz su.", "delivery": "sakin, düşünceli" },
-        { "speaker": "ada", "type": "vo", "text": "Annemin annesi bu duvara çentik attı. Sonra annem. Şimdi ben.", "delivery": "sakin" },
-        { "speaker": "ada", "type": "vo", "text": "Her sabah aynı kuralla uyanırız. Yukarı kazılmaz.", "delivery": "ezberlenmiş, hafif ironik" },
-        { "speaker": "ada", "type": "vo", "text": "Annem bu kuralı bir kez çiğnedi. Onu bir daha hiç görmedim.", "delivery": "alçak, kırgın" }
+        {
+          "speaker": "ada",
+          "type": "vo",
+          "text": "Derin'de güneş yok. Takvim de yok. Bizim tek takvimimiz su.",
+          "delivery": "sakin, düşünceli"
+        },
+        {
+          "speaker": "ada",
+          "type": "vo",
+          "text": "Annemin annesi bu duvara çentik attı. Sonra annem. Şimdi ben.",
+          "delivery": "sakin"
+        },
+        {
+          "speaker": "ada",
+          "type": "vo",
+          "text": "Her sabah aynı kuralla uyanırız. Yukarı kazılmaz.",
+          "delivery": "ezberlenmiş, hafif ironik"
+        },
+        {
+          "speaker": "ada",
+          "type": "vo",
+          "text": "Annem bu kuralı bir kez çiğnedi. Onu bir daha hiç görmedim.",
+          "delivery": "alçak, kırgın"
+        }
       ],
       "sfx": [
-        { "at_s": 8, "id": "pirinc_tas" },
-        { "at_s": 0, "id": "ayak_sesi_ada" }
+        {
+          "at_s": 8,
+          "id": "pirinc_tas"
+        },
+        {
+          "at_s": 0,
+          "id": "ayak_sesi_ada"
+        }
       ],
-      "music": { "id": "drone_alcak", "in_s": 5 }
+      "music": {
+        "id": "drone_alcak",
+        "in_s": 5
+      }
     },
     {
       "id": "s3",
       "name": "Kova",
       "duration_s": 40,
       "location": "kuyu-odasi",
-      "light": { "type": "lantern", "x": 300, "y": 284, "onFloor": true, "lit": true },
+      "light": {
+        "type": "lantern",
+        "x": 300,
+        "y": 284,
+        "onFloor": true,
+        "lit": true
+      },
       "cast": [
-        { "id": "ada", "view": "side", "expression": "sakin", "x": 240, "y": 150, "scale": 0.9, "action": "turn_pulley", "expressionAt": [{ "at_s": 33, "expression": "saskin" }] }
+        {
+          "id": "ada",
+          "view": "side",
+          "expression": "sakin",
+          "x": 240,
+          "y": 150,
+          "scale": 0.9,
+          "action": "turn_pulley",
+          "expressionAt": [
+            {
+              "at_s": 33,
+              "expression": "saskin"
+            }
+          ]
+        }
       ],
       "camera": [
-        { "at_s": 0, "zoom": 1.2, "focus": [340, 240] },
-        { "at_s": 30, "zoom": 2.8, "focus": "ada.face", "ease": "slow" }
+        {
+          "at_s": 0,
+          "zoom": 1.2,
+          "focus": [
+            340,
+            240
+          ]
+        },
+        {
+          "at_s": 30,
+          "zoom": 2.8,
+          "focus": "ada.face",
+          "ease": "slow"
+        }
       ],
       "lines": [
-        { "speaker": "ada", "type": "vo", "text": "Kuyunun suyu her zaman buz gibidir. Kayanın kalbinden gelir.", "delivery": "sakin" },
-        { "speaker": "ada", "type": "dialogue", "text": "Ilık…", "delivery": "fısıltı, şaşkın", "voice_preset": "whisper", "at_s": 34 }
+        {
+          "speaker": "ada",
+          "type": "vo",
+          "text": "Kuyunun suyu her zaman buz gibidir. Kayanın kalbinden gelir.",
+          "delivery": "sakin"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Ilık…",
+          "delivery": "fısıltı, şaşkın",
+          "voice_preset": "whisper",
+          "at_s": 34
+        }
       ],
       "sfx": [
-        { "at_s": 4, "id": "makara_gicirti", "loop_until_s": 28 },
-        { "at_s": 29, "id": "kova_tas" }
+        {
+          "at_s": 4,
+          "id": "makara_gicirti",
+          "loop_until_s": 28
+        },
+        {
+          "at_s": 29,
+          "id": "kova_tas"
+        }
       ],
-      "music": { "id": "drone_alcak", "cut_at_s": 33 }
+      "music": {
+        "id": "drone_alcak",
+        "cut_at_s": 33
+      }
     },
     {
       "id": "s4",
       "name": "Yaprak",
       "duration_s": 50,
       "location": "kuyu-odasi",
-      "light": { "type": "lantern", "held_by": "ada", "lit": true },
+      "light": {
+        "type": "lantern",
+        "held_by": "ada",
+        "lit": true
+      },
       "cast": [
-        { "id": "ada", "view": "side", "expression": "saskin", "x": 330, "y": 150, "scale": 0.9, "action": "lift_leaf", "expressionAt": [{ "at_s": 38, "expression": "kararli" }] }
+        {
+          "id": "ada",
+          "view": "side",
+          "expression": "saskin",
+          "x": 330,
+          "y": 150,
+          "scale": 0.9,
+          "action": "lift_leaf",
+          "expressionAt": [
+            {
+              "at_s": 38,
+              "expression": "kararli"
+            }
+          ]
+        }
       ],
       "props": [
-        { "id": "yaprak", "type": "leaf", "color": "#5aa83c", "start": "bucket.water", "pickup_at_s": 26 }
+        {
+          "id": "yaprak",
+          "type": "leaf",
+          "color": "#5aa83c",
+          "start": "bucket.water",
+          "pickup_at_s": 26
+        }
       ],
       "camera": [
-        { "at_s": 0, "zoom": 4.0, "focus": "prop.yaprak" },
-        { "at_s": 26, "zoom": 2.6, "focus": ["ada.face", "prop.yaprak"], "ease": "slow" }
+        {
+          "at_s": 0,
+          "zoom": 4.0,
+          "focus": "prop.yaprak"
+        },
+        {
+          "at_s": 26,
+          "zoom": 2.6,
+          "focus": [
+            "ada.face",
+            "prop.yaprak"
+          ],
+          "ease": "slow"
+        }
       ],
       "lines": [
-        { "speaker": "ada", "type": "vo", "text": "Derin'de yeşil yoktur. Yeşil sadece hikâyelerde var. Yukarının hikâyelerinde.", "delivery": "yavaş, büyülenmiş", "at_s": 10 },
-        { "speaker": "ada", "type": "dialogue", "text": "Nereden geldin sen?", "delivery": "fısıltı", "voice_preset": "whisper", "at_s": 40 }
+        {
+          "speaker": "ada",
+          "type": "vo",
+          "text": "Derin'de yeşil yoktur. Yeşil sadece hikâyelerde var. Yukarının hikâyelerinde.",
+          "delivery": "yavaş, büyülenmiş",
+          "at_s": 10
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Nereden geldin sen?",
+          "delivery": "fısıltı",
+          "voice_preset": "whisper",
+          "at_s": 40
+        }
       ],
-      "sfx": [{ "at_s": 6, "id": "damla" }],
-      "music": { "id": "ince_nota_gerilim", "in_s": 3 }
+      "sfx": [
+        {
+          "at_s": 6,
+          "id": "damla"
+        }
+      ],
+      "music": {
+        "id": "ince_nota_gerilim",
+        "in_s": 3
+      }
     },
     {
       "id": "s5",
       "name": "Ayak sesleri",
       "duration_s": 35,
       "location": "kuyu-odasi",
-      "light": { "type": "lantern", "held_by": "ada", "lit": true },
-      "secondary_light": { "type": "cold", "from": "offscreen_right", "rampIn_s": [4, 30], "color": "#9fc4d6" },
+      "light": {
+        "type": "lantern",
+        "held_by": "ada",
+        "lit": true
+      },
+      "secondary_light": {
+        "type": "cold",
+        "from": "offscreen_right",
+        "rampIn_s": [
+          4,
+          30
+        ],
+        "color": "#9fc4d6"
+      },
       "cast": [
-        { "id": "ada", "view": "side", "expression": "korkmus", "x": 330, "y": 150, "scale": 0.9, "action": "hide_leaf_then_pour" }
+        {
+          "id": "ada",
+          "view": "side",
+          "expression": "korkmus",
+          "x": 330,
+          "y": 150,
+          "scale": 0.9,
+          "action": "hide_leaf_then_pour"
+        }
       ],
-      "camera": [{ "at_s": 0, "zoom": 1.1, "focus": [340, 220] }],
+      "camera": [
+        {
+          "at_s": 0,
+          "zoom": 1.1,
+          "focus": [
+            340,
+            220
+          ]
+        }
+      ],
       "lines": [],
       "sfx": [
-        { "at_s": 0, "id": "ayak_sesi_merdiven_yanki", "loop_until_s": 33 },
-        { "at_s": 18, "id": "su_dokulme" }
+        {
+          "at_s": 0,
+          "id": "ayak_sesi_merdiven_yanki",
+          "loop_until_s": 33
+        },
+        {
+          "at_s": 18,
+          "id": "su_dokulme"
+        }
       ],
-      "music": { "id": "drone_yogun", "in_s": 2 }
+      "music": {
+        "id": "drone_yogun",
+        "in_s": 2
+      }
     },
     {
       "id": "s6",
       "name": "Saim",
       "duration_s": 50,
       "location": "kuyu-odasi",
-      "light": { "type": "lantern", "held_by": "ada", "lit": true },
-      "secondary_light": { "type": "cold", "held_by": "saim", "rampOut_s": [40, 46] },
+      "light": {
+        "type": "lantern",
+        "held_by": "ada",
+        "lit": true
+      },
+      "secondary_light": {
+        "type": "cold",
+        "held_by": "saim",
+        "rampOut_s": [
+          40,
+          46
+        ]
+      },
       "cast": [
-        { "id": "ada", "view": "side", "expression": "korkmus", "x": 250, "y": 150, "scale": 0.9, "expressionAt": [{ "at_s": 6, "expression": "sakin" }, { "at_s": 46, "expression": "kararli" }] },
-        { "id": "saim", "view": "side", "expression": "sinsi", "path": [[700, 130], [470, 130]], "enter_s": [0, 5], "exit_s": [38, 44], "scale": 0.95, "expressionAt": [{ "at_s": 20, "expression": "otoriter" }, { "at_s": 32, "expression": "sinsi" }] }
+        {
+          "id": "ada",
+          "view": "side",
+          "expression": "korkmus",
+          "x": 250,
+          "y": 150,
+          "scale": 0.9,
+          "expressionAt": [
+            {
+              "at_s": 6,
+              "expression": "sakin"
+            },
+            {
+              "at_s": 46,
+              "expression": "kararli"
+            }
+          ]
+        },
+        {
+          "id": "saim",
+          "view": "side",
+          "expression": "sinsi",
+          "path": [
+            [
+              700,
+              130
+            ],
+            [
+              470,
+              130
+            ]
+          ],
+          "enter_s": [
+            0,
+            5
+          ],
+          "exit_s": [
+            38,
+            44
+          ],
+          "scale": 0.95,
+          "expressionAt": [
+            {
+              "at_s": 20,
+              "expression": "otoriter"
+            },
+            {
+              "at_s": 32,
+              "expression": "sinsi"
+            }
+          ]
+        }
       ],
       "camera": [
-        { "at_s": 0, "zoom": 1.3, "focus": [360, 220] },
-        { "at_s": 8, "zoom": 2.4, "focus": "ada.face", "ease": "cut" },
-        { "at_s": 14, "zoom": 1.3, "focus": [360, 220], "ease": "cut" },
-        { "at_s": 46, "zoom": 3.6, "focus": "ada.bracelet", "ease": "slow" }
+        {
+          "at_s": 0,
+          "zoom": 1.3,
+          "focus": [
+            360,
+            220
+          ]
+        },
+        {
+          "at_s": 8,
+          "zoom": 2.4,
+          "focus": "ada.face",
+          "ease": "cut"
+        },
+        {
+          "at_s": 14,
+          "zoom": 1.3,
+          "focus": [
+            360,
+            220
+          ],
+          "ease": "cut"
+        },
+        {
+          "at_s": 46,
+          "zoom": 3.6,
+          "focus": "ada.bracelet",
+          "ease": "slow"
+        }
       ],
       "lines": [
-        { "speaker": "saim", "type": "dialogue", "text": "Su bugün nasıl, Ada?", "delivery": "yumuşak, sinsi", "at_s": 6 },
-        { "speaker": "ada", "type": "dialogue", "text": "Her zamanki gibi, Saim Efendi. Soğuk.", "delivery": "sakin ama gergin, yalan söylüyor", "at_s": 10 },
-        { "speaker": "saim", "type": "dialogue", "text": "Güzel. Derin'de her şey her zamanki gibi kalmalı.", "delivery": "ağır, otoriter", "at_s": 21 },
-        { "speaker": "saim", "type": "dialogue", "text": "Annen de çok soru sorardı.", "delivery": "arkası dönük, alçak, sinsi", "at_s": 34 }
+        {
+          "speaker": "saim",
+          "type": "dialogue",
+          "text": "Su bugün nasıl, Ada?",
+          "delivery": "yumuşak, sinsi",
+          "at_s": 6
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Her zamanki gibi, Saim Efendi. Soğuk.",
+          "delivery": "sakin ama gergin, yalan söylüyor",
+          "at_s": 10
+        },
+        {
+          "speaker": "saim",
+          "type": "dialogue",
+          "text": "Güzel. Derin'de her şey her zamanki gibi kalmalı.",
+          "delivery": "ağır, otoriter",
+          "at_s": 21
+        },
+        {
+          "speaker": "saim",
+          "type": "dialogue",
+          "text": "Annen de çok soru sorardı.",
+          "delivery": "arkası dönük, alçak, sinsi",
+          "at_s": 34
+        }
       ],
       "sfx": [
-        { "at_s": 0, "id": "nefes_lambasi_tisilti", "loop_until_s": 44 },
-        { "at_s": 38, "id": "ayak_sesi_uzaklasan" }
+        {
+          "at_s": 0,
+          "id": "nefes_lambasi_tisilti",
+          "loop_until_s": 44
+        },
+        {
+          "at_s": 38,
+          "id": "ayak_sesi_uzaklasan"
+        }
       ],
-      "music": { "id": "derin_vurus", "at_s": 35, "then": "silence" },
+      "music": {
+        "id": "derin_vurus",
+        "at_s": 35,
+        "then": "silence"
+      },
       "end": "fade_to_black"
     },
     {
@@ -155,8 +552,18 @@
       "name": "Başlık",
       "duration_s": 10,
       "location": null,
-      "card": { "text": "DERİN", "color": "#ffffff", "background": "#000000", "in_s": 3 },
-      "sfx": [{ "at_s": 1, "id": "damla" }],
+      "card": {
+        "text": "DERİN",
+        "color": "#ffffff",
+        "background": "#000000",
+        "in_s": 3
+      },
+      "sfx": [
+        {
+          "at_s": 1,
+          "id": "damla"
+        }
+      ],
       "music": null
     }
   ],
