@@ -11,8 +11,10 @@
     },
     {
       "id": "saim",
-      "role": "Nefes Divanı Başı",
-      "status": "not_started"
+      "version": "1.0.0",
+      "status": "locked",
+      "path": "characters/saim",
+      "voice": { "provider": "elevenlabs", "voice_id": null, "status": "pending" }
     }
   ],
   "rules": [

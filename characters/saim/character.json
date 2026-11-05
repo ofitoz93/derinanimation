@@ -1,0 +1,59 @@
+{
+  "id": "saim",
+  "name": "Saim",
+  "version": "1.0.0",
+  "status": "locked",
+  "approved_at": "2026-11-05T16:02:00+03:00",
+  "approved_by": "kullanıcı",
+  "style": "lumen",
+  "component": "Saim.tsx",
+  "profile": {
+    "age": 58,
+    "role": "Nefes Divanı Başı",
+    "floor": 1,
+    "summary": "Derin'in havasını ve ışığını dağıtan Nefes Divanı'nın başı. Kötü biri değil: sırrı korumanın herkesi koruduğuna gerçekten inanıyor.",
+    "temperament": "Sakin, ölçülü, sabırlı. Sesini yükseltmez; kızgın olmaktan çok her şeyi bilen biri gibi gülümser."
+  },
+  "proportions": {
+    "head_heights": 6.5,
+    "build": "uzun ve kemikli",
+    "height_px_reference": 262,
+    "posture": "Dik; eller önde kavuşturulmuş"
+  },
+  "palette": {
+    "skin": "#b99a82",
+    "skin_shadow": "#9a7c66",
+    "hair_beard": "#8d8a85",
+    "brows": "#6f6c68",
+    "robe": "#232833",
+    "robe_fold": "#1a1e27",
+    "collar": "#2c3240",
+    "divan_sash": "#4a1f24",
+    "brass": "#b8923f",
+    "brass_dark": "#6b5320",
+    "chain": "#7a6230",
+    "shoes": "#111214",
+    "eyes": "#14110f",
+    "lips": "#4a3c37",
+    "lamp_glass": "#9fc4d6",
+    "lamp_flame": "#e6f4ff"
+  },
+  "signature": [
+    "Pirinç tel yuvarlak gözlük; ışığı yansıtır, gözler sık sık okunamaz",
+    "Göğüste pirinç nefes vanası madalyonu, zincirle yakaya bağlı",
+    "Cübbenin önünden inen kan kırmızısı Divan kuşağı",
+    "Kısa, düzgün kırpılmış kır sakal; tepesi açık, yanları kır"
+  ],
+  "equipment": [
+    "Nefes lambası: mavi-beyaz, dumansız alevli cam lamba (yalnızca Divan'da bulunur)"
+  ],
+  "views": ["front", "side"],
+  "expressions": ["otoriter", "tehditkar", "endiseli", "sinsi"],
+  "lighting_rules": [
+    "Saim'i daima soğuk, sabit, mavi-beyaz ışık aydınlatır; asla sıcak fener ışığı değil",
+    "Işık yukarıdan gelir; göz çukurları ve çene altı gölgede kalır",
+    "Gözlük camlarında soğuk yansıma bulunur",
+    "Ada ile aynı karedeyse: Ada'nın tarafı sıcak, Saim'in tarafı soğuk"
+  ],
+  "lock_policy": "Bu dosya ve Saim.tsx kilitlidir. Değişiklik yalnızca yeni sürüm olarak önerilir ve kullanıcı onayı olmadan sahnelerde kullanılmaz."
+}
