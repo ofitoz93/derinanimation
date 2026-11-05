@@ -1,0 +1,212 @@
+// Ses efektleri ve müzik: ElevenLabs ile üretim, seçim ve kilit.
+//
+//   node scripts/sounds.mjs list                    → kullanılan efekt/müzik ve durumları
+//   node scripts/sounds.mjs autofill [bölüm]        → eksikleri sahneye uygun açıklamayla üretip uygular
+//   node scripts/sounds.mjs variants sfx damla 3    → bir efekt için 3 seçenek üretir
+//
+// Akış: açıklama (catalog.json) → seçenekler → seçim → kilit.
+// Kilitli bir ses bir daha üretilmez ve değiştirilmez.
+import fs from "node:fs";
+import path from "node:path";
+import { fail, loadEnv, ok, p, readJson, runCli, writeJson } from "./lib.mjs";
+
+loadEnv();
+const API = "https://api.elevenlabs.io/v1";
+const CATALOG = p("sounds", "catalog.json");
+const DIRS = { sfx: "sfx", music: "music" };
+
+const key = () => process.env.ELEVENLABS_API_KEY || fail("ELEVENLABS_API_KEY bulunamadı. Panelden ya da .env dosyasından anahtarı ekle.");
+export const readCatalog = () => readJson(CATALOG);
+const saveCatalog = (c) => writeJson(CATALOG, c);
+const fileOf = (kind, id) => p("public", DIRS[kind], `${id}.mp3`);
+const relOf = (kind, id) => `${DIRS[kind]}/${id}.mp3`;
+
+// Senaryolarda hangi efekt ve müziğin, hangi bölümde kullanıldığı
+export function usedSounds() {
+  const used = { sfx: {}, music: {} };
+  for (const ep of fs.readdirSync(p("episodes"))) {
+    const f = p("episodes", ep, "scenes.json");
+    if (!fs.existsSync(f)) continue;
+    for (const s of readJson(f).scenes) {
+      for (const x of s.sfx ?? []) (used.sfx[x.id] ??= new Set()).add(ep);
+      if (s.music?.id) (used.music[s.music.id] ??= new Set()).add(ep);
+    }
+  }
+  return used;
+}
+
+// Katalogda olmayan bir id için yer açar. Açıklaması id'den tahmin edilir;
+// panel bunu "açıklama tahmini" olarak işaretler ki düzeltilebilsin.
+function ensureEntry(cat, kind, id) {
+  if (!cat[kind][id]) {
+    const words = id.replace(/_/g, " ");
+    cat[kind][id] = {
+      label: words,
+      ...(kind === "music" ? { generator: "music" } : {}),
+      prompt: kind === "music" ? `Dark minimal ambient underscore, ${words}, instrumental` : `${words}, inside a quiet underground stone cave, realistic`,
+      duration_seconds: kind === "music" ? 40 : 4,
+      loop: kind === "music",
+      status: "missing",
+      guessed_prompt: true,
+    };
+  }
+  return cat[kind][id];
+}
+
+async function elevenBinary(pathname, body) {
+  const res = await fetch(API + pathname, { method: "POST", headers: { "xi-api-key": key(), "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  if (!res.ok) {
+    const text = await res.text();
+    if (pathname.startsWith("/music") && (res.status === 401 || res.status === 403)) fail(`Müzik üretimi hesabının planında açık olmayabilir (${res.status}). Ayrıntı: ${text}`);
+    fail(`ElevenLabs hatası ${res.status}: ${text}`);
+  }
+  return Buffer.from(await res.arrayBuffer());
+}
+
+async function generateAudio(kind, entry) {
+  const useMusic = kind === "music" && (entry.generator ?? "music") === "music";
+  if (useMusic) {
+    return elevenBinary("/music", {
+      prompt: entry.prompt,
+      music_length_ms: Math.round(Math.min(600, Math.max(3, entry.duration_seconds ?? 40)) * 1000),
+      force_instrumental: true,
+    });
+  }
+  return elevenBinary("/sound-generation?output_format=mp3_44100_128", {
+    text: entry.prompt,
+    duration_seconds: Math.min(30, Math.max(0.5, entry.duration_seconds ?? 4)),
+    loop: !!entry.loop,
+    prompt_influence: 0.4,
+  });
+}
+
+function assertKind(kind) {
+  if (!DIRS[kind]) fail("Tür sfx ya da music olmalı");
+}
+
+export async function makeVariants(kind, id, count = 3) {
+  assertKind(kind);
+  const cat = readCatalog();
+  const entry = ensureEntry(cat, kind, id);
+  if (entry.status === "locked") fail(`${entry.label} kilitli; yeni seçenek üretilmez.`);
+  const dir = p("public", DIRS[kind], "variants");
+  fs.mkdirSync(dir, { recursive: true });
+  // Eski seçenekleri temizle
+  for (const v of entry.variants ?? []) fs.rmSync(p("public", v.file), { force: true });
+  const stamp = Date.now();
+  const variants = [];
+  for (let i = 1; i <= count; i++) {
+    process.stdout.write(`  ${id} seçenek ${i}/${count}… `);
+    const buf = await generateAudio(kind, entry);
+    const rel = `${DIRS[kind]}/variants/${id}_${stamp}_${i}.mp3`;
+    fs.writeFileSync(p("public", rel), buf);
+    variants.push({ file: rel });
+    console.log("hazır");
+  }
+  entry.variants = variants;
+  saveCatalog(cat);
+  return variants;
+}
+
+export function chooseVariant(kind, id, file) {
+  assertKind(kind);
+  const cat = readCatalog();
+  const entry = cat[kind][id] ?? fail("Katalogda böyle bir ses yok");
+  if (entry.status === "locked") fail(`${entry.label} kilitli; değiştirilemez.`);
+  if (!(entry.variants ?? []).some((v) => v.file === file)) fail("Bu seçenek bulunamadı");
+  fs.mkdirSync(path.dirname(fileOf(kind, id)), { recursive: true });
+  fs.copyFileSync(p("public", file), fileOf(kind, id));
+  entry.status = "chosen";
+  entry.chosen_at = new Date().toISOString();
+  saveCatalog(cat);
+  ok(`${entry.label} seçildi`);
+}
+
+export function lockSound(kind, id) {
+  assertKind(kind);
+  const cat = readCatalog();
+  const entry = cat[kind][id] ?? fail("Katalogda böyle bir ses yok");
+  if (!fs.existsSync(fileOf(kind, id))) fail("Kilitlemeden önce bir seçenek seçilmeli");
+  entry.status = "locked";
+  entry.locked_at = new Date().toISOString();
+  saveCatalog(cat);
+  ok(`${entry.label} kilitlendi`);
+}
+
+export function setPrompt(kind, id, { prompt, duration_seconds, loop }) {
+  assertKind(kind);
+  const cat = readCatalog();
+  const entry = ensureEntry(cat, kind, id);
+  if (entry.status === "locked") fail(`${entry.label} kilitli; açıklaması değiştirilemez.`);
+  if (typeof prompt === "string" && prompt.trim()) {
+    entry.prompt = prompt.trim().slice(0, 1000);
+    delete entry.guessed_prompt;
+  }
+  if (Number.isFinite(duration_seconds)) entry.duration_seconds = Math.max(0.5, Math.min(kind === "music" ? 600 : 30, duration_seconds));
+  if (typeof loop === "boolean") entry.loop = loop;
+  saveCatalog(cat);
+}
+
+// Seçilmemiş ve kilitli olmayan her sesi tek seferde üretip uygular.
+export async function autofill(episode) {
+  const used = usedSounds();
+  const cat = readCatalog();
+  let made = 0;
+  for (const kind of ["sfx", "music"]) {
+    for (const [id, eps] of Object.entries(used[kind])) {
+      if (episode && !eps.has(episode)) continue;
+      const entry = ensureEntry(cat, kind, id);
+      if (entry.status === "locked" || fs.existsSync(fileOf(kind, id))) continue;
+      process.stdout.write(`  ${entry.label} üretiliyor… `);
+      const buf = await generateAudio(kind, entry);
+      fs.mkdirSync(path.dirname(fileOf(kind, id)), { recursive: true });
+      fs.writeFileSync(fileOf(kind, id), buf);
+      entry.status = "auto";
+      entry.auto_at = new Date().toISOString();
+      saveCatalog(cat);
+      console.log("uygulandı");
+      made++;
+    }
+  }
+  saveCatalog(cat);
+  ok(made ? `${made} ses otomatik üretilip uygulandı` : "Eksik ses yok");
+}
+
+// Panel için: kullanılan her sesin durumu
+export function soundsState() {
+  const used = usedSounds();
+  const cat = readCatalog();
+  const out = {};
+  for (const kind of ["sfx", "music"]) {
+    const ids = new Set([...Object.keys(used[kind]), ...Object.keys(cat[kind])]);
+    out[kind] = [...ids].map((id) => {
+      const e = cat[kind][id] ?? { label: id, prompt: "", status: "missing", guessed_prompt: true };
+      const has = fs.existsSync(fileOf(kind, id));
+      return {
+        id,
+        label: e.label,
+        prompt: e.prompt,
+        duration_seconds: e.duration_seconds,
+        loop: !!e.loop,
+        status: has ? e.status === "missing" ? "chosen" : e.status : "missing",
+        guessed: !!e.guessed_prompt,
+        episodes: [...(used[kind][id] ?? [])],
+        current: has ? `/files/${relOf(kind, id)}?v=${fs.statSync(fileOf(kind, id)).mtimeMs}` : null,
+        variants: (e.variants ?? []).filter((v) => fs.existsSync(p("public", v.file))).map((v) => ({ file: v.file, url: `/files/${v.file}` })),
+      };
+    });
+  }
+  return out;
+}
+
+if (process.argv[1]?.endsWith("sounds.mjs")) {
+  const [cmd, a, b, c] = process.argv.slice(2);
+  await runCli(async () => {
+    if (cmd === "autofill") await autofill(a);
+    else if (cmd === "variants") await makeVariants(a, b, Number(c) || 3);
+    else if (cmd === "list") {
+      const s = soundsState();
+      for (const kind of ["sfx", "music"]) for (const x of s[kind]) console.log(`${kind.padEnd(5)} ${x.status.padEnd(7)} ${x.id}  (${x.label})`);
+    } else fail("Komutlar: list | autofill [bölüm] | variants <sfx|music> <id> [adet]");
+  });
+}

@@ -9,7 +9,8 @@ Lumen stilinde, Remotion ile kodla üretilen mini dizi. Senaryo verilir; sistem 
 - `episodes/` — bölümler (`senaryo.md` okunur sürüm, `scenes.json` üretim hattının okuduğu sürüm)
 - `src/engine/` — sahne motoru: kamera, ışık, karakter yerleşimi, altyazı, ses
 - `scripts/` — üretim komutları
-- `public/sfx/`, `public/music/` — ses efektleri ve müzik (`<id>.mp3`; senaryodaki id ile aynı ad)
+- `sounds/catalog.json` — senaryolarda kullanılan her efekt ve müziğin ElevenLabs açıklaması, süresi, döngü ayarı ve durumu
+- `public/sfx/`, `public/music/` — seçilen efekt ve müzik dosyaları (`<id>.mp3`; senaryodaki id ile aynı ad)
 - `locks.json` — kilitli öğelerin ve onaylı bölümlerin mühürleri
 - `out/` — üretilen videolar (GitHub'a gönderilmez)
 
@@ -36,6 +37,7 @@ Lumen stilinde, Remotion ile kodla üretilen mini dizi. Senaryo verilir; sistem 
 - ElevenLabs API anahtarını ekler (yalnızca yerel `.env` dosyasına yazılır)
 - Hesabındaki sesleri listeler; ▶ ile örneklerini ücretsiz dinletir
 - Seçtiğin sesi karakterin kendi repliğiyle dener ve onaylarsan karaktere kilitler
+- Ses efektlerini ve müziği ElevenLabs ile üretir: her sesin sahneye uygun bir açıklaması hazırdır; 3 seçenek üretip dinler, birini seçer ve kilitlersin. Seçmediklerini sistem taslak üretirken kendisi üretip uygular
 - Bölümün 480p taslağını üretir, ilerlemesini gösterir ve videoyu panelde oynatır
 - Taslağı onaylar ve 4K final render'ı başlatır
 
@@ -54,6 +56,14 @@ npm run voice:lock -- ada <voice_id>      # beğendiğin sesi kilitle
 ```
 
 Aynısını `saim` için de yap. Kilitli bir ses bir daha değiştirilemez; değişiklik bilinçli bir sürüm kararıdır.
+
+### Efekt ve müzik
+
+```
+node scripts/sounds.mjs list                   # kullanılan sesler ve durumları
+node scripts/sounds.mjs variants sfx damla 3   # bir efekt için 3 seçenek
+node scripts/sounds.mjs autofill pilot         # eksikleri üretip uygula
+```
 
 ### Bölüm üretimi
 

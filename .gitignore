@@ -3,3 +3,5 @@ out/
 .env
 .remotion/
 public/audio/previews/
+public/sfx/variants/
+public/music/variants/

@@ -84,10 +84,15 @@ export async function generate(episode = "pilot") {
   fs.mkdirSync(dir, { recursive: true });
 
   let made = 0;
+  const skipped = new Set();
   for (const scene of ep.scenes) {
     for (const [i, line] of (scene.lines ?? []).entries()) {
       const v = voices[line.speaker];
-      if (!v || v.status !== "locked") fail(`${line.speaker} için kilitli ses yok. Önce: npm run voice:lock -- ${line.speaker} <voice_id>`);
+      if (!v || v.status !== "locked") {
+        if (!skipped.has(line.speaker)) console.log(`• ${line.speaker} için kilitli ses yok; replikleri seslendirmesiz kalacak`);
+        skipped.add(line.speaker);
+        continue;
+      }
       const id = `${scene.id}_${i}`;
       const settings = line.voice_preset && PRESETS[line.voice_preset] ? PRESETS[line.voice_preset] : v.settings;
       const textHash = sha256(`${v.voice_id}|${line.text}|${JSON.stringify(settings)}`);

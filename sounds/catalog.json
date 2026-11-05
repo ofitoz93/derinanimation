@@ -1,0 +1,123 @@
+{
+  "_note": "Senaryolarda kullanılan ses efektleri ve müzik. 'prompt' ElevenLabs'e gönderilen İngilizce açıklamadır (model İngilizcede en iyi sonucu verir); 'label' paneldeki Türkçe adıdır. status: missing | auto | chosen | locked.",
+  "sfx": {
+    "damla": {
+      "label": "Kuyuya düşen damla",
+      "prompt": "A single water droplet falling into a deep stone well, soft plink with a long hollow echo inside a small rock cave, quiet and intimate",
+      "duration_seconds": 3,
+      "loop": false,
+      "status": "missing"
+    },
+    "uguldu": {
+      "label": "Havalandırma uğultusu",
+      "prompt": "Low constant hum of distant ventilation shafts deep underground, airy rumbling drone in a rock tunnel, no melody, steady",
+      "duration_seconds": 20,
+      "loop": true,
+      "status": "missing"
+    },
+    "kibrit": {
+      "label": "Kibrit çakılması",
+      "prompt": "Wooden match struck against a rough box and igniting, sharp scratch then small flame flare, close-up, quiet cave room",
+      "duration_seconds": 2.5,
+      "loop": false,
+      "status": "missing"
+    },
+    "fitil": {
+      "label": "Fenerin tutuşması",
+      "prompt": "Oil lantern wick catching flame, soft whoosh and gentle crackle, small metal lantern door clicking shut",
+      "duration_seconds": 3,
+      "loop": false,
+      "status": "missing"
+    },
+    "pirinc_tas": {
+      "label": "Duvara çentik kazıma",
+      "prompt": "Brass rod scraping and carving a notch into a stone wall, slow deliberate scratches, grit falling, close-up in a quiet cave",
+      "duration_seconds": 6,
+      "loop": false,
+      "status": "missing"
+    },
+    "ayak_sesi_ada": {
+      "label": "Ada'nın ayak sesleri",
+      "prompt": "Light footsteps of a young woman in worn leather boots walking slowly on a gritty stone floor in a small cave room",
+      "duration_seconds": 8,
+      "loop": false,
+      "status": "missing"
+    },
+    "makara_gicirti": {
+      "label": "Makara gıcırtısı",
+      "prompt": "Old wooden well pulley creaking rhythmically as a rope is pulled hand over hand, rope straining, steady repeating squeak",
+      "duration_seconds": 10,
+      "loop": true,
+      "status": "missing"
+    },
+    "kova_tas": {
+      "label": "Kovanın taşa konması",
+      "prompt": "Heavy wooden bucket full of water set down on a stone well rim, dull wooden knock and water sloshing inside",
+      "duration_seconds": 2.5,
+      "loop": false,
+      "status": "missing"
+    },
+    "ayak_sesi_merdiven_yanki": {
+      "label": "Merdivenden inen ayak sesleri",
+      "prompt": "Slow heavy measured footsteps descending stone stairs, echoing down a narrow underground stairwell, getting closer, ominous",
+      "duration_seconds": 15,
+      "loop": true,
+      "status": "missing"
+    },
+    "su_dokulme": {
+      "label": "Suyun kuyuya dökülmesi",
+      "prompt": "A bucket of water poured back into a deep stone well, splashing that echoes far below, then dripping",
+      "duration_seconds": 4,
+      "loop": false,
+      "status": "missing"
+    },
+    "nefes_lambasi_tisilti": {
+      "label": "Nefes lambasının tıslaması",
+      "prompt": "Quiet steady hiss of a small gas lamp flame, faint high whisper of burning gas, cold and constant",
+      "duration_seconds": 10,
+      "loop": true,
+      "status": "missing"
+    },
+    "ayak_sesi_uzaklasan": {
+      "label": "Uzaklaşan ayak sesleri",
+      "prompt": "Unhurried footsteps of a man in soft shoes walking away up stone stairs, fading into the distance with echo",
+      "duration_seconds": 6,
+      "loop": false,
+      "status": "missing"
+    }
+  },
+  "music": {
+    "drone_alcak": {
+      "label": "Alçak drone",
+      "generator": "music",
+      "prompt": "Dark minimal ambient drone for an underground mystery, one low sustained cello note with faint air texture, slow, no percussion, no melody",
+      "duration_seconds": 60,
+      "loop": true,
+      "status": "missing"
+    },
+    "ince_nota_gerilim": {
+      "label": "İnce gerilim notası",
+      "generator": "music",
+      "prompt": "Thin high violin harmonic held very softly, fragile suspense, sparse and still, a sense of wonder and danger, no percussion",
+      "duration_seconds": 45,
+      "loop": true,
+      "status": "missing"
+    },
+    "drone_yogun": {
+      "label": "Yoğun drone",
+      "generator": "music",
+      "prompt": "Intense low dark ambient drone slowly rising in tension, deep brass swells and sub bass pulse, suspense thriller, someone approaching",
+      "duration_seconds": 40,
+      "loop": true,
+      "status": "missing"
+    },
+    "derin_vurus": {
+      "label": "Derin vuruş",
+      "generator": "sfx",
+      "prompt": "Single deep cinematic boom hit, low and heavy, followed by a long dark reverb tail fading to silence",
+      "duration_seconds": 8,
+      "loop": false,
+      "status": "missing"
+    }
+  }
+}

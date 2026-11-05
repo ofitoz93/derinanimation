@@ -5,6 +5,9 @@ import { CAST } from "./castRegistry";
 import { hasMusic, hasSfx, type ScheduledScene } from "./schedule";
 import { actionOffset, cameraAt, castPosition, clamp01, expressionAt, ramp } from "./timeline";
 import type { Focus, Point } from "./types";
+import catalog from "../../sounds/catalog.json";
+
+const musicLoops = (id: string) => !!(catalog.music as Record<string, { loop?: boolean }>)[id]?.loop;
 
 // Kilitli mekânların kaydı
 const LOCATIONS: Record<string, React.ComponentType<{ light?: { x: number; y: number; lit: boolean; onFloor?: boolean }; width?: number; children?: React.ReactNode }>> = {
@@ -185,7 +188,7 @@ const SceneAudio: React.FC<{ scene: ScheduledScene }> = ({ scene }) => {
       )}
       {m && hasMusic(m.id) && (
         <Sequence from={f(musicStart)} durationInFrames={Math.max(1, f(musicEnd) - f(musicStart))}>
-          <Audio src={staticFile(`music/${m.id}.mp3`)} volume={(fr) => interpolate(fr, [0, fps * 2], [0, 0.5], { extrapolateRight: "clamp" })} />
+          <Audio src={staticFile(`music/${m.id}.mp3`)} loop={musicLoops(m.id)} volume={(fr) => interpolate(fr, [0, fps * 2], [0, 0.5], { extrapolateRight: "clamp" })} />
         </Sequence>
       )}
     </>

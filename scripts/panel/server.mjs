@@ -8,6 +8,7 @@ import { spawn, exec } from "node:child_process";
 import { loadEnv, p, readJson, UserError } from "../lib.mjs";
 import { lockProblems } from "../locks.mjs";
 import { listVoices, lock as lockVoice, preview as previewVoice } from "../voices.mjs";
+import { chooseVariant, lockSound, makeVariants, setPrompt, soundsState } from "../sounds.mjs";
 
 loadEnv();
 const PORT = Number(process.env.DERIN_PANEL_PORT || 4317);
@@ -71,6 +72,7 @@ function state() {
     elevenlabs: { connected: !!key, hint: key ? `••••${key.slice(-4)}` : null },
     characters: characters(),
     episodes: episodes(),
+    sounds: soundsState(),
     locks,
     job: publicJob(),
   };
@@ -95,8 +97,9 @@ const JOBS = {
   approve: (ep) => ["scripts/produce.mjs", "approve", ep],
   final: (ep) => ["scripts/produce.mjs", "final", ep],
   check: () => ["scripts/locks.mjs", "check"],
+  sounds: () => ["scripts/sounds.mjs", "autofill"],
 };
-const LABELS = { draft: "480p taslak", approve: "Onay", final: "4K final", check: "Kilit kontrolü" };
+const LABELS = { draft: "480p taslak", approve: "Onay", final: "4K final", check: "Kilit kontrolü", sounds: "Eksik efekt ve müzikleri üretme" };
 
 let job = null;
 
@@ -219,6 +222,20 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { ok: true });
     }
 
+    if (req.method === "POST" && url.pathname.startsWith("/api/sound/")) {
+      const b = await body(req);
+      if (!["sfx", "music"].includes(b.kind) || !ID.test(b.id ?? "")) throw new UserError("Geçersiz ses");
+      const action = url.pathname.slice("/api/sound/".length);
+      if (action === "prompt") setPrompt(b.kind, b.id, { prompt: b.prompt, duration_seconds: Number(b.duration_seconds), loop: b.loop });
+      else if (action === "variants") {
+        if (job?.status === "running" && job.cmd === "sounds") throw new UserError("Otomatik üretim sürüyor; bitince tekrar dene.");
+        await makeVariants(b.kind, b.id, b.kind === "music" ? 2 : 3);
+      } else if (action === "choose") chooseVariant(b.kind, b.id, String(b.file ?? ""));
+      else if (action === "lock") lockSound(b.kind, b.id);
+      else throw new UserError("Bilinmeyen işlem");
+      return send(res, 200, { ok: true, sounds: soundsState() });
+    }
+
     if (req.method === "POST" && url.pathname === "/api/job") {
       const { cmd, episode } = await body(req);
       if (episode !== undefined && !ID.test(episode)) throw new UserError("Geçersiz bölüm");
@@ -229,6 +246,12 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "GET" && url.pathname.startsWith("/files/out/")) {
       const f = safeJoin(p("out"), url.pathname.slice("/files/out/".length));
       return f ? serveFile(req, res, f) : send(res, 403, { error: "İzin yok" });
+    }
+    for (const dir of ["sfx", "music"]) {
+      if (req.method === "GET" && url.pathname.startsWith(`/files/${dir}/`)) {
+        const f = safeJoin(p("public", dir), url.pathname.slice(`/files/${dir}/`.length));
+        return f ? serveFile(req, res, f) : send(res, 403, { error: "İzin yok" });
+      }
     }
     if (req.method === "GET" && url.pathname.startsWith("/files/audio/")) {
       const f = safeJoin(p("public", "audio"), url.pathname.slice("/files/audio/".length));

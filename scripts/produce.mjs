@@ -1,6 +1,6 @@
 // Üretim hattı.
 //
-//   npm run draft -- pilot     → kilit kontrolü, seslendirme, montaj, 480p taslak
+//   npm run draft -- pilot     → kilit kontrolü, seslendirme, eksik efekt/müzik, montaj, 480p taslak
 //   npm run approve -- pilot   → taslağı izledikten sonra bölümü onaylar ve mühürler
 //   npm run final -- pilot     → yalnızca onaylı bölüm için 4K final render
 import fs from "node:fs";
@@ -9,6 +9,7 @@ import { bundle } from "@remotion/bundler";
 import { renderMedia, selectComposition } from "@remotion/renderer";
 import { checkLocks } from "./locks.mjs";
 import { generate } from "./voices.mjs";
+import { autofill } from "./sounds.mjs";
 import { fail, loadEnv, ok, p, readJson, runCli, sha256, writeJson } from "./lib.mjs";
 
 loadEnv();
@@ -74,8 +75,10 @@ async function render(ep, kind) {
 async function draft(ep) {
   if (!fs.existsSync(scenesPath(ep))) fail(`episodes/${ep}/scenes.json bulunamadı`);
   checkLocks();
-  if (process.env.ELEVENLABS_API_KEY) await generate(ep);
-  else console.log("• ELEVENLABS_API_KEY yok: taslak seslendirmesiz, tahmini sürelerle hazırlanacak");
+  if (process.env.ELEVENLABS_API_KEY) {
+    await generate(ep);
+    if (process.env.DERIN_AUTO_SOUNDS !== "0") await autofill(ep);
+  } else console.log("• ELEVENLABS_API_KEY yok: taslak seslendirmesiz, efektsiz ve tahmini sürelerle hazırlanacak");
   writeManifest();
   await render(ep, "draft");
   console.log("\nTaslağı izle. Beğenirsen: npm run approve -- " + ep);

@@ -62,6 +62,19 @@ video{width:100%;border-radius:10px;background:#000;margin-top:14px;display:bloc
 .tabs button.on{border-color:var(--warm);color:var(--warm)}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--s2);border:1px solid var(--b2);padding:10px 16px;border-radius:var(--r);font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
 .toast.on{opacity:1}
+.snd-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.slist{background:var(--s1);border:1px solid var(--b);border-radius:14px;overflow:hidden}
+.srow{padding:12px 16px;border-bottom:1px solid var(--b)}
+.srow:last-child{border-bottom:0}
+.srow-top{display:flex;align-items:center;gap:12px}
+.srow-top .nm{flex:1;min-width:0}
+.srow-top .nm b{font-weight:500}
+.sedit{margin-top:12px;padding:12px;border-radius:var(--r);background:var(--s2);border:1px solid var(--b2)}
+textarea{font:inherit;font-size:14px;color:var(--t);background:var(--bg);border:1px solid var(--b2);border-radius:var(--r);padding:8px 12px;outline:none;width:100%;resize:vertical;min-height:64px}
+textarea:focus{border-color:var(--warm)}
+.var{display:flex;align-items:center;gap:10px;margin-top:8px;padding:6px 8px;border-radius:8px;background:var(--bg)}
+label.chk{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--m)}
+h3{font-size:14px;font-weight:500;margin:18px 0 8px;color:var(--t)}
 @media (max-width:560px){.grid{grid-template-columns:1fr}.wrap{padding:20px 16px}}
 </style>
 </head>
@@ -77,6 +90,9 @@ video{width:100%;border-radius:10px;background:#000;margin-top:14px;display:bloc
 
   <h2>Karakterler</h2>
   <div class="grid" id="chars"></div>
+
+  <h2>Ses efektleri ve müzik</h2>
+  <div id="sounds"></div>
 
   <h2>Bölümler</h2>
   <div class="grid" id="eps"></div>
@@ -106,8 +122,8 @@ function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.ad
 const last = {};
 async function refresh() {
   try { S = await api("/api/state"); } catch (e) { return; }
-  const parts = { key: S.elevenlabs, chars: S.characters, eps: [S.episodes, S.job?.status], locks: S.locks };
-  const draw = { key: renderKey, chars: renderChars, eps: renderEps, locks: renderLocks };
+  const parts = { key: S.elevenlabs, chars: S.characters, eps: [S.episodes, S.job?.status], locks: S.locks, sounds: [S.sounds, S.elevenlabs.connected, S.job?.status] };
+  const draw = { key: renderKey, chars: renderChars, eps: renderEps, locks: renderLocks, sounds: renderSounds };
   for (const k in parts) { const j = JSON.stringify(parts[k]); if (last[k] !== j) { last[k] = j; draw[k](); } }
   renderJob();
 }
@@ -207,6 +223,80 @@ async function lockVoice(id) {
   if (!confirm(`"${voiceName(ui.picks[id])}" sesi ${c.name} için kilitlensin mi?\n\nKilitlenen ses bütün bölümlerde kullanılır ve buradan değiştirilemez.`)) return;
   try { await api("/api/voice/lock", { method: "POST", body: { character: id, voiceId: ui.picks[id] } }); delete ui.picks[id]; toast(`${c.name} sesi kilitlendi`); refresh(); }
   catch (e) { ui.err[id] = e.message; renderChars(); }
+}
+
+const STATUS = {
+  missing: `<span class="pill">Eksik</span>`,
+  auto: `<span class="pill cold"><span class="dot"></span>Otomatik seçildi</span>`,
+  chosen: `<span class="pill warm"><span class="dot"></span>Seçildi</span>`,
+  locked: `<span class="pill ok"><span class="dot"></span>Kilitli</span>`,
+};
+ui.open = {}; ui.sbusy = {}; ui.serr = {};
+
+function renderSounds() {
+  const all = [...S.sounds.sfx, ...S.sounds.music];
+  const missing = all.filter((x) => x.status === "missing").length;
+  const running = S.job?.status === "running";
+  const head = `<div class="card" style="margin-bottom:12px"><div class="snd-head">
+      <div><div>${all.length - missing} / ${all.length} ses hazır</div>
+      <div class="note" style="margin-top:2px">Her sesin sahneye uygun bir açıklaması var. Seçmediğin sesleri sistem taslak üretirken kendisi üretip uygular; istersen şimdi de üretebilirsin.</div></div>
+      <button class="primary" ${!S.elevenlabs.connected || running || !missing ? "disabled" : ""} onclick="job('sounds')">Eksikleri otomatik üret${missing ? ` (${missing})` : ""}</button></div>
+      ${!S.elevenlabs.connected ? `<div class="note">Ses üretmek için önce ElevenLabs anahtarını ekle.</div>` : ""}</div>`;
+  const group = (title, kind, list) => `<h3>${title}</h3><div class="slist">${list.map((x) => soundRow(kind, x)).join("")}</div>`;
+  $("#sounds").innerHTML = head + group("Efektler", "sfx", S.sounds.sfx) + group("Müzik", "music", S.sounds.music);
+}
+
+function soundRow(kind, x) {
+  const k = `${kind}:${x.id}`;
+  const open = ui.open[k];
+  const locked = x.status === "locked";
+  const busy = ui.sbusy[k];
+  return `<div class="srow"><div class="srow-top">
+      ${x.current ? `<button class="icon" title="Şu anki sesi dinle" onclick="play('${esc(x.current)}')">▶</button>` : `<span style="width:34px;flex-shrink:0"></span>`}
+      <div class="nm"><b>${esc(x.label)}</b> <span class="tiny muted">${esc(x.id)} · ${x.duration_seconds ?? "?"} sn${x.loop ? " · döngü" : ""}${x.episodes.length ? " · " + x.episodes.map(esc).join(", ") : ""}</span></div>
+      ${x.guessed ? `<span class="pill bad" title="Bu ses için açıklama yazılmamış; id'den tahmin edildi">Açıklama tahmini</span>` : ""}
+      ${STATUS[x.status] ?? ""}
+      <button class="ghost" onclick="ui.open['${k}']=!ui.open['${k}'];renderSounds()">${open ? "Kapat" : locked ? "Detay" : "Düzenle"}</button></div>
+    ${open ? `<div class="sedit">
+      <div class="tiny muted" style="margin-bottom:6px">ElevenLabs'e gönderilen açıklama (İngilizce en iyi sonucu verir)</div>
+      <textarea id="p-${k}" ${locked ? "disabled" : ""}>${esc(x.prompt)}</textarea>
+      <div class="row" style="margin-top:8px">
+        <label class="chk">Süre <input id="d-${k}" type="number" min="0.5" max="${kind === "music" ? 600 : 30}" step="0.5" value="${x.duration_seconds ?? 4}" style="width:80px" ${locked ? "disabled" : ""}> sn</label>
+        <label class="chk"><input id="l-${k}" type="checkbox" ${x.loop ? "checked" : ""} ${locked ? "disabled" : ""}> Döngü</label>
+        ${locked ? "" : `<button onclick="savePrompt('${kind}','${x.id}')">Açıklamayı kaydet</button>`}
+      </div>
+      ${locked ? `<div class="note">Bu ses kilitli; bütün bölümlerde aynı dosya kullanılır.</div>` : `
+      <div class="row" style="margin-top:12px">
+        <button ${busy || !S.elevenlabs.connected ? "disabled" : ""} onclick="variants('${kind}','${x.id}')">${busy ? "Üretiliyor…" : (kind === "music" ? "2" : "3") + " seçenek üret"}</button>
+        <button class="primary" ${!x.current ? "disabled" : ""} onclick="lockSound('${kind}','${x.id}')">Şu ankini kilitle</button>
+      </div>
+      <div class="note">Seçenek üretmek ElevenLabs kredisi kullanır${kind === "music" ? "; müzik, efektten daha fazla kredi harcar" : ""}. Önce açıklamayı kaydetmeyi unutma.</div>
+      ${x.variants.map((v, i) => `<div class="var"><button class="icon" onclick="play('${esc(v.url)}')">▶</button><span style="flex:1">Seçenek ${i + 1}</span><button onclick="choose('${kind}','${x.id}','${esc(v.file)}')">Bunu kullan</button></div>`).join("")}`}
+      ${ui.serr[k] ? `<div class="err">${esc(ui.serr[k])}</div>` : ""}
+    </div>` : ""}</div>`;
+}
+
+async function soundCall(kind, id, action, extra = {}) {
+  const k = `${kind}:${id}`;
+  ui.serr[k] = "";
+  try { const r = await api(`/api/sound/${action}`, { method: "POST", body: { kind, id, ...extra } }); S.sounds = r.sounds; last.sounds = null; }
+  catch (e) { ui.serr[k] = e.message; }
+  renderSounds();
+}
+function savePrompt(kind, id) {
+  const k = `${kind}:${id}`;
+  soundCall(kind, id, "prompt", { prompt: document.getElementById(`p-${k}`).value, duration_seconds: Number(document.getElementById(`d-${k}`).value), loop: document.getElementById(`l-${k}`).checked }).then(() => toast("Açıklama kaydedildi"));
+}
+async function variants(kind, id) {
+  const k = `${kind}:${id}`;
+  ui.sbusy[k] = true; renderSounds();
+  await soundCall(kind, id, "variants");
+  ui.sbusy[k] = false; renderSounds();
+}
+function choose(kind, id, file) { soundCall(kind, id, "choose", { file }).then(() => toast("Ses uygulandı")); }
+function lockSound(kind, id) {
+  if (!confirm("Bu ses kilitlensin mi? Kilitli ses bütün bölümlerde aynı kalır ve değiştirilemez.")) return;
+  soundCall(kind, id, "lock").then(() => toast("Ses kilitlendi"));
 }
 
 function renderEps() {
