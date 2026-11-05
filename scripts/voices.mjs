@@ -1,21 +1,26 @@
 // ElevenLabs seslendirme.
 //
-//   npm run voices:list                         → hesabındaki sesleri listeler
-//   npm run voice:preview -- ada <voice_id>     → o sesle Ada için deneme kaydı yapar
-//   npm run voice:lock -- ada <voice_id>        → sesi Ada'ya bağlar ve kilitler
-//   npm run voices:generate -- pilot            → bölümün tüm repliklerini seslendirir
+//   npm run voices:list                               → hesabındaki sesleri listeler
+//   npm run voice:preview -- derin ada <voice_id>     → o sesle Ada için deneme kaydı yapar
+//   npm run voice:lock -- derin ada <voice_id>        → sesi Ada'ya bağlar ve kilitler
+//   npm run voices:generate -- derin/s1/e01           → bölümün tüm repliklerini seslendirir
 import fs from "node:fs";
-import { fail, loadEnv, ok, p, readJson, runCli, sha256, writeJson } from "./lib.mjs";
+import { allEpisodes, fail, loadEnv, ok, p, projectDir, publicDir, readJson, resolveEpisode, runCli, sha256, writeJson } from "./lib.mjs";
 
 loadEnv();
 const API = "https://api.elevenlabs.io/v1";
 const MODEL = "eleven_multilingual_v2";
 const BASE_SETTINGS = { stability: 0.5, similarity_boost: 0.8, style: 0.25, use_speaker_boost: true };
 const PRESETS = { whisper: { stability: 0.3, similarity_boost: 0.8, style: 0.5, use_speaker_boost: false } };
-const SAMPLE = {
-  ada: "Derin'de güneş yok. Takvim de yok. Bizim tek takvimimiz su.",
-  saim: "Güzel. Derin'de her şey her zamanki gibi kalmalı.",
-};
+
+// Deneme kaydı için karakterin senaryodaki ilk uzunca repliği
+function sampleLine(proj, charId) {
+  for (const e of allEpisodes().filter((x) => x.project === proj)) {
+    for (const s of readJson(e.scenes).scenes)
+      for (const l of s.lines ?? []) if (l.speaker === charId && l.text.length > 25) return l.text;
+  }
+  return "Bu bir deneme kaydıdır. Sesimi beğendin mi?";
+}
 
 function key() {
   const k = process.env.ELEVENLABS_API_KEY;
@@ -40,7 +45,7 @@ async function tts(voiceId, text, settings) {
   return { audio: Buffer.from(data.audio_base64, "base64"), duration };
 }
 
-const registryPath = p("characters", "registry.json");
+const registryPath = (proj) => projectDir(proj, "characters", "registry.json");
 
 export async function listVoices() {
   const { voices } = await api("/voices");
@@ -52,34 +57,34 @@ async function list() {
   for (const v of voices) console.log(`${v.voice_id}  ${v.name}  ${Object.values(v.labels ?? {}).join(", ")}`);
 }
 
-export async function preview(charId, voiceId) {
-  if (!charId || !voiceId) fail("Kullanım: npm run voice:preview -- <karakter> <voice_id>");
-  const text = SAMPLE[charId] ?? "Bu bir deneme kaydıdır.";
-  const { audio } = await tts(voiceId, text, BASE_SETTINGS);
-  const out = p("public", "audio", "previews", `${charId}_${voiceId}.mp3`);
-  fs.mkdirSync(p("public", "audio", "previews"), { recursive: true });
+export async function preview(proj, charId, voiceId) {
+  if (!proj || !charId || !voiceId) fail("Kullanım: npm run voice:preview -- <film> <karakter> <voice_id>");
+  const { audio } = await tts(voiceId, sampleLine(proj, charId), BASE_SETTINGS);
+  const out = publicDir(proj, "previews", `${charId}_${voiceId}.mp3`);
+  fs.mkdirSync(publicDir(proj, "previews"), { recursive: true });
   fs.writeFileSync(out, audio);
   ok(`Deneme kaydı hazır: ${out}`);
-  return `audio/previews/${charId}_${voiceId}.mp3`;
+  return `projects/${proj}/previews/${charId}_${voiceId}.mp3`;
 }
 
-export function lock(charId, voiceId) {
-  if (!charId || !voiceId) fail("Kullanım: npm run voice:lock -- <karakter> <voice_id>");
-  const reg = readJson(registryPath);
+export function lock(proj, charId, voiceId) {
+  if (!proj || !charId || !voiceId) fail("Kullanım: npm run voice:lock -- <film> <karakter> <voice_id>");
+  const reg = readJson(registryPath(proj));
   const c = reg.characters.find((x) => x.id === charId);
   if (!c) fail(`${charId} kayıtlarda yok`);
   if (c.voice?.status === "locked") fail(`${charId} için ses zaten kilitli (${c.voice.voice_id}). Değiştirmek bir sürüm kararıdır; önce onay alınmalı.`);
   c.voice = { provider: "elevenlabs", voice_id: voiceId, model: MODEL, settings: BASE_SETTINGS, status: "locked", locked_at: new Date().toISOString() };
-  writeJson(registryPath, reg);
+  writeJson(registryPath(proj), reg);
   ok(`${charId} sesi kilitlendi: ${voiceId}`);
 }
 
-export async function generate(episode = "pilot") {
-  const ep = readJson(p("episodes", episode, "scenes.json"));
-  const reg = readJson(registryPath);
+export async function generate(ref) {
+  const info = resolveEpisode(ref);
+  const ep = readJson(info.scenes);
+  const reg = readJson(registryPath(info.project));
   const voices = Object.fromEntries(reg.characters.map((c) => [c.id, c.voice]));
-  const dir = p("public", "audio", episode);
-  const timingPath = p("public", "audio", episode, "timing.json");
+  const dir = info.audioDir;
+  const timingPath = `${info.audioDir}/timing.json`;
   const timing = fs.existsSync(timingPath) ? readJson(timingPath) : {};
   fs.mkdirSync(dir, { recursive: true });
 
@@ -96,7 +101,7 @@ export async function generate(episode = "pilot") {
       const id = `${scene.id}_${i}`;
       const settings = line.voice_preset && PRESETS[line.voice_preset] ? PRESETS[line.voice_preset] : v.settings;
       const textHash = sha256(`${v.voice_id}|${line.text}|${JSON.stringify(settings)}`);
-      const file = `audio/${episode}/${id}.mp3`;
+      const file = `${info.audioRel}/${id}.mp3`;
       if (timing[id]?.textHash === textHash && fs.existsSync(p("public", file))) continue;
       process.stdout.write(`  ${id} (${line.speaker}) seslendiriliyor… `);
       const { audio, duration } = await tts(v.voice_id, line.text, settings);
@@ -111,12 +116,12 @@ export async function generate(episode = "pilot") {
 }
 
 if (process.argv[1]?.endsWith("voices.mjs")) {
-  const [cmd, a, b] = process.argv.slice(2);
+  const [cmd, a, b, c] = process.argv.slice(2);
   await runCli(async () => {
     if (cmd === "list") await list();
-    else if (cmd === "preview") await preview(a, b);
-    else if (cmd === "lock") lock(a, b);
+    else if (cmd === "preview") await preview(a, b, c);
+    else if (cmd === "lock") lock(a, b, c);
     else if (cmd === "generate") await generate(a);
-    else fail("Komutlar: list | preview <karakter> <voice_id> | lock <karakter> <voice_id> | generate <bölüm>");
+    else fail("Komutlar: list | preview <film> <karakter> <voice_id> | lock <film> <karakter> <voice_id> | generate <film/sezon/bölüm>");
   });
 }

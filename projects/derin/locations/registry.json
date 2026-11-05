@@ -1,0 +1,25 @@
+{
+  "locations": [
+    {
+      "id": "kuyu-odasi",
+      "version": "1.0.0",
+      "status": "locked",
+      "path": "locations/kuyu-odasi",
+      "component": "KuyuOdasi.tsx",
+      "export": "KuyuOdasi",
+      "size": [
+        680,
+        400
+      ],
+      "defaultLight": [
+        212,
+        328
+      ]
+    }
+  ],
+  "rules": [
+    "Sahneler kilitli mekânları kullanır; tanımsız mekân taslakta karanlık bir yer tutucu oda olarak çizilir.",
+    "Kilitli mekânın dosyaları değiştirilemez; değişiklik yeni sürüm olarak önerilir ve onay bekler.",
+    "Mekân bileşeni { light, width, children } alır; karakterler children olarak verilir, ışık katmanı en üsttedir."
+  ]
+}

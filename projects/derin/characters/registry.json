@@ -1,0 +1,114 @@
+{
+  "characters": [
+    {
+      "id": "ada",
+      "version": "2.0.0",
+      "status": "locked",
+      "path": "characters/ada",
+      "component": "Ada.tsx",
+      "export": "Ada",
+      "rig": {
+        "baseHeight": 180,
+        "ratio": {
+          "front": 0.3816793893129771,
+          "side": 0.6153846153846154
+        },
+        "anchors": {
+          "front": {
+            "face": [
+              0.5,
+              0.137
+            ],
+            "bracelet": [
+              0.12,
+              0.553
+            ],
+            "hand": [
+              0.12,
+              0.6
+            ]
+          },
+          "side": {
+            "face": [
+              0.339,
+              0.137
+            ],
+            "bracelet": [
+              0.75,
+              0.527
+            ],
+            "hand": [
+              0.84,
+              0.555
+            ],
+            "light": [
+              0.902,
+              0.659
+            ]
+          }
+        },
+        "props": {
+          "holdingLight": "holdingLantern",
+          "lightLit": "lanternLit"
+        },
+        "facing": "right",
+        "lightColor": "warm"
+      },
+      "voice": {
+        "provider": "elevenlabs",
+        "voice_id": null,
+        "status": "pending"
+      }
+    },
+    {
+      "id": "saim",
+      "version": "1.0.0",
+      "status": "locked",
+      "path": "characters/saim",
+      "component": "Saim.tsx",
+      "export": "Saim",
+      "rig": {
+        "baseHeight": 195,
+        "ratio": {
+          "front": 0.4186046511627907,
+          "side": 0.31007751937984496
+        },
+        "anchors": {
+          "front": {
+            "face": [
+              0.5,
+              0.1
+            ]
+          },
+          "side": {
+            "face": [
+              0.525,
+              0.1
+            ],
+            "light": [
+              0.175,
+              0.64
+            ]
+          }
+        },
+        "props": {
+          "holdingLight": "holdingLamp",
+          "lightLit": "lampLit"
+        },
+        "facing": "left",
+        "lightColor": "cold"
+      },
+      "voice": {
+        "provider": "elevenlabs",
+        "voice_id": null,
+        "status": "pending"
+      }
+    }
+  ],
+  "rules": [
+    "Sahneler kilitli (locked) karakterleri kullanır; taslak (draft) karakterler yalnızca önizlemede görünür, tanımsız olanlar taslakta yer tutucu siluetle çizilir.",
+    "Kilitli karakterin klasöründeki dosyalar değiştirilemez; değişiklik yeni sürüm olarak önerilir ve onay bekler.",
+    "rig: motorun karakteri sahneye yerleştirmek için kullandığı ölçüler; karakter dosyalarının dışında tutulur, kilidi etkilemez.",
+    "Ses (voice_id) onaylanınca o da kilitlenir."
+  ]
+}

@@ -1,0 +1,2075 @@
+{
+  "episode": "e01",
+  "season": "s1",
+  "number": 1,
+  "title": "Yaprak",
+  "version": "1.0.0",
+  "status": "draft",
+  "fps": 30,
+  "scenes": [
+    {
+      "id": "s01",
+      "name": "Havalandırmadaki ses",
+      "duration_s": 8,
+      "location": "kuyu-odasi",
+      "light": {
+        "type": "lantern",
+        "x": 212,
+        "y": 328,
+        "onFloor": true,
+        "lit": false,
+        "lightAt_s": 26.7
+      },
+      "music": null,
+      "caption": {
+        "text": "12. KAT · KUYU ODASI",
+        "in_s": 1,
+        "out_s": 5
+      },
+      "cast": [
+        {
+          "id": "ada",
+          "view": "side",
+          "expression": "sakin",
+          "x": 150,
+          "y": 158,
+          "scale": 0.9,
+          "enterAt_s": 26.7
+        }
+      ],
+      "camera": [
+        {
+          "at_s": 0,
+          "zoom": 2.8,
+          "focus": [
+            212,
+            300
+          ]
+        },
+        {
+          "at_s": 26.7,
+          "zoom": 2.6,
+          "focus": [
+            212,
+            290
+          ]
+        },
+        {
+          "at_s": 42.0,
+          "zoom": 1.25,
+          "focus": [
+            250,
+            215
+          ],
+          "ease": "slow"
+        }
+      ],
+      "lines": [
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Ada… Ada! Biliyorum orada olduğunu. Nefesini duyuyorum.",
+          "delivery": "havalandırma borusunun içinden, alaycı fısıltı"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Herkesin nefesini duyuyorsun, Kerem. Havalandırma senin.",
+          "delivery": "karanlıkta, yorgun"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Ama seninki farklı. Seninki hep sinirli.",
+          "delivery": "keyifli"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Kibriti düşürdüm. Konuşmayı kes de aşağı gel.",
+          "delivery": "yerde el yordamıyla arıyor"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Karanlıkta kibrit arayan su bekçisi. Bunu Divan'a şikâyet etsem mi?",
+          "delivery": "gülerek"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Et. Bu hafta payımız zaten yarım.",
+          "delivery": "fener yanınca yüzü aydınlanır, kuru"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Yarım mı? Kim dedi?",
+          "delivery": "şakası bir anda kaybolur"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Koridorda herkes söylüyor. Rüzgâr kötüymüş."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Rüzgâr. Doksan yıldır görmediğimiz rüzgâr, hep kötü.",
+          "delivery": "acı bir gülüşle"
+        }
+      ],
+      "sfx": [
+        {
+          "at_s": 0,
+          "id": "uguldu",
+          "loop": true
+        },
+        {
+          "at_s": 0.6,
+          "id": "damla"
+        },
+        {
+          "at_s": 1.2,
+          "id": "metal_izgara"
+        },
+        {
+          "at_s": 20.6,
+          "id": "kibrit"
+        },
+        {
+          "at_s": 26.3,
+          "id": "fitil"
+        }
+      ]
+    },
+    {
+      "id": "s02",
+      "name": "Başlık",
+      "duration_s": 7,
+      "location": null,
+      "card": {
+        "text": "DERİN",
+        "subtitle": "1. Bölüm · Yaprak",
+        "color": "#ffffff",
+        "background": "#000000",
+        "in_s": 1
+      },
+      "sfx": [
+        {
+          "at_s": 1,
+          "id": "damla"
+        }
+      ],
+      "music": null
+    },
+    {
+      "id": "s03",
+      "name": "Çentik",
+      "duration_s": 8,
+      "location": "kuyu-odasi",
+      "light": {
+        "type": "lantern",
+        "held_by": "ada",
+        "lit": true
+      },
+      "camera_mode": "dialogue",
+      "music": {
+        "id": "drone_alcak",
+        "in_s": 3
+      },
+      "cast": [
+        {
+          "id": "ada",
+          "view": "side",
+          "expression": "sakin",
+          "path": [
+            [
+              170,
+              158
+            ],
+            [
+              72,
+              150
+            ]
+          ],
+          "scale": 0.9,
+          "action": "carve_notch",
+          "expressionAt": [
+            {
+              "at_s": 80.9,
+              "expression": "kararli"
+            }
+          ]
+        },
+        {
+          "id": "kerem",
+          "view": "side",
+          "expression": "sakin",
+          "path": [
+            [
+              700,
+              150
+            ],
+            [
+              470,
+              150
+            ]
+          ],
+          "enter_s": [
+            0,
+            5
+          ],
+          "scale": 0.9
+        }
+      ],
+      "lines": [
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Yine mi çentik? Su bugün de aynı yerde, söyleyeyim sana.",
+          "delivery": "merdivenden inerken"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Söyleme. Ölç."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Ölçtüm. Dün de ölçtüm. Su bekçisinin işi değil mi bu? Benim işim hava."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Senin işin havalandırmaları tamir etmek. Sen ise içlerinde uyuyorsun.",
+          "delivery": "çentiği kazırken, başını çevirmeden"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Orası Derin'in en temiz havası. Divan bile bu kadar iyisini solumuyor."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Annemin annesi bu duvara çentik attı. Sonra annem. Şimdi ben.",
+          "delivery": "duvara dokunarak"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Bir gün de senin kızın. Şanslı kız. Bütün hayatı bir duvar.",
+          "delivery": "takılarak"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Kızım olmayacak."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Neden?"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Burada büyüsün diye mi?",
+          "delivery": "sert"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Emre dün gece yine öksürdü. Sabaha kadar.",
+          "delivery": "sesi alçalır"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "İlacı bitti mi?",
+          "delivery": "yumuşayarak"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Divan yarın verecekmiş. Yarın diyorlar. Hep yarın."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Saim'e git. Yüzüne söyle."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Saim'in yüzüne bir şey söyleyen kimse görmedim. Sen hariç. Annen hariç."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Annem söyledi ve gitti."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Ben de onu diyorum."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Kural belli. Yukarı kazılmaz. Annem kazmadı, Kerem. Sadece sordu.",
+          "delivery": "kararlı"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Burada sormak da kazmak gibi."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "O zaman ben de kazıyorum."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Lütfen bunu bir daha kimsenin yanında söyleme.",
+          "delivery": "gerçekten korkmuş"
+        }
+      ],
+      "sfx": [
+        {
+          "at_s": 0,
+          "id": "uguldu",
+          "loop": true
+        },
+        {
+          "at_s": 0,
+          "id": "merdiven_tirmanma"
+        },
+        {
+          "at_s": 8.8,
+          "id": "pirinc_tas"
+        }
+      ]
+    },
+    {
+      "id": "s04",
+      "name": "Kova",
+      "duration_s": 8,
+      "location": "kuyu-odasi",
+      "light": {
+        "type": "lantern",
+        "x": 300,
+        "y": 284,
+        "onFloor": true,
+        "lit": true
+      },
+      "camera_mode": "dialogue",
+      "sfx": [
+        {
+          "at_s": 0,
+          "id": "uguldu",
+          "loop": true
+        },
+        {
+          "at_s": 2,
+          "id": "makara_gicirti",
+          "loop_until_s": 31.3
+        },
+        {
+          "at_s": 31.3,
+          "id": "kova_tas"
+        }
+      ],
+      "music": {
+        "id": "drone_alcak",
+        "cut_at_s": 39.5
+      },
+      "cast": [
+        {
+          "id": "ada",
+          "view": "side",
+          "expression": "sakin",
+          "x": 236,
+          "y": 152,
+          "scale": 0.9,
+          "action": "turn_pulley",
+          "expressionAt": [
+            {
+              "at_s": 39.5,
+              "expression": "saskin"
+            }
+          ]
+        },
+        {
+          "id": "kerem",
+          "view": "side",
+          "expression": "sakin",
+          "x": 120,
+          "y": 150,
+          "scale": 0.9
+        }
+      ],
+      "lines": [
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Ver şunu, ben çekeyim. Bugün kollarım hâlâ güçlü. Yarın yarım payla kim bilir."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Makaraya dokunma. Geçen sefer halatı kopardın.",
+          "delivery": "makarayı çevirirken"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Halat yaşlıydı. Benim gibi."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Yirmi dört yaşındasın."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Derin'de yirmi dört, yukarıda kırk sekiz eder. Hava yarım ya."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Yukarıda kimse yok."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Ben de onu diyorum. İtiraz edecek kimse yok."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Geldi."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Her zamanki gibi. Buz gibi, kara, kayanın kalbinden. Hadi, töreni yap."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Bekle."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Ne oldu? Kova mı delik?"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Su… ılık.",
+          "delivery": "inanamayarak"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Ilık mı? Dalga geçme."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Elini sok."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Ben suya el sokmam, ben havacıyım."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Kerem. Elini sok.",
+          "delivery": "ciddi"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Bu… bu nasıl olur? Kuyular hep soğuktur.",
+          "delivery": "şakası tamamen bitmiş"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Doksan yıldır hep soğuk. Çentiklerde yazıyor."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Belki aşağıda bir şey ısındı. Bir boru, bir makine…"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Aşağıda makine yok. Aşağıda sadece kaya var."
+        }
+      ]
+    },
+    {
+      "id": "s05",
+      "name": "Yüzeyde bir şey",
+      "duration_s": 8,
+      "location": "kuyu-odasi",
+      "light": {
+        "type": "lantern",
+        "held_by": "ada",
+        "lit": true
+      },
+      "music": {
+        "id": "ince_nota_gerilim",
+        "in_s": 0.5
+      },
+      "props": [
+        {
+          "id": "yaprak",
+          "type": "leaf",
+          "color": "#5aa83c",
+          "start": "bucket.water",
+          "held_by": "ada",
+          "pickup_at_s": 15.8
+        }
+      ],
+      "cast": [
+        {
+          "id": "ada",
+          "view": "side",
+          "expression": "saskin",
+          "x": 322,
+          "y": 152,
+          "scale": 0.9
+        },
+        {
+          "id": "kerem",
+          "view": "side",
+          "expression": "sakin",
+          "x": 205,
+          "y": 150,
+          "scale": 0.9
+        }
+      ],
+      "camera": [
+        {
+          "at_s": 0,
+          "zoom": 1.8,
+          "focus": [
+            360,
+            240
+          ]
+        },
+        {
+          "at_s": 9.8,
+          "zoom": 3.8,
+          "focus": "prop.yaprak",
+          "ease": "slow"
+        },
+        {
+          "at_s": 15.8,
+          "zoom": 2.4,
+          "focus": [
+            "ada.face",
+            "prop.yaprak"
+          ],
+          "ease": "slow"
+        }
+      ],
+      "lines": [
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Feneri yaklaştır. Suyun üstünde bir şey var."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Bir şey değil."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Ne o zaman?"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Yaprak.",
+          "voice_preset": "whisper"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Ne?"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Yeşil bir yaprak, Kerem. Canlı.",
+          "delivery": "büyülenmiş"
+        }
+      ],
+      "sfx": [
+        {
+          "at_s": 0.8,
+          "id": "damla"
+        }
+      ]
+    },
+    {
+      "id": "s06",
+      "name": "Kim bilecek",
+      "duration_s": 8,
+      "location": "kuyu-odasi",
+      "light": {
+        "type": "lantern",
+        "held_by": "ada",
+        "lit": true
+      },
+      "camera_mode": "dialogue",
+      "music": {
+        "id": "ince_nota_gerilim",
+        "in_s": 0
+      },
+      "props": [
+        {
+          "id": "yaprak",
+          "type": "leaf",
+          "color": "#5aa83c",
+          "start": "bucket.water",
+          "held_by": "ada",
+          "pickup_at_s": 0,
+          "hide_at_s": 76.2
+        }
+      ],
+      "cast": [
+        {
+          "id": "ada",
+          "view": "side",
+          "expression": "saskin",
+          "x": 280,
+          "y": 152,
+          "scale": 0.9,
+          "expressionAt": [
+            {
+              "at_s": 28.2,
+              "expression": "kararli"
+            }
+          ]
+        },
+        {
+          "id": "kerem",
+          "view": "side",
+          "expression": "sakin",
+          "x": 160,
+          "y": 150,
+          "scale": 0.9
+        }
+      ],
+      "end": "fade_to_black",
+      "lines": [
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Yeşil sadece Nur Ana'nın masallarında olur."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "O zaman masal elimde duruyor."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "At onu. Şimdi. Kuyuya geri at.",
+          "delivery": "panikle"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Neden?"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Çünkü bir yaprak bulduğunu duyarlarsa, ilk soracakları şey nereden geldiği olur."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Ben de onu soruyorum."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Sen sorma! Sen sorarsan seni de annen gibi…",
+          "delivery": "kendini tutamadan"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Söyle. Annem gibi ne?",
+          "delivery": "buz gibi"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Özür dilerim. Öyle demek istemedim."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Ama dedin."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Ada, bak. Kural belli. Yukarıdan bir şey gelmez, çünkü yukarıda bir şey yok. Kül var."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Külden yaprak çıkmaz."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "O zaman Divan'a götürelim. Onlar açıklar."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Onlar açıklamaz. Onlar saklar."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Emre'nin ilacı onlarda, Ada.",
+          "delivery": "yalvararak"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Biliyorum.",
+          "delivery": "yumuşayarak"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Bu yaprak yüzünden ilaç gelmezse…"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Kimse bilmeyecek. Sen ve ben."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Ve kuyu."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Kuyu konuşmaz."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Burada her şey konuşur. Duvarlar bile Divan'a çalışır."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "O zaman sessiz ol.",
+          "delivery": "yaprağı bakır bileziğinin altına sıkıştırır"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Nur Ana'ya göstereceğim. O, yeşili görmüş birini tanır."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Nur Ana göremiyor ki."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Ama hatırlıyor."
+        }
+      ]
+    },
+    {
+      "id": "s07",
+      "name": "Pay kuyruğu",
+      "duration_s": 8,
+      "location": "koridor-12",
+      "light": {
+        "type": "lantern",
+        "held_by": "ada",
+        "lit": true
+      },
+      "secondary_light": {
+        "type": "cold",
+        "held_by": "yaman",
+        "rampIn_s": [
+          0,
+          1.5
+        ]
+      },
+      "camera_mode": "dialogue",
+      "start": "fade_from_black",
+      "music": null,
+      "caption": {
+        "text": "12. KAT · PAY KUYRUĞU",
+        "in_s": 0.8,
+        "out_s": 4.5
+      },
+      "cast": [
+        {
+          "id": "kerem",
+          "view": "side",
+          "expression": "sakin",
+          "x": 110,
+          "y": 150,
+          "scale": 0.9
+        },
+        {
+          "id": "ada",
+          "view": "side",
+          "expression": "sakin",
+          "x": 215,
+          "y": 152,
+          "scale": 0.9,
+          "expressionAt": [
+            {
+              "at_s": 32.1,
+              "expression": "kararli"
+            },
+            {
+              "at_s": 41.5,
+              "expression": "korkmus"
+            }
+          ]
+        },
+        {
+          "id": "yaman",
+          "view": "front",
+          "expression": "sakin",
+          "x": 450,
+          "y": 138,
+          "scale": 0.98
+        }
+      ],
+      "lines": [
+        {
+          "speaker": "yaman",
+          "type": "dialogue",
+          "text": "Jetonlar. Sırayla. Elinizde tutun.",
+          "delivery": "yüksek sesle, sıkılmış"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Yaman bugün kendisi gelmiş. Kötü işaret.",
+          "voice_preset": "whisper"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Senin için her şey kötü işaret.",
+          "voice_preset": "whisper"
+        },
+        {
+          "speaker": "yaman",
+          "type": "dialogue",
+          "text": "Su bekçisi. Ada, değil mi?"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Evet."
+        },
+        {
+          "speaker": "yaman",
+          "type": "dialogue",
+          "text": "Jeton."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Burada."
+        },
+        {
+          "speaker": "yaman",
+          "type": "dialogue",
+          "text": "Bu hafta yarım pay. Divan'ın kararı."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Yarım mı? Ama kardeşim…"
+        },
+        {
+          "speaker": "yaman",
+          "type": "dialogue",
+          "text": "Herkesin bir kardeşi var, tamirci. Rüzgâr kötü."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Rüzgârı hiç gördün mü, Yaman?"
+        },
+        {
+          "speaker": "yaman",
+          "type": "dialogue",
+          "text": "Görmeme gerek yok. Kayıtlar var."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Kayıtları kim yazıyor?"
+        },
+        {
+          "speaker": "yaman",
+          "type": "dialogue",
+          "text": "Bileğindeki ne?",
+          "delivery": "gözleri bileziğe kayar"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Annemin bileziği."
+        },
+        {
+          "speaker": "yaman",
+          "type": "dialogue",
+          "text": "Annenin. Leyla'nın.",
+          "delivery": "bir an duraksar, sesi değişir"
+        },
+        {
+          "speaker": "yaman",
+          "type": "dialogue",
+          "text": "Bileğini sakla, Ada. Burada herkes bir şeyler hatırlar.",
+          "delivery": "alçak sesle, neredeyse uyarır gibi"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Gidelim. Lütfen."
+        }
+      ],
+      "sfx": [
+        {
+          "at_s": 0,
+          "id": "kalabalik_ugultu",
+          "loop": true
+        },
+        {
+          "at_s": 4,
+          "id": "oksuruk"
+        }
+      ]
+    },
+    {
+      "id": "s08",
+      "name": "Nur Ana",
+      "duration_s": 8,
+      "location": "nur-ana-odasi",
+      "light": {
+        "type": "lantern",
+        "x": 335,
+        "y": 300,
+        "onFloor": true,
+        "lit": true
+      },
+      "camera_mode": "dialogue",
+      "music": {
+        "id": "nur_ana_tema",
+        "in_s": 2
+      },
+      "caption": {
+        "text": "NUR ANA'NIN ODASI",
+        "in_s": 0.8,
+        "out_s": 4.5
+      },
+      "cast": [
+        {
+          "id": "kerem",
+          "view": "side",
+          "expression": "sakin",
+          "x": 70,
+          "y": 150,
+          "scale": 0.9
+        },
+        {
+          "id": "ada",
+          "view": "side",
+          "expression": "sakin",
+          "x": 205,
+          "y": 152,
+          "scale": 0.9,
+          "expressionAt": [
+            {
+              "at_s": 70.5,
+              "expression": "saskin"
+            }
+          ]
+        },
+        {
+          "id": "nur-ana",
+          "view": "front",
+          "expression": "sakin",
+          "x": 400,
+          "y": 178,
+          "scale": 0.82
+        }
+      ],
+      "lines": [
+        {
+          "speaker": "nur-ana",
+          "type": "dialogue",
+          "text": "Ayak seslerinden tanırım. Ada. Ve kapıda dikilen korkak tamirci.",
+          "delivery": "yaşlı, gülümseyen bir ses"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Korkak değil, dikkatli, Nur Ana."
+        },
+        {
+          "speaker": "nur-ana",
+          "type": "dialogue",
+          "text": "Senin deden de dikkatliydi. Hiçbir şey görmeden öldü."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Sana bir şey getirdim. Elini ver."
+        },
+        {
+          "speaker": "nur-ana",
+          "type": "dialogue",
+          "text": "Ne bu? Islak… ince… yumuşacık.",
+          "delivery": "parmaklarıyla yoklayarak"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Kuyudan çıktı. Rengi yeşil."
+        },
+        {
+          "speaker": "nur-ana",
+          "type": "dialogue",
+          "text": "Yeşil. Bu kelimeyi bir kez daha duyacağımı sanmazdım.",
+          "delivery": "derin bir nefesle"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Ne olduğunu biliyor musun?"
+        },
+        {
+          "speaker": "nur-ana",
+          "type": "dialogue",
+          "text": "Yaprak, evladım. Ağaçta biter. Ağaç da güneşte."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Güneş yok."
+        },
+        {
+          "speaker": "nur-ana",
+          "type": "dialogue",
+          "text": "Kurucular öyle dedi. Kurucular çok şey dedi."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Sen ne diyorsun?"
+        },
+        {
+          "speaker": "nur-ana",
+          "type": "dialogue",
+          "text": "Ninem yukarıyı görmüştü. Toprak kokardı, derdi. Yağmurdan sonra her yer yeşil olurdu.",
+          "delivery": "masal anlatır gibi"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Sonra da Kül Rüzgârı geldi."
+        },
+        {
+          "speaker": "nur-ana",
+          "type": "dialogue",
+          "text": "Ninem rüzgârı hiç anlatmazdı. Sadece kapıyı anlatırdı. Büyük, demir bir kapı."
+        },
+        {
+          "speaker": "nur-ana",
+          "type": "dialogue",
+          "text": "Herkes aşağı iner, kapı kapanır. Kapıyı da içeriden kilitlerler."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "İçeriden mi? Neden içeriden?"
+        },
+        {
+          "speaker": "nur-ana",
+          "type": "dialogue",
+          "text": "Ninem 'bir şeyi korumak için' derdi. Neyi diye sorduğumda susardı."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Biz mi korunuyoruz, yoksa biz mi bir şeyi koruyoruz?"
+        },
+        {
+          "speaker": "nur-ana",
+          "type": "dialogue",
+          "text": "Bu soruyu bana daha önce biri daha sordu. Aynı kelimelerle.",
+          "delivery": "duraksayarak"
+        }
+      ],
+      "sfx": [
+        {
+          "at_s": 0,
+          "id": "mum_citirti",
+          "loop": true
+        }
+      ]
+    },
+    {
+      "id": "s09",
+      "name": "Leyla'nın sorusu",
+      "duration_s": 8,
+      "location": "nur-ana-odasi",
+      "light": {
+        "type": "lantern",
+        "x": 335,
+        "y": 300,
+        "onFloor": true,
+        "lit": true
+      },
+      "camera_mode": "dialogue",
+      "music": {
+        "id": "nur_ana_tema",
+        "in_s": 0
+      },
+      "cast": [
+        {
+          "id": "kerem",
+          "view": "side",
+          "expression": "sakin",
+          "x": 70,
+          "y": 150,
+          "scale": 0.9
+        },
+        {
+          "id": "ada",
+          "view": "side",
+          "expression": "saskin",
+          "x": 205,
+          "y": 152,
+          "scale": 0.9,
+          "expressionAt": [
+            {
+              "at_s": 39.4,
+              "expression": "kararli"
+            }
+          ]
+        },
+        {
+          "id": "nur-ana",
+          "view": "front",
+          "expression": "sakin",
+          "x": 400,
+          "y": 178,
+          "scale": 0.82
+        }
+      ],
+      "lines": [
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Kim?"
+        },
+        {
+          "speaker": "nur-ana",
+          "type": "dialogue",
+          "text": "Annen."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Annem burada mıydı?",
+          "delivery": "nefesi kesilir"
+        },
+        {
+          "speaker": "nur-ana",
+          "type": "dialogue",
+          "text": "Tam senin oturduğun yerde. Elinde de bir yaprak vardı. On yıl önce."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "On yıl önce mi? O zaman bu ilk değil."
+        },
+        {
+          "speaker": "nur-ana",
+          "type": "dialogue",
+          "text": "Su ne zaman ılırsa, yeşil gelir. Leyla öyle derdi."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Annem ne yaptı?"
+        },
+        {
+          "speaker": "nur-ana",
+          "type": "dialogue",
+          "text": "Suyun nereden geldiğini aradı. Ve buldu sanırım. Çünkü bir hafta sonra kapıdan geçirdiler onu."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Nereden geldiğini söyledi mi?"
+        },
+        {
+          "speaker": "nur-ana",
+          "type": "dialogue",
+          "text": "Bir şey söyledi. Hiç unutmadım."
+        },
+        {
+          "speaker": "nur-ana",
+          "type": "dialogue",
+          "text": "'Su yukarıdan inmiyor, Nur Ana. Aşağıdan da gelmiyor. Su yan taraftan geliyor.'",
+          "delivery": "Leyla'yı taklit eder gibi, fısıltıyla"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Yan taraftan mı? Bu ne demek?"
+        },
+        {
+          "speaker": "nur-ana",
+          "type": "dialogue",
+          "text": "Bilmiyorum, evladım. Ben kör bir kadınım; yanları göremem."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Ben görebilirim.",
+          "delivery": "kararlı"
+        },
+        {
+          "speaker": "nur-ana",
+          "type": "dialogue",
+          "text": "Görürsün. Annen de görmüştü. Bak nereye götürdü."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Nur Ana, onu cesaretlendirme. Lütfen."
+        },
+        {
+          "speaker": "nur-ana",
+          "type": "dialogue",
+          "text": "Ben kimseyi cesaretlendirmem, tamirci. Su yolunu bulur. Bu kız da sudan."
+        },
+        {
+          "speaker": "nur-ana",
+          "type": "dialogue",
+          "text": "Yaprağı sakla, Ada. Ve suyu izle. Kuyu sana herkesten çok şey anlatır."
+        }
+      ],
+      "sfx": [
+        {
+          "at_s": 0,
+          "id": "mum_citirti",
+          "loop": true
+        }
+      ]
+    },
+    {
+      "id": "s10",
+      "name": "Haber",
+      "duration_s": 8,
+      "location": "koridor-12",
+      "light": {
+        "type": "lantern",
+        "held_by": "ada",
+        "lit": true
+      },
+      "camera_mode": "dialogue",
+      "music": {
+        "id": "drone_yogun",
+        "in_s": 2
+      },
+      "cast": [
+        {
+          "id": "ada",
+          "view": "side",
+          "expression": "sakin",
+          "x": 300,
+          "y": 152,
+          "scale": 0.9,
+          "expressionAt": [
+            {
+              "at_s": 21.5,
+              "expression": "korkmus"
+            }
+          ]
+        },
+        {
+          "id": "kerem",
+          "view": "side",
+          "expression": "sakin",
+          "path": [
+            [
+              -60,
+              150
+            ],
+            [
+              180,
+              150
+            ]
+          ],
+          "enter_s": [
+            0,
+            2.5
+          ],
+          "scale": 0.9
+        }
+      ],
+      "lines": [
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Ada! Dur! Bekle!",
+          "delivery": "koşarak, nefes nefese"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Ne oldu?"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Saim. Saim aşağı iniyor. Kendisi. Lambasıyla."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Saim on ikinci kata inmez."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Biliyorum! O yüzden koşuyorum!"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Nereye gidiyor?"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Kuyu odasına. Seni sormuş."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Yaman söylemiştir. Bileziği gördü."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Yaprak nerede?"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Bileziğin altında."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Harika. Tam saklanacak yer. Gözünün önünde."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Sen eve git, Kerem."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Seni onunla yalnız bırakmam."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Emre'yi düşün."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Düşünüyorum. Sürekli düşünüyorum. Yine de geliyorum."
+        }
+      ],
+      "sfx": [
+        {
+          "at_s": 0,
+          "id": "ayak_sesi_ada"
+        }
+      ]
+    },
+    {
+      "id": "s11",
+      "name": "Saim",
+      "duration_s": 8,
+      "location": "kuyu-odasi",
+      "light": {
+        "type": "lantern",
+        "held_by": "ada",
+        "lit": true
+      },
+      "secondary_light": {
+        "type": "cold",
+        "held_by": "saim",
+        "rampIn_s": [
+          0,
+          4
+        ]
+      },
+      "camera_mode": "dialogue",
+      "music": {
+        "id": "drone_yogun",
+        "in_s": 0
+      },
+      "cast": [
+        {
+          "id": "kerem",
+          "view": "side",
+          "expression": "sakin",
+          "x": 110,
+          "y": 150,
+          "scale": 0.9
+        },
+        {
+          "id": "ada",
+          "view": "side",
+          "expression": "korkmus",
+          "x": 236,
+          "y": 152,
+          "scale": 0.9,
+          "expressionAt": [
+            {
+              "at_s": 3,
+              "expression": "sakin"
+            },
+            {
+              "at_s": 64.6,
+              "expression": "kararli"
+            }
+          ]
+        },
+        {
+          "id": "saim",
+          "view": "side",
+          "expression": "sinsi",
+          "path": [
+            [
+              720,
+              128
+            ],
+            [
+              470,
+              128
+            ]
+          ],
+          "enter_s": [
+            0,
+            4.5
+          ],
+          "scale": 0.95,
+          "expressionAt": [
+            {
+              "at_s": 64.6,
+              "expression": "otoriter"
+            }
+          ]
+        }
+      ],
+      "lines": [
+        {
+          "speaker": "saim",
+          "type": "dialogue",
+          "text": "Su bugün nasıl, Ada?",
+          "delivery": "yumuşak, sinsi bir nezaket"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Her zamanki gibi, Saim Efendi. Soğuk.",
+          "delivery": "sakin görünmeye çalışarak"
+        },
+        {
+          "speaker": "saim",
+          "type": "dialogue",
+          "text": "Soğuk. Güzel. Derin'de her şey her zamanki gibi kalmalı."
+        },
+        {
+          "speaker": "saim",
+          "type": "dialogue",
+          "text": "Kerem. Sen de buradasın. Havalandırmalar bu kadar aşağıda mı arızalanıyor?"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Ben… makarayı tamir ediyordum. Ada'nın makarasını.",
+          "delivery": "kekeleyerek"
+        },
+        {
+          "speaker": "saim",
+          "type": "dialogue",
+          "text": "Makarayı. Elbette. Kardeşin nasıl? Emre."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Öksürüyor, efendim."
+        },
+        {
+          "speaker": "saim",
+          "type": "dialogue",
+          "text": "İlacı yarın gelecek. Ben söyledim."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Teşekkür ederim, Saim Efendi."
+        },
+        {
+          "speaker": "saim",
+          "type": "dialogue",
+          "text": "Teşekkür etme. Yarın hepimiz için önemli bir gün. İyi geçmesini istiyoruz, değil mi?",
+          "delivery": "tehdidi gülümsemeyle"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Neden indiniz, efendim? Divan Başı on ikinci kata inmez."
+        },
+        {
+          "speaker": "saim",
+          "type": "dialogue",
+          "text": "İner, Ada. Gerekirse iner. Annen zamanında çok inerdim."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Annemi tanıyordunuz."
+        },
+        {
+          "speaker": "saim",
+          "type": "dialogue",
+          "text": "Derin'de herkes herkesi tanır. Leyla'yı benden iyi tanıyan azdı."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "O zaman neden kapıdan geçirildi?",
+          "delivery": "sesi titrer ama geri adım atmaz"
+        },
+        {
+          "speaker": "saim",
+          "type": "dialogue",
+          "text": "Çünkü kuralı çiğnedi."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Kazmadı. Sadece sordu."
+        },
+        {
+          "speaker": "saim",
+          "type": "dialogue",
+          "text": "Bazı sorular kazmaktan derindir.",
+          "delivery": "ağır ağır"
+        }
+      ],
+      "sfx": [
+        {
+          "at_s": 0,
+          "id": "ayak_sesi_merdiven_yanki",
+          "loop_until_s": 4.5
+        },
+        {
+          "at_s": 0,
+          "id": "nefes_lambasi_tisilti",
+          "loop": true
+        }
+      ]
+    },
+    {
+      "id": "s12",
+      "name": "Annen de",
+      "duration_s": 56.4,
+      "location": "kuyu-odasi",
+      "light": {
+        "type": "lantern",
+        "held_by": "ada",
+        "lit": true
+      },
+      "secondary_light": {
+        "type": "cold",
+        "held_by": "saim",
+        "rampOut_s": [
+          51.4,
+          54.4
+        ]
+      },
+      "camera_mode": "dialogue",
+      "music": {
+        "id": "derin_vurus",
+        "at_s": 48.9
+      },
+      "cast": [
+        {
+          "id": "kerem",
+          "view": "side",
+          "expression": "sakin",
+          "x": 110,
+          "y": 150,
+          "scale": 0.9
+        },
+        {
+          "id": "ada",
+          "view": "side",
+          "expression": "sakin",
+          "x": 236,
+          "y": 152,
+          "scale": 0.9,
+          "expressionAt": [
+            {
+              "at_s": 25.6,
+              "expression": "korkmus"
+            },
+            {
+              "at_s": 51.4,
+              "expression": "kararli"
+            }
+          ]
+        },
+        {
+          "id": "saim",
+          "view": "side",
+          "expression": "otoriter",
+          "path": [
+            [
+              720,
+              128
+            ],
+            [
+              470,
+              128
+            ]
+          ],
+          "exit_s": [
+            50.9,
+            54.9
+          ],
+          "scale": 0.95,
+          "expressionAt": [
+            {
+              "at_s": 13.9,
+              "expression": "sinsi"
+            }
+          ]
+        }
+      ],
+      "lines": [
+        {
+          "speaker": "saim",
+          "type": "dialogue",
+          "text": "Duvarı görebilir miyim? Çentiklerini."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Buyurun."
+        },
+        {
+          "speaker": "saim",
+          "type": "dialogue",
+          "text": "Doksan yıl. Her gün aynı seviye. Ne güzel bir düzen. Hiçbir şey değişmiyor.",
+          "delivery": "duvara bakarak, neredeyse şefkatle"
+        },
+        {
+          "speaker": "saim",
+          "type": "dialogue",
+          "text": "Bugün de değişmedi, değil mi Ada?"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Değişmedi."
+        },
+        {
+          "speaker": "saim",
+          "type": "dialogue",
+          "text": "Bileğin. Bakır. Leyla'nınkine çok benziyor."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Onun bileziği."
+        },
+        {
+          "speaker": "saim",
+          "type": "dialogue",
+          "text": "Islak."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Kuyu suyu, efendim. İşim bu."
+        },
+        {
+          "speaker": "saim",
+          "type": "dialogue",
+          "text": "Elbette. Suyu iyi tut, Ada. Su, Derin'in hafızasıdır. Hafıza da bazen zehirlidir."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Efendim, isterseniz yukarıya kadar size eşlik edeyim."
+        },
+        {
+          "speaker": "saim",
+          "type": "dialogue",
+          "text": "Gerek yok, Kerem. Ben yolu bilirim. Herkesten iyi bilirim."
+        },
+        {
+          "speaker": "saim",
+          "type": "dialogue",
+          "text": "Annen de çok soru sorardı.",
+          "delivery": "arkasını dönmeden, alçak sesle"
+        }
+      ],
+      "sfx": [
+        {
+          "at_s": 0,
+          "id": "nefes_lambasi_tisilti",
+          "loop": true
+        },
+        {
+          "at_s": 50.9,
+          "id": "ayak_sesi_uzaklasan"
+        }
+      ]
+    },
+    {
+      "id": "s13",
+      "name": "Kavga",
+      "duration_s": 8,
+      "location": "kuyu-odasi",
+      "light": {
+        "type": "lantern",
+        "held_by": "ada",
+        "lit": true
+      },
+      "camera_mode": "dialogue",
+      "music": null,
+      "cast": [
+        {
+          "id": "ada",
+          "view": "side",
+          "expression": "kararli",
+          "x": 236,
+          "y": 152,
+          "scale": 0.9
+        },
+        {
+          "id": "kerem",
+          "view": "side",
+          "expression": "sakin",
+          "path": [
+            [
+              110,
+              150
+            ],
+            [
+              -120,
+              150
+            ]
+          ],
+          "exit_s": [
+            49.1,
+            52.1
+          ],
+          "scale": 0.9
+        }
+      ],
+      "lines": [
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Yaprağı gördü. Gördü, Ada. Bileğine baktı.",
+          "delivery": "fısıltıyla başlar"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Gördüyse neden almadı?"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Çünkü almasına gerek yok! Seni de alacak! Beni de! Emre'yi de!",
+          "delivery": "patlayarak"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Bağırma."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Bağırırım! Burada yarın diye bir şey kalmadı!"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Sen git. Bu benim işim."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Senin işin su ölçmek! Gizem çözmek değil!"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Suyu ölçüyorum, Kerem. Su ılık. Su değişti. Doksan yılda ilk kez.",
+          "delivery": "sakin ama kesin"
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Sen de değişeceksin. Kapıdan sonra kimse geri gelmiyor."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Annem gelmedi. Çünkü kimse onu aramadı."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Ben eve gidiyorum. Emre'nin yanına.",
+          "delivery": "uzun bir sessizlikten sonra, kırgın"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Git."
+        },
+        {
+          "speaker": "kerem",
+          "type": "dialogue",
+          "text": "Yarın uğrarım. Eğer yarın varsa."
+        }
+      ],
+      "sfx": [
+        {
+          "at_s": 0,
+          "id": "uguldu",
+          "loop": true
+        },
+        {
+          "at_s": 49.1,
+          "id": "ayak_sesi_uzaklasan"
+        }
+      ]
+    },
+    {
+      "id": "s14",
+      "name": "Kuyunun içi",
+      "duration_s": 37.3,
+      "location": "kuyu-odasi",
+      "light": {
+        "type": "lantern",
+        "held_by": "ada",
+        "lit": true
+      },
+      "music": {
+        "id": "derin_vurus",
+        "at_s": 30.7
+      },
+      "end": "fade_to_black",
+      "cast": [
+        {
+          "id": "ada",
+          "view": "side",
+          "expression": "sakin",
+          "x": 236,
+          "y": 152,
+          "scale": 0.9,
+          "expressionAt": [
+            {
+              "at_s": 16.3,
+              "expression": "saskin"
+            },
+            {
+              "at_s": 30.3,
+              "expression": "kararli"
+            }
+          ]
+        }
+      ],
+      "camera": [
+        {
+          "at_s": 0,
+          "zoom": 1.5,
+          "focus": [
+            300,
+            230
+          ]
+        },
+        {
+          "at_s": 9.6,
+          "zoom": 2.6,
+          "focus": [
+            340,
+            290
+          ],
+          "ease": "slow"
+        },
+        {
+          "at_s": 16.3,
+          "zoom": 3.6,
+          "focus": [
+            340,
+            305
+          ],
+          "ease": "slow"
+        },
+        {
+          "at_s": 30.3,
+          "zoom": 2.6,
+          "focus": "ada.face",
+          "ease": "cut"
+        }
+      ],
+      "lines": [
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Su yan taraftan geliyor. Ne demek istedin, anne?",
+          "delivery": "kendi kendine"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Kuyunun duvarı. Hep düz sandım."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Biraz daha aşağı. Halat yeter mi?",
+          "delivery": "feneri halata bağlayıp kuyuya sarkıtırken"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Bir şey var. Taşta. Çizikler."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Hayır. Çizik değil. Çentik."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Bizim çentiklerimiz gibi. Ama burada. Suyun altında."
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Ve en sonuncusu… bir yaprak şekli.",
+          "delivery": "nefesi kesilerek"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Annemin işareti.",
+          "voice_preset": "whisper"
+        },
+        {
+          "speaker": "ada",
+          "type": "dialogue",
+          "text": "Annem buradaydı. Kuyunun içinde.",
+          "delivery": "fısıltı ile kararlılık arası"
+        }
+      ],
+      "sfx": [
+        {
+          "at_s": 0,
+          "id": "uguldu",
+          "loop": true
+        },
+        {
+          "at_s": 0.5,
+          "id": "damla"
+        },
+        {
+          "at_s": 9.6,
+          "id": "makara_gicirti",
+          "loop_until_s": 15.6
+        }
+      ]
+    },
+    {
+      "id": "s15",
+      "name": "Gelecek bölüm",
+      "duration_s": 6,
+      "location": null,
+      "card": {
+        "text": "DERİN",
+        "subtitle": "Gelecek bölüm: Çentik",
+        "color": "#ffffff",
+        "background": "#000000",
+        "in_s": 0.8
+      },
+      "sfx": [
+        {
+          "at_s": 0.5,
+          "id": "damla"
+        }
+      ],
+      "music": null
+    }
+  ]
+}

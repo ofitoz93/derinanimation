@@ -62,9 +62,13 @@ export type Music =
 
 export type PropEntry = {
   id: string;
-  type: "leaf";
+  type: "leaf" | "dot" | "box";
   color: string;
-  start: string;
+  // Başlangıç yeri: mekân koordinatı [x, y] ya da "bucket.water" gibi kayıtlı bir nokta
+  start: string | Point;
+  size?: number;
+  // Bir karakter alırsa: kimin eline, hangi saniyede
+  held_by?: string;
   pickup_at_s?: number;
   hide_at_s?: number;
 };
@@ -79,15 +83,22 @@ export type SceneDef = {
   cast?: CastEntry[];
   props?: PropEntry[];
   camera?: CameraKey[];
+  // "dialogue": kamera konuşanı otomatik izler (anahtar kareler yok sayılır)
+  camera_mode?: "dialogue";
   lines?: Line[];
   sfx?: Sfx[];
   music?: Music;
-  card?: { text: string; color: string; background: string; in_s: number };
+  card?: { text: string; color: string; background: string; in_s: number; subtitle?: string };
+  // Ekranın üst köşesinde kısa yazı (ör. "10 YIL ÖNCE", "1. kat · Nefes Divanı")
+  caption?: { text: string; in_s?: number; out_s?: number };
+  start?: "fade_from_black";
   end?: "fade_to_black";
 };
 
 export type EpisodeDef = {
   episode: string;
+  season?: string;
+  number?: number;
   title: string;
   version: string;
   status: "draft" | "approved";
@@ -97,6 +108,7 @@ export type EpisodeDef = {
 
 export type Assets = {
   audio: Record<string, { file: string; duration: number }>;
-  sfx: string[];
-  music: string[];
+  sfx: Record<string, string[]>;
+  music: Record<string, string[]>;
+  musicLoops: Record<string, Record<string, boolean>>;
 };

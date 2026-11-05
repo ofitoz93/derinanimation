@@ -84,6 +84,41 @@
       "duration_seconds": 6,
       "loop": false,
       "status": "missing"
+    },
+    "metal_izgara": {
+      "label": "Havalandırma ızgarasına vurma",
+      "prompt": "Knuckles tapping on a metal ventilation grate from inside a narrow duct, hollow tinny echo, playful rhythm",
+      "duration_seconds": 2,
+      "loop": false,
+      "status": "missing"
+    },
+    "merdiven_tirmanma": {
+      "label": "Demir merdivenden inme",
+      "prompt": "Someone climbing down an old iron rung ladder inside a stone shaft, boots on metal rungs, slight creak, then landing on stone",
+      "duration_seconds": 5,
+      "loop": false,
+      "status": "missing"
+    },
+    "kalabalik_ugultu": {
+      "label": "Pay kuyruğu kalabalığı",
+      "prompt": "Low murmur of a tired crowd waiting in line in a cramped underground stone corridor, shuffling feet, distant coughs, no clear words",
+      "duration_seconds": 20,
+      "loop": true,
+      "status": "missing"
+    },
+    "oksuruk": {
+      "label": "Uzaktan öksürük",
+      "prompt": "A child coughing weakly somewhere down a stone corridor, echoing, sad",
+      "duration_seconds": 3,
+      "loop": false,
+      "status": "missing"
+    },
+    "mum_citirti": {
+      "label": "Mum çıtırtısı",
+      "prompt": "Small candle flame softly crackling and fluttering in a tiny quiet stone room, very intimate and close",
+      "duration_seconds": 15,
+      "loop": true,
+      "status": "missing"
     }
   },
   "music": {
@@ -117,6 +152,14 @@
       "prompt": "Single deep cinematic boom hit, low and heavy, followed by a long dark reverb tail fading to silence",
       "duration_seconds": 8,
       "loop": false,
+      "status": "missing"
+    },
+    "nur_ana_tema": {
+      "label": "Nur Ana teması",
+      "generator": "music",
+      "prompt": "Sparse melancholic Anatolian folk lullaby on a single plucked long-necked lute, slow and tender, candlelit storytelling mood, no percussion",
+      "duration_seconds": 60,
+      "loop": true,
       "status": "missing"
     }
   }

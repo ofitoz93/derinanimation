@@ -5,3 +5,5 @@ out/
 public/audio/previews/
 public/sfx/variants/
 public/music/variants/
+.studio/
+public/projects/*/previews/*.mp3

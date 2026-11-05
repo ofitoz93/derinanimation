@@ -10,5 +10,5 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["src", "characters", "locations"]
+  "include": ["src", "projects"]
 }

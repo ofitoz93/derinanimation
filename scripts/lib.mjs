@@ -90,3 +90,49 @@ export function pruneRenders(ep, kind, keep = 3) {
     } catch {}
   }
 }
+
+// ---------- filmler, sezonlar, bölümler ----------
+// projects/<film>/seasons/<sezon>/episodes/<bölüm>/scenes.json
+// Bir bölümün adresi "film/sezon/bölüm" (ör. derin/s1/e01); Remotion kimliği "derin-s1-e01".
+export const SLUG = /^[a-z0-9][a-z0-9-]{0,40}$/;
+export const projectDir = (proj, ...parts) => p("projects", proj, ...parts);
+export const publicDir = (proj, ...parts) => p("public", "projects", proj, ...parts);
+
+const dirs = (d) => (fs.existsSync(d) ? fs.readdirSync(d).filter((f) => fs.statSync(path.join(d, f)).isDirectory()) : []);
+const natural = (a, b) => a.localeCompare(b, "tr", { numeric: true });
+
+export const listProjects = () => dirs(p("projects")).filter((d) => fs.existsSync(projectDir(d, "project.json"))).sort(natural);
+export const listSeasons = (proj) => dirs(projectDir(proj, "seasons")).sort(natural);
+export const listEpisodeIds = (proj, season) =>
+  dirs(projectDir(proj, "seasons", season, "episodes")).filter((e) => fs.existsSync(projectDir(proj, "seasons", season, "episodes", e, "scenes.json"))).sort(natural);
+
+export function episodeInfo(project, season, episode) {
+  const dir = projectDir(project, "seasons", season, "episodes", episode);
+  return {
+    project,
+    season,
+    episode,
+    ref: `${project}/${season}/${episode}`,
+    compId: `${project}-${season}-${episode}`,
+    dir,
+    scenes: path.join(dir, "scenes.json"),
+    audioRel: `projects/${project}/audio/${season}-${episode}`,
+    audioDir: publicDir(project, "audio", `${season}-${episode}`),
+  };
+}
+
+export const allEpisodes = () =>
+  listProjects().flatMap((proj) => listSeasons(proj).flatMap((s) => listEpisodeIds(proj, s).map((e) => episodeInfo(proj, s, e))));
+
+// "derin/s1/e01", "derin-s1-e01" ya da tek başına "e01" kabul edilir (tek eşleşme varsa).
+export function resolveEpisode(ref) {
+  if (!ref) fail("Bölüm belirtilmedi. Örnek: derin/s1/e01");
+  const all = allEpisodes();
+  const hit = all.find((e) => e.ref === ref || e.compId === ref) ?? (() => {
+    const m = all.filter((e) => e.episode === ref);
+    if (m.length > 1) fail(`"${ref}" birden fazla bölümle eşleşiyor: ${m.map((x) => x.ref).join(", ")}`);
+    return m[0];
+  })();
+  if (!hit) fail(`Bölüm bulunamadı: ${ref}`);
+  return hit;
+}

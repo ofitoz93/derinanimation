@@ -3,19 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Derin · Üretim Paneli</title>
+<title>Stüdyo</title>
 <style>
 :root{--bg:#0d0b0a;--s1:#161311;--s2:#1d1916;--b:#2c2622;--b2:#3d3530;--t:#ece4d8;--m:#a0958a;--d:#6f665e;--warm:#e2a65c;--warm-bg:#2e2116;--cold:#9fc4d6;--cold-bg:#16222a;--ok:#5dcaa5;--ok-bg:#12261f;--bad:#e7836f;--bad-bg:#2c1612;--r:10px}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--t);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
-.wrap{max-width:1180px;margin:0 auto;padding:28px 24px 60px}
-header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px;flex-wrap:wrap}
-.brand{display:flex;align-items:baseline;gap:14px}
-.brand h1{font:500 30px/1 Georgia,serif;letter-spacing:10px;margin:0}
-.brand span{color:var(--m);font-size:14px}
-h2{font-size:13px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--m);margin:34px 0 12px}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 24px 80px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand h1{font:500 30px/1 Georgia,serif;letter-spacing:8px;margin:0}
+nav{position:sticky;top:0;z-index:5;background:rgba(13,11,10,.92);backdrop-filter:blur(6px);display:flex;gap:4px;padding:10px 0;margin:18px 0 6px;border-bottom:1px solid var(--b);flex-wrap:wrap}
+nav a{color:var(--m);text-decoration:none;font-size:14px;padding:6px 12px;border-radius:8px}
+nav a:hover{color:var(--t);background:var(--s2)}
+h2{font-size:13px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--m);margin:36px 0 12px;scroll-margin-top:70px}
 .card{background:var(--s1);border:1px solid var(--b);border-radius:14px;padding:18px 20px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
 .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .between{justify-content:space-between}
 .muted{color:var(--m)}.small{font-size:13px}.tiny{font-size:12px}
@@ -33,15 +35,17 @@ button.primary:hover:not(:disabled){background:#efb676;border-color:#efb676}
 button.ghost{background:transparent;border-color:transparent;color:var(--m);padding:6px 8px}
 button.ghost:hover:not(:disabled){color:var(--t);background:var(--s2)}
 button.icon{width:34px;height:34px;padding:0;display:inline-grid;place-items:center;border-radius:50%}
-input{font:inherit;color:var(--t);background:var(--bg);border:1px solid var(--b2);border-radius:var(--r);padding:8px 12px;outline:none;min-width:0}
-input:focus{border-color:var(--warm)}
-.char-head{display:flex;gap:14px;align-items:flex-start}
+input,select{font:inherit;color:var(--t);background:var(--bg);border:1px solid var(--b2);border-radius:var(--r);padding:8px 12px;outline:none;min-width:0}
+select{padding:7px 10px}
+input:focus,select:focus,textarea:focus{border-color:var(--warm)}
+textarea{font:inherit;font-size:14px;color:var(--t);background:var(--bg);border:1px solid var(--b2);border-radius:var(--r);padding:10px 12px;outline:none;width:100%;resize:vertical;min-height:120px}
 .swatches{display:grid;grid-template-columns:repeat(3,14px);gap:4px;flex-shrink:0;margin-top:4px}
 .swatches i{width:14px;height:14px;border-radius:4px;display:block}
-.char-name{font:500 20px/1.2 Georgia,serif}
+.name{font:500 20px/1.2 Georgia,serif}
 .sig{margin:10px 0 0;padding-left:18px;color:var(--m);font-size:13px}
+.thumb{width:100%;border-radius:10px;display:block;margin-top:12px;background:#000;cursor:zoom-in}
 .voice-box{margin-top:16px;padding-top:14px;border-top:1px solid var(--b)}
-.vlist{max-height:260px;overflow:auto;border:1px solid var(--b);border-radius:var(--r);margin-top:10px}
+.vlist{max-height:240px;overflow:auto;border:1px solid var(--b);border-radius:var(--r);margin-top:10px}
 .vrow{display:flex;align-items:center;gap:10px;padding:8px 10px;border-bottom:1px solid var(--b)}
 .vrow:last-child{border-bottom:0}
 .vrow.sel{background:var(--warm-bg)}
@@ -50,19 +54,25 @@ input:focus{border-color:var(--warm)}
 .chosen{margin-top:12px;padding:12px;border-radius:var(--r);background:var(--s2);border:1px solid var(--b2)}
 audio{width:100%;height:36px;margin-top:10px}
 video{width:100%;border-radius:10px;background:#000;margin-top:14px;display:block}
-.ep-title{font:500 22px/1.2 Georgia,serif}
-.stats{display:flex;gap:18px;margin-top:6px}
-.log{background:#090807;border:1px solid var(--b);border-radius:var(--r);padding:12px 14px;font:12.5px/1.6 ui-monospace,Consolas,monospace;color:#cfc5b8;max-height:300px;overflow:auto;white-space:pre-wrap;margin:12px 0 0}
+.ep{border-top:1px solid var(--b);padding:16px 0 4px}
+.ep:first-of-type{border-top:0;padding-top:4px}
+.ep-title{font:500 21px/1.2 Georgia,serif}
+.stats{display:flex;gap:16px;margin-top:6px;flex-wrap:wrap}
+.log{background:#090807;border:1px solid var(--b);border-radius:var(--r);padding:12px 14px;font:12.5px/1.6 ui-monospace,Consolas,monospace;color:#cfc5b8;max-height:320px;overflow:auto;white-space:pre-wrap;margin:12px 0 0}
+.doc{background:#0f0d0c;border:1px solid var(--b);border-radius:var(--r);padding:14px 16px;font-size:14px;line-height:1.65;color:#ddd3c6;max-height:520px;overflow:auto;white-space:pre-wrap;margin-top:12px}
 .bar{height:6px;border-radius:3px;background:var(--b);overflow:hidden;margin-top:12px}
 .bar i{display:block;height:100%;background:var(--warm);transition:width .4s}
 .note{font-size:13px;color:var(--m);margin-top:8px}
 .err{color:var(--bad);font-size:13px;margin-top:8px}
+.warnlist{margin:8px 0 0;padding-left:18px;color:var(--warm);font-size:13px}
+.form{margin-top:14px;padding:16px;border-radius:12px;background:var(--s2);border:1px solid var(--b2)}
+.form label{display:block;font-size:12px;color:var(--m);margin:10px 0 6px}
+.form label:first-child{margin-top:0}
 .tabs{display:flex;gap:6px;margin-top:14px}
 .tabs button{padding:5px 12px;font-size:13px}
 .tabs button.on{border-color:var(--warm);color:var(--warm)}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--s2);border:1px solid var(--b2);padding:10px 16px;border-radius:var(--r);font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--s2);border:1px solid var(--b2);padding:10px 16px;border-radius:var(--r);font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:20}
 .toast.on{opacity:1}
-.snd-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .slist{background:var(--s1);border:1px solid var(--b);border-radius:14px;overflow:hidden}
 .srow{padding:12px 16px;border-bottom:1px solid var(--b)}
 .srow:last-child{border-bottom:0}
@@ -70,44 +80,50 @@ video{width:100%;border-radius:10px;background:#000;margin-top:14px;display:bloc
 .srow-top .nm{flex:1;min-width:0}
 .srow-top .nm b{font-weight:500}
 .sedit{margin-top:12px;padding:12px;border-radius:var(--r);background:var(--s2);border:1px solid var(--b2)}
-textarea{font:inherit;font-size:14px;color:var(--t);background:var(--bg);border:1px solid var(--b2);border-radius:var(--r);padding:8px 12px;outline:none;width:100%;resize:vertical;min-height:64px}
-textarea:focus{border-color:var(--warm)}
 .var{display:flex;align-items:center;gap:10px;margin-top:8px;padding:6px 8px;border-radius:8px;background:var(--bg)}
 label.chk{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--m)}
 h3{font-size:14px;font-weight:500;margin:18px 0 8px;color:var(--t)}
-@media (max-width:560px){.grid{grid-template-columns:1fr}.wrap{padding:20px 16px}}
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:30;cursor:zoom-out}
+.lightbox.on{display:flex}
+.lightbox img{max-width:94vw;max-height:92vh;border-radius:10px}
+@media (max-width:560px){.grid{grid-template-columns:1fr}.wrap{padding:18px 14px}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="brand"><h1>DERİN</h1><span>Üretim paneli</span></div>
-    <div id="lockPill"></div>
+    <div class="brand"><h1 id="filmTitle">STÜDYO</h1><select id="filmSel" onchange="switchFilm(this.value)"></select><button class="ghost" onclick="toggle('newFilm')">+ Yeni film</button></div>
+    <div class="row" id="statusPills"></div>
   </header>
-
-  <h2>ElevenLabs</h2>
-  <div class="card" id="keyCard"></div>
-
-  <h2>Karakterler</h2>
-  <div class="grid" id="chars"></div>
-
-  <h2>Ses efektleri ve müzik</h2>
-  <div id="sounds"></div>
-
-  <h2>Bölümler</h2>
-  <div class="grid" id="eps"></div>
+  <div id="newFilm"></div>
+  <nav><a href="#bolumler">Bölümler</a><a href="#karakterler">Karakterler</a><a href="#mekanlar">Mekânlar</a><a href="#sesler">Efekt ve müzik</a><a href="#ayarlar">Ayarlar</a></nav>
 
   <div id="jobWrap"></div>
+
+  <h2 id="bolumler">Sezonlar ve bölümler</h2>
+  <div id="seasons"></div>
+
+  <h2 id="karakterler">Karakterler</h2>
+  <div class="grid" id="chars"></div>
+
+  <h2 id="mekanlar">Mekânlar</h2>
+  <div class="grid" id="places"></div>
+
+  <h2 id="sesler">Efekt ve müzik</h2>
+  <div id="sounds"></div>
+
+  <h2 id="ayarlar">Ayarlar</h2>
+  <div class="card" id="keyCard"></div>
 </div>
 <div class="toast" id="toast"></div>
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('on')"><img id="lightImg" alt=""></div>
 
 <script>
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-let S = null;
-let voices = null;
-let voicesErr = "";
-const ui = { picks: {}, filter: {}, preview: {}, busy: {}, err: {}, tab: {}, editKey: false };
+let S = null, voices = null, voicesErr = "";
+let film = new URLSearchParams(location.search).get("film") || (() => { try { return localStorage.getItem("film"); } catch { return null; } })();
+const ui = { open: {}, picks: {}, filter: {}, preview: {}, busy: {}, err: {}, tab: {}, editKey: false, docs: {}, sbusy: {}, serr: {}, forms: {} };
 let audioEl = new Audio();
 
 async function api(url, opts = {}) {
@@ -116,72 +132,168 @@ async function api(url, opts = {}) {
   if (!res.ok) throw new Error(data.error || "Bir hata oluştu");
   return data;
 }
-function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("on"), 2600); }
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("on"), 2800); }
+function toggle(k) { ui.forms[k] = !ui.forms[k]; renderAll(); }
+function zoom(src) { $("#lightImg").src = src; $("#lightbox").classList.add("on"); }
+function play(url) { audioEl.pause(); audioEl = new Audio(url); audioEl.play().catch(() => toast("Ses çalınamadı")); }
+const running = () => S?.job?.status === "running";
+const F = () => S?.film?.id;
 
-// Yalnızca değişen bölümleri yeniden çiz: oynayan video ve ses kesilmesin.
+// ---------- yenileme: yalnızca değişen bölümler yeniden çizilir (oynayan video kesilmesin) ----------
 const last = {};
 async function refresh() {
-  try { S = await api("/api/state"); } catch (e) { return; }
-  const parts = { key: S.elevenlabs, chars: S.characters, eps: [S.episodes, S.job?.status], locks: S.locks, sounds: [S.sounds, S.elevenlabs.connected, S.job?.status] };
-  const draw = { key: renderKey, chars: renderChars, eps: renderEps, locks: renderLocks, sounds: renderSounds };
+  try { S = await api(`/api/state${film ? `?film=${encodeURIComponent(film)}` : ""}`); } catch { return; }
+  if (S.film && S.film.id !== film) { film = S.film.id; }
+  const parts = {
+    head: [S.films, S.film, S.claude, S.locks, S.job?.status],
+    newFilm: [ui.forms.newFilm, S.claude, S.job?.status],
+    seasons: [S.seasons, S.job?.status, S.characters.map((c) => [c.id, c.voice?.status])],
+    chars: [S.characters, S.elevenlabs.connected, S.job?.status],
+    places: [S.locations, S.job?.status],
+    sounds: [S.sounds, S.elevenlabs.connected, S.job?.status],
+    key: [S.elevenlabs, S.claude],
+  };
+  const draw = { head: renderHead, newFilm: renderNewFilm, seasons: renderSeasons, chars: renderChars, places: renderPlaces, sounds: renderSounds, key: renderKey };
   for (const k in parts) { const j = JSON.stringify(parts[k]); if (last[k] !== j) { last[k] = j; draw[k](); } }
   renderJob();
 }
+function renderAll() { for (const k in last) delete last[k]; refresh(); }
+function switchFilm(id) { film = id; try { localStorage.setItem("film", id); } catch {} voices && renderAll(); renderAll(); }
 
-function render() {
-  renderLocks(); renderKey(); renderChars(); renderEps(); renderJob();
-}
-
-function renderLocks() {
+// ---------- başlık ----------
+function renderHead() {
+  $("#filmTitle").textContent = (S.film?.title ?? "Stüdyo").toLocaleUpperCase("tr");
+  document.title = `${S.film?.title ?? "Stüdyo"} · Stüdyo`;
+  $("#filmSel").innerHTML = S.films.map((f) => `<option value="${esc(f.id)}" ${f.id === F() ? "selected" : ""}>${esc(f.title)}</option>`).join("");
   const n = S.locks.problems.length;
-  $("#lockPill").innerHTML = n
-    ? `<span class="pill bad" title="${esc(S.locks.problems.join("\n"))}"><span class="dot"></span>Kilit sorunu: ${n}</span>`
-    : `<span class="pill ok"><span class="dot"></span>Kilitler sağlam</span>`;
+  $("#statusPills").innerHTML = `${S.claude.available ? `<span class="pill ok" title="Claude Code ${esc(S.claude.version)}"><span class="dot"></span>Claude bağlı</span>` : `<span class="pill bad" title="Bilgisayarında Claude Code bulunamadı"><span class="dot"></span>Claude yok</span>`}
+    ${n ? `<span class="pill bad" title="${esc(S.locks.problems.join("\n"))}"><span class="dot"></span>Kilit sorunu: ${n}</span>` : `<span class="pill ok"><span class="dot"></span>Kilitler sağlam</span>`}`;
 }
 
-function renderKey() {
-  const k = S.elevenlabs;
-  if (k.connected && !ui.editKey) {
-    $("#keyCard").innerHTML = `<div class="row between"><div class="row"><span class="pill ok"><span class="dot"></span>Bağlı</span><span class="muted small">API anahtarı ${esc(k.hint)}</span></div>
-      <div class="row"><button class="ghost" onclick="ui.editKey=true;renderKey()">Anahtarı değiştir</button><button class="ghost" onclick="removeKey()">Kaldır</button></div></div>`;
-  } else {
-    $("#keyCard").innerHTML = `<div class="row"><input id="keyIn" type="password" placeholder="ElevenLabs API anahtarı" style="flex:1;min-width:220px" autocomplete="off">
-      <button class="primary" onclick="saveKey()">Kaydet</button>${k.connected ? `<button class="ghost" onclick="ui.editKey=false;renderKey()">Vazgeç</button>` : ""}</div>
-      <div class="note">Anahtar yalnızca bu bilgisayardaki .env dosyasına yazılır, GitHub'a gönderilmez. ElevenLabs'te Profil → API Keys bölümünden alabilirsin.</div>`;
-  }
+function renderNewFilm() {
+  if (!ui.forms.newFilm) { $("#newFilm").innerHTML = ""; return; }
+  $("#newFilm").innerHTML = `<div class="form" style="margin-top:16px"><div class="row between"><b style="font-weight:500">Yeni film</b><button class="ghost" onclick="toggle('newFilm')">Kapat</button></div>
+    <label>Film kimliği (küçük harf, tire)</label><input id="nf-id" placeholder="kayip-sehir" style="width:260px">
+    <label>Film fikri</label><textarea id="nf-brief" placeholder="Tür, dünya, ana karakter, ton… Ne kadar ayrıntı verirsen Claude o kadar isabetli kurar. Aynı lumen stilinde üretilir."></textarea>
+    <div class="row" style="margin-top:12px"><button class="primary" ${!S.claude.available || running() ? "disabled" : ""} onclick="createFilm()">Claude ile oluştur</button>${!S.claude.available ? `<span class="note">Claude Code bulunamadı.</span>` : ""}</div></div>`;
 }
-async function saveKey() {
-  const v = $("#keyIn").value.trim();
-  if (!v) return toast("Önce anahtarı yapıştır");
-  await api("/api/key", { method: "POST", body: { key: v } });
-  ui.editKey = false; voices = null; voicesErr = ""; toast("Anahtar kaydedildi"); await refresh(); loadVoices();
-}
-async function removeKey() {
-  if (!confirm("ElevenLabs anahtarı bu bilgisayardan silinsin mi?")) return;
-  await api("/api/key", { method: "POST", body: { key: "" } }); voices = null; toast("Anahtar silindi"); refresh();
-}
-async function loadVoices() {
-  if (!S?.elevenlabs.connected) return;
-  voicesErr = "";
-  try { voices = (await api("/api/voices")).voices; } catch (e) { voicesErr = e.message; voices = null; }
-  renderChars();
+async function createFilm() {
+  const id = $("#nf-id").value.trim(), brief = $("#nf-brief").value.trim();
+  if (!/^[a-z0-9][a-z0-9-]{0,40}$/.test(id)) return toast("Kimlik küçük harf, rakam ve tire olmalı");
+  if (!brief) return toast("Film fikrini yaz");
+  try { await api("/api/job", { method: "POST", body: { cmd: "new-project", film: id, brief } }); ui.forms.newFilm = false; film = id; toast("Claude filmi kuruyor"); renderAll(); } catch (e) { toast(e.message); }
 }
 
+// ---------- sezonlar ve bölümler ----------
+const nextCode = (list, prefix) => { const nums = list.map((x) => Number(String(x).replace(/\D/g, "")) || 0); return prefix + String(Math.max(0, ...nums) + 1).padStart(prefix === "e" ? 2 : 1, "0"); };
+
+function renderSeasons() {
+  const ss = S.seasons;
+  const html = ss.map((s) => {
+    const fk = `ep-${s.id}`;
+    const dk = `doc-${s.id}`;
+    return `<div class="card" style="margin-bottom:16px">
+      <div class="row between"><div><div class="tiny muted">${esc(F())}</div><div class="name">${esc(s.id.toUpperCase())} · ${s.episodes.length} bölüm</div></div>
+        <div class="row">${s.hasDoc ? `<button class="ghost" onclick="toggleDoc('${dk}','${esc(F())}/seasons/${esc(s.id)}/season.md')">${ui.docs[dk] ? "Sezon tasarımını kapat" : "Sezon tasarımı"}</button>` : ""}<button onclick="toggle('${fk}')">+ Yeni bölüm</button></div></div>
+      ${ui.docs[dk] ? `<div class="doc">${esc(ui.docs[dk])}</div>` : ""}
+      ${ui.forms[fk] ? episodeForm(s) : ""}
+      <div style="margin-top:8px">${s.episodes.map((e) => episodeRow(e)).join("") || `<div class="note">Bu sezonda henüz bölüm yok.</div>`}</div></div>`;
+  }).join("");
+  const sk = "season";
+  $("#seasons").innerHTML = html + `<div class="row"><button onclick="toggle('${sk}')">+ Yeni sezon</button></div>${ui.forms[sk] ? seasonForm() : ""}`;
+}
+
+function episodeForm(s) {
+  const code = nextCode(s.episodes.map((e) => e.id), "e");
+  return `<div class="form"><b style="font-weight:500">Yeni bölüm · ${esc(s.id)}</b>
+    <label>Bölüm kodu</label><input id="ne-code-${s.id}" value="${esc(code)}" style="width:120px">
+    <label>Bölüm promptu</label><textarea id="ne-brief-${s.id}" style="min-height:180px" placeholder="Bölümde ne olacağını yaz ya da sana verilen bölüm promptunu yapıştır. Hazır bir scenes.json da yapıştırabilirsin; o zaman Claude'a gerek kalmadan doğrudan eklenir."></textarea>
+    <div class="row" style="margin-top:12px"><button class="primary" ${running() ? "disabled" : ""} onclick="createEpisode('${s.id}')">Bölümü oluştur</button><button class="ghost" onclick="toggle('ep-${s.id}')">Vazgeç</button></div>
+    <div class="note">Claude, sezon tasarımına ve önceki bölümlere bakarak senaryoyu, replikleri, efektleri ve müzikleri yazar; tempo kurallarına uyana kadar düzeltir. 15–20 dakikalık bir bölüm birkaç dakika sürebilir.</div></div>`;
+}
+function seasonForm() {
+  const code = nextCode(S.seasons.map((s) => s.id), "s");
+  return `<div class="form"><b style="font-weight:500">Yeni sezon</b>
+    <label>Sezon kodu</label><input id="ns-code" value="${esc(code)}" style="width:120px">
+    <label>Sezon fikri</label><textarea id="ns-brief" placeholder="Sezonun ana sorusu, bölüm sayısı ve süresi, öne çıkmasını istediğin karakterler…"></textarea>
+    <div class="row" style="margin-top:12px"><button class="primary" ${!S.claude.available || running() ? "disabled" : ""} onclick="createSeason()">Claude ile tasarla</button><button class="ghost" onclick="toggle('season')">Vazgeç</button></div></div>`;
+}
+async function createEpisode(season) {
+  const episode = $(`#ne-code-${season}`).value.trim(), brief = $(`#ne-brief-${season}`).value.trim();
+  if (!/^[a-z0-9][a-z0-9-]{0,40}$/.test(episode)) return toast("Bölüm kodu küçük harf, rakam ve tire olmalı (ör. e02)");
+  if (!brief) return toast("Bölüm promptunu yaz");
+  try { await api("/api/job", { method: "POST", body: { cmd: "new-episode", film: F(), season, episode, brief } }); ui.forms[`ep-${season}`] = false; toast("Bölüm hazırlanıyor"); renderAll(); } catch (e) { toast(e.message); }
+}
+async function createSeason() {
+  const season = $("#ns-code").value.trim(), brief = $("#ns-brief").value.trim();
+  if (!/^[a-z0-9][a-z0-9-]{0,40}$/.test(season)) return toast("Sezon kodu küçük harf ve rakam olmalı (ör. s2)");
+  if (!brief) return toast("Sezon fikrini yaz");
+  try { await api("/api/job", { method: "POST", body: { cmd: "new-season", film: F(), season, brief } }); ui.forms.season = false; toast("Sezon tasarlanıyor"); renderAll(); } catch (e) { toast(e.message); }
+}
+async function toggleDoc(key, path) {
+  if (ui.docs[key]) { delete ui.docs[key]; return renderAll(); }
+  try { ui.docs[key] = (await api(`/api/text?path=${encodeURIComponent(path)}`)).text; } catch (e) { toast(e.message); }
+  renderAll();
+}
+
+function episodeRow(e) {
+  const missing = e.speakers.filter((sp) => S.characters.find((c) => c.id === sp)?.voice?.status !== "locked");
+  const unknown = e.speakers.filter((sp) => !S.characters.some((c) => c.id === sp));
+  const approved = e.status === "approved";
+  const tab = ui.tab[e.ref] || (e.final ? "final" : "draft");
+  const vid = tab === "final" ? e.final : e.draft;
+  const t = e.tempo;
+  const dk = `script-${e.ref}`;
+  return `<div class="ep">
+    <div class="row between"><div><div class="tiny muted">${esc(e.ref)}</div><div class="ep-title">${e.number ? `${e.number}. ` : ""}${esc(e.title)}</div></div>
+      ${approved ? `<span class="pill ok"><span class="dot"></span>Onaylı</span>` : `<span class="pill">Taslak aşamasında</span>`}</div>
+    ${t ? `<div class="stats muted small"><span>${Math.floor(t.total_s / 60)} dk ${t.total_s % 60} sn</span><span>${t.scenes} sahne</span><span>${t.lines} replik</span><span>diyalog %${Math.round(t.dialogueRatio * 100)}</span>${t.ok ? `<span class="pill ok">Tempo uygun</span>` : `<span class="pill warm" title="${esc(t.warnings.join("\n"))}">Tempo: ${t.warnings.length} uyarı</span>`}</div>
+      ${!t.ok ? `<ul class="warnlist">${t.warnings.map((w) => `<li>${esc(w)}</li>`).join("")}</ul>` : ""}` : ""}
+    ${unknown.length ? `<div class="note">Henüz tasarlanmamış karakterler: ${unknown.map(esc).join(", ")}. Taslakta yer tutucu siluetle görünürler.</div>` : ""}
+    ${missing.length ? `<div class="note">Sesi kilitlenmemiş: ${missing.map((m) => esc(S.characters.find((c) => c.id === m)?.name ?? m)).join(", ")}. Bu replikler seslendirmesiz kalır.</div>` : ""}
+    <div class="row" style="margin-top:12px">
+      <button class="primary" ${running() ? "disabled" : ""} onclick="job({cmd:'draft',ref:'${e.ref}'})">${e.draft ? "Taslağı yeniden üret" : "Taslak üret"} · 480p</button>
+      <button ${running() || !e.draft || approved ? "disabled" : ""} onclick="approveEp('${e.ref}')">Onayla</button>
+      <button ${running() || !approved ? "disabled" : ""} onclick="job({cmd:'final',ref:'${e.ref}'})">4K render</button>
+      <button class="ghost" onclick="toggleDoc('${dk}','${esc(e.ref.split("/")[0])}/seasons/${esc(e.ref.split("/")[1])}/episodes/${esc(e.ref.split("/")[2])}/senaryo.md')">${ui.docs[dk] ? "Senaryoyu kapat" : "Senaryoyu oku"}</button>
+    </div>
+    ${ui.docs[dk] ? `<div class="doc">${esc(ui.docs[dk])}</div>` : ""}
+    ${e.draft && e.final ? `<div class="tabs"><button class="${tab === "draft" ? "on" : ""}" onclick="ui.tab['${e.ref}']='draft';renderAll()">Taslak 480p</button><button class="${tab === "final" ? "on" : ""}" onclick="ui.tab['${e.ref}']='final';renderAll()">Final 4K</button></div>` : ""}
+    ${vid ? `<video controls preload="metadata" src="${esc(vid.url)}?v=${vid.mtime}"></video><div class="tiny muted" style="margin-top:6px">${tab === "final" ? "4K final" : "480p taslak"} · ${new Date(vid.mtime).toLocaleString("tr-TR")}</div>` : ""}
+  </div>`;
+}
+async function job(body) { try { await api("/api/job", { method: "POST", body: { film: F(), ...body } }); toast("İşlem başladı"); renderAll(); } catch (e) { toast(e.message); } }
+function approveEp(ref) {
+  if (!confirm("Taslağı izledin ve beğendin mi?\n\nOnaylanan bölüm mühürlenir. Sonradan senaryoda değişiklik yapılırsa 4K için yeniden taslak ve onay gerekir.")) return;
+  job({ cmd: "approve", ref });
+}
+
+// ---------- karakterler ----------
 function voiceName(id) { return voices?.find((v) => v.voice_id === id)?.name ?? id; }
 function labels(v) { return Object.values(v.labels || {}).filter(Boolean).slice(0, 3).join(" · "); }
 
 function renderChars() {
-  $("#chars").innerHTML = S.characters.map((c) => {
+  const cards = S.characters.map((c) => {
     const sw = Object.entries(c.palette).filter(([k]) => !/shadow|dark|eyes|lips|fold|cuff|patch/.test(k)).slice(0, 9).map(([, v]) => `<i style="background:${esc(v)}"></i>`).join("");
     const locked = c.status === "locked";
     return `<div class="card">
-      <div class="char-head"><div class="swatches">${sw}</div>
-        <div style="flex:1;min-width:0"><div class="row between"><div class="char-name">${esc(c.name)}</div>
-          ${locked ? `<span class="pill ok"><span class="dot"></span>Kilitli · v${esc(c.version)}</span>` : `<span class="pill">Taslak</span>`}</div>
+      <div class="row" style="align-items:flex-start;gap:14px"><div class="swatches">${sw}</div>
+        <div style="flex:1;min-width:0"><div class="row between"><div class="name">${esc(c.name)}</div>
+          ${locked ? `<span class="pill ok"><span class="dot"></span>Kilitli · v${esc(c.version)}</span>` : `<span class="pill warm"><span class="dot"></span>Onay bekliyor</span>`}</div>
           <div class="muted small">${esc(c.role)}</div></div></div>
+      ${c.preview ? `<img class="thumb" src="${esc(c.preview)}" alt="${esc(c.name)} kartı" onclick="zoom(this.src)">` : ""}
       ${c.signature.length ? `<ul class="sig">${c.signature.slice(0, 3).map((s) => `<li>${esc(s)}</li>`).join("")}</ul>` : ""}
+      <div class="row" style="margin-top:12px">
+        <button class="ghost" ${running() ? "disabled" : ""} onclick="job({cmd:'preview',kind:'karakter',id:'${c.id}'})">${c.preview ? "Kartı yeniden çiz" : "Kartını çiz"}</button>
+        ${locked ? "" : `<button class="primary" onclick="approveItem('karakter','${c.id}','${esc(c.name)}')">Onayla ve kilitle</button>`}
+      </div>
       <div class="voice-box">${voiceSection(c)}</div></div>`;
   }).join("");
+  const nk = "newChar";
+  $("#chars").innerHTML = cards + `<div class="card"><div class="name">Yeni karakter</div><div class="note">Claude, filmin dünyasına ve var olan karakterlere bakarak tiplemeyi çizer. Kartını inceleyip onayladığında karakter kilitlenir.</div>
+    ${ui.forms[nk] ? `<div class="form"><label>Kimlik</label><input id="nc-id" placeholder="kerem" style="width:200px"><label>Tarif</label><textarea id="nc-brief" placeholder="Yaş, rol, kişilik, görünüş, ışık imzası… Ör: Kerem, 24, havalandırma tamircisi, Ada'nın çocukluk arkadaşı; esprili, alnında küçük el feneri, gri iş tulumu."></textarea>
+      <div class="row" style="margin-top:12px"><button class="primary" ${!S.claude.available || running() ? "disabled" : ""} onclick="createItem('new-character','nc')">Claude ile tasarla</button><button class="ghost" onclick="toggle('${nk}')">Vazgeç</button></div></div>`
+    : `<button style="margin-top:12px" onclick="toggle('${nk}')">+ Yeni karakter</button>`}</div>`;
   S.characters.forEach((c) => { const el = $(`#f-${c.id}`); if (el && ui.focus === c.id) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); } });
 }
 
@@ -191,166 +303,152 @@ function voiceSection(c) {
     return `<div class="row between"><div><div class="tiny muted">Ses</div><div>${esc(voiceName(c.voice.voice_id))}</div></div>
       <div class="row">${v?.preview_url ? `<button class="icon" title="Dinle" onclick="play('${esc(v.preview_url)}')">▶</button>` : ""}<span class="pill warm"><span class="dot"></span>Ses kilitli</span></div></div>`;
   }
-  if (!S.elevenlabs.connected) return `<div class="muted small">Ses seçmek için önce ElevenLabs anahtarını ekle.</div>`;
+  if (!S.elevenlabs.connected) return `<div class="muted small">Ses seçmek için Ayarlar'dan ElevenLabs anahtarını ekle.</div>`;
   if (voicesErr) return `<div class="err">${esc(voicesErr)}</div><button style="margin-top:8px" onclick="loadVoices()">Tekrar dene</button>`;
   if (!voices) return `<div class="muted small">Sesler yükleniyor…</div>`;
+  if (!ui.open[`v-${c.id}`]) return `<div class="row between"><div class="muted small">Ses seçilmedi</div><button onclick="ui.open['v-${c.id}']=true;renderAll()">Ses seç</button></div>`;
   const f = (ui.filter[c.id] || "").toLowerCase();
   const list = voices.filter((v) => !f || (v.name + " " + labels(v)).toLowerCase().includes(f));
   const pick = ui.picks[c.id];
-  return `<div class="row between"><div class="tiny muted">Ses seç · ${voices.length} ses</div></div>
-    <input id="f-${c.id}" placeholder="Ara: isim, cinsiyet, aksan" value="${esc(ui.filter[c.id] || "")}" oninput="ui.filter['${c.id}']=this.value;ui.focus='${c.id}';renderChars()" style="width:100%;margin-top:8px">
+  return `<div class="tiny muted">Ses seç · ${voices.length} ses</div>
+    <input id="f-${c.id}" placeholder="Ara: isim, cinsiyet, aksan" value="${esc(ui.filter[c.id] || "")}" oninput="ui.filter['${c.id}']=this.value;ui.focus='${c.id}';renderAll()" style="width:100%;margin-top:8px">
     <div class="vlist">${list.map((v) => `<div class="vrow ${pick === v.voice_id ? "sel" : ""}">
       ${v.preview_url ? `<button class="icon" title="Örneği dinle (ücretsiz)" onclick="play('${esc(v.preview_url)}')">▶</button>` : `<span style="width:34px"></span>`}
       <div class="nm"><b>${esc(v.name)}</b><span class="tiny muted">${esc(labels(v) || v.category || "")}</span></div>
-      <button onclick="ui.picks['${c.id}']='${esc(v.voice_id)}';ui.preview['${c.id}']=null;ui.err['${c.id}']='';renderChars()">${pick === v.voice_id ? "Seçildi" : "Seç"}</button></div>`).join("") || `<div class="vrow muted small">Eşleşen ses yok</div>`}</div>
-    ${pick ? `<div class="chosen"><div class="row between"><div><div class="tiny muted">Seçilen</div><div>${esc(voiceName(pick))}</div></div></div>
+      <button onclick="ui.picks['${c.id}']='${esc(v.voice_id)}';ui.preview['${c.id}']=null;ui.err['${c.id}']='';renderAll()">${pick === v.voice_id ? "Seçildi" : "Seç"}</button></div>`).join("") || `<div class="vrow muted small">Eşleşen ses yok</div>`}</div>
+    ${pick ? `<div class="chosen"><div class="tiny muted">Seçilen</div><div>${esc(voiceName(pick))}</div>
       <div class="row" style="margin-top:10px"><button ${ui.busy[c.id] ? "disabled" : ""} onclick="tryVoice('${c.id}')">${ui.busy[c.id] ? "Hazırlanıyor…" : "Kendi repliğiyle dene"}</button>
       <button class="primary" onclick="lockVoice('${c.id}')">Bu sesi kilitle</button></div>
-      <div class="note">Deneme, karakterin kendi repliğini bu sesle okutur ve az miktarda ElevenLabs kredisi kullanır. ▶ ile dinlemek ücretsizdir.</div>
+      <div class="note">Deneme, karakterin senaryodaki bir cümlesini bu sesle okutur ve az miktarda kredi kullanır. ▶ ile dinlemek ücretsizdir.</div>
       ${ui.preview[c.id] ? `<audio controls autoplay src="${esc(ui.preview[c.id])}"></audio>` : ""}
       ${ui.err[c.id] ? `<div class="err">${esc(ui.err[c.id])}</div>` : ""}</div>` : ""}`;
 }
-
-function play(url) { audioEl.pause(); audioEl = new Audio(url); audioEl.play().catch(() => toast("Ses çalınamadı")); }
+async function loadVoices() {
+  if (!S?.elevenlabs.connected) return;
+  voicesErr = "";
+  try { voices = (await api("/api/voices")).voices; } catch (e) { voicesErr = e.message; voices = null; }
+  renderAll();
+}
 async function tryVoice(id) {
-  ui.busy[id] = true; ui.err[id] = ""; renderChars();
-  try { ui.preview[id] = (await api("/api/voice/preview", { method: "POST", body: { character: id, voiceId: ui.picks[id] } })).url; }
-  catch (e) { ui.err[id] = e.message; }
-  ui.busy[id] = false; renderChars();
+  ui.busy[id] = true; ui.err[id] = ""; renderAll();
+  try { ui.preview[id] = (await api("/api/voice/preview", { method: "POST", body: { film: F(), character: id, voiceId: ui.picks[id] } })).url; } catch (e) { ui.err[id] = e.message; }
+  ui.busy[id] = false; renderAll();
 }
 async function lockVoice(id) {
   const c = S.characters.find((x) => x.id === id);
   if (!confirm(`"${voiceName(ui.picks[id])}" sesi ${c.name} için kilitlensin mi?\n\nKilitlenen ses bütün bölümlerde kullanılır ve buradan değiştirilemez.`)) return;
-  try { await api("/api/voice/lock", { method: "POST", body: { character: id, voiceId: ui.picks[id] } }); delete ui.picks[id]; toast(`${c.name} sesi kilitlendi`); refresh(); }
-  catch (e) { ui.err[id] = e.message; renderChars(); }
+  try { await api("/api/voice/lock", { method: "POST", body: { film: F(), character: id, voiceId: ui.picks[id] } }); delete ui.picks[id]; toast(`${c.name} sesi kilitlendi`); renderAll(); } catch (e) { ui.err[id] = e.message; renderAll(); }
+}
+async function approveItem(kind, id, name) {
+  if (!confirm(`${name} onaylanıp kilitlensin mi?\n\nKilitlenen ${kind === "karakter" ? "karakter" : "mekân"} bütün bölümlerde aynı kalır; değişiklik ancak yeni sürüm olarak yapılabilir.`)) return;
+  try { await api("/api/approve-item", { method: "POST", body: { film: F(), kind, id } }); toast(`${name} kilitlendi`); renderAll(); } catch (e) { toast(e.message); }
+}
+async function createItem(cmd, prefix) {
+  const id = $(`#${prefix}-id`).value.trim(), brief = $(`#${prefix}-brief`).value.trim();
+  if (!/^[a-z0-9][a-z0-9-]{0,40}$/.test(id)) return toast("Kimlik küçük harf, rakam ve tire olmalı");
+  if (!brief) return toast("Tarifi yaz");
+  try { await api("/api/job", { method: "POST", body: { cmd, film: F(), id, brief } }); ui.forms[prefix === "nc" ? "newChar" : "newPlace"] = false; toast("Claude tasarlıyor"); renderAll(); } catch (e) { toast(e.message); }
 }
 
+// ---------- mekânlar ----------
+function renderPlaces() {
+  const cards = S.locations.map((l) => {
+    const locked = l.status === "locked";
+    return `<div class="card"><div class="row between"><div class="name">${esc(l.name)}</div>${locked ? `<span class="pill ok"><span class="dot"></span>Kilitli · v${esc(l.version)}</span>` : `<span class="pill warm"><span class="dot"></span>Onay bekliyor</span>`}</div>
+      <div class="muted small">${esc(l.description)}</div>
+      ${l.preview ? `<img class="thumb" src="${esc(l.preview)}" alt="${esc(l.name)}" onclick="zoom(this.src)">` : ""}
+      <div class="row" style="margin-top:12px"><button class="ghost" ${running() ? "disabled" : ""} onclick="job({cmd:'preview',kind:'mekan',id:'${l.id}'})">${l.preview ? "Önizlemeyi yenile" : "Önizleme çiz"}</button>
+      ${locked ? "" : `<button class="primary" onclick="approveItem('mekan','${l.id}','${esc(l.name)}')">Onayla ve kilitle</button>`}</div></div>`;
+  }).join("");
+  const nk = "newPlace";
+  $("#places").innerHTML = cards + `<div class="card"><div class="name">Yeni mekân</div><div class="note">Claude mekânı lumen stilinde çizer; önizlemesini inceleyip onayladığında kilitlenir.</div>
+    ${ui.forms[nk] ? `<div class="form"><label>Kimlik</label><input id="np-id" placeholder="divan-salonu" style="width:200px"><label>Tarif</label><textarea id="np-brief" placeholder="Nerede, neye benziyor, ışık kaynağı ne, sahnelerde hangi noktalar önemli…"></textarea>
+      <div class="row" style="margin-top:12px"><button class="primary" ${!S.claude.available || running() ? "disabled" : ""} onclick="createItem('new-location','np')">Claude ile tasarla</button><button class="ghost" onclick="toggle('${nk}')">Vazgeç</button></div></div>`
+    : `<button style="margin-top:12px" onclick="toggle('${nk}')">+ Yeni mekân</button>`}</div>`;
+}
+
+// ---------- efekt ve müzik ----------
 const STATUS = {
   missing: `<span class="pill">Eksik</span>`,
   auto: `<span class="pill cold"><span class="dot"></span>Otomatik seçildi</span>`,
   chosen: `<span class="pill warm"><span class="dot"></span>Seçildi</span>`,
   locked: `<span class="pill ok"><span class="dot"></span>Kilitli</span>`,
 };
-ui.open = {}; ui.sbusy = {}; ui.serr = {};
-
 function renderSounds() {
   const all = [...S.sounds.sfx, ...S.sounds.music];
   const missing = all.filter((x) => x.status === "missing").length;
-  const running = S.job?.status === "running";
-  const head = `<div class="card" style="margin-bottom:12px"><div class="snd-head">
-      <div><div>${all.length - missing} / ${all.length} ses hazır</div>
-      <div class="note" style="margin-top:2px">Her sesin sahneye uygun bir açıklaması var. Seçmediğin sesleri sistem taslak üretirken kendisi üretip uygular; istersen şimdi de üretebilirsin.</div></div>
-      <button class="primary" ${!S.elevenlabs.connected || running || !missing ? "disabled" : ""} onclick="job('sounds')">Eksikleri otomatik üret${missing ? ` (${missing})` : ""}</button></div>
-      ${!S.elevenlabs.connected ? `<div class="note">Ses üretmek için önce ElevenLabs anahtarını ekle.</div>` : ""}</div>`;
-  const group = (title, kind, list) => `<h3>${title}</h3><div class="slist">${list.map((x) => soundRow(kind, x)).join("")}</div>`;
+  const head = `<div class="card" style="margin-bottom:12px"><div class="row between">
+      <div><div>${all.length - missing} / ${all.length} ses hazır</div><div class="note" style="margin-top:2px">Her sesin sahneye uygun bir açıklaması var. Seçmediğin sesler taslak üretilirken otomatik üretilip uygulanır.</div></div>
+      <button class="primary" ${!S.elevenlabs.connected || running() || !missing ? "disabled" : ""} onclick="job({cmd:'sounds'})">Eksikleri otomatik üret${missing ? ` (${missing})` : ""}</button></div>
+      ${!S.elevenlabs.connected ? `<div class="note">Ses üretmek için Ayarlar'dan ElevenLabs anahtarını ekle.</div>` : ""}</div>`;
+  const group = (title, kind, list) => (list.length ? `<h3>${title}</h3><div class="slist">${list.map((x) => soundRow(kind, x)).join("")}</div>` : "");
   $("#sounds").innerHTML = head + group("Efektler", "sfx", S.sounds.sfx) + group("Müzik", "music", S.sounds.music);
 }
-
 function soundRow(kind, x) {
-  const k = `${kind}:${x.id}`;
-  const open = ui.open[k];
-  const locked = x.status === "locked";
-  const busy = ui.sbusy[k];
+  const k = `${kind}:${x.id}`, open = ui.open[k], locked = x.status === "locked", busy = ui.sbusy[k];
   return `<div class="srow"><div class="srow-top">
       ${x.current ? `<button class="icon" title="Şu anki sesi dinle" onclick="play('${esc(x.current)}')">▶</button>` : `<span style="width:34px;flex-shrink:0"></span>`}
       <div class="nm"><b>${esc(x.label)}</b> <span class="tiny muted">${esc(x.id)} · ${x.duration_seconds ?? "?"} sn${x.loop ? " · döngü" : ""}${x.episodes.length ? " · " + x.episodes.map(esc).join(", ") : ""}</span></div>
-      ${x.guessed ? `<span class="pill bad" title="Bu ses için açıklama yazılmamış; id'den tahmin edildi">Açıklama tahmini</span>` : ""}
-      ${STATUS[x.status] ?? ""}
-      <button class="ghost" onclick="ui.open['${k}']=!ui.open['${k}'];renderSounds()">${open ? "Kapat" : locked ? "Detay" : "Düzenle"}</button></div>
-    ${open ? `<div class="sedit">
-      <div class="tiny muted" style="margin-bottom:6px">ElevenLabs'e gönderilen açıklama (İngilizce en iyi sonucu verir)</div>
-      <textarea id="p-${k}" ${locked ? "disabled" : ""}>${esc(x.prompt)}</textarea>
-      <div class="row" style="margin-top:8px">
-        <label class="chk">Süre <input id="d-${k}" type="number" min="0.5" max="${kind === "music" ? 600 : 30}" step="0.5" value="${x.duration_seconds ?? 4}" style="width:80px" ${locked ? "disabled" : ""}> sn</label>
-        <label class="chk"><input id="l-${k}" type="checkbox" ${x.loop ? "checked" : ""} ${locked ? "disabled" : ""}> Döngü</label>
-        ${locked ? "" : `<button onclick="savePrompt('${kind}','${x.id}')">Açıklamayı kaydet</button>`}
-      </div>
-      ${locked ? `<div class="note">Bu ses kilitli; bütün bölümlerde aynı dosya kullanılır.</div>` : `
-      <div class="row" style="margin-top:12px">
-        <button ${busy || !S.elevenlabs.connected ? "disabled" : ""} onclick="variants('${kind}','${x.id}')">${busy ? "Üretiliyor…" : (kind === "music" ? "2" : "3") + " seçenek üret"}</button>
-        <button class="primary" ${!x.current ? "disabled" : ""} onclick="lockSound('${kind}','${x.id}')">Şu ankini kilitle</button>
-      </div>
-      <div class="note">Seçenek üretmek ElevenLabs kredisi kullanır${kind === "music" ? "; müzik, efektten daha fazla kredi harcar. ElevenLabs ücretsiz planında müzik API kapalı olduğu için müzik, efekt modeliyle 30 sn'lik döngü olarak üretilir" : ""}. Önce açıklamayı kaydetmeyi unutma.</div>
+      ${x.guessed ? `<span class="pill bad" title="Açıklama id'den tahmin edildi">Açıklama tahmini</span>` : ""}${STATUS[x.status] ?? ""}
+      <button class="ghost" onclick="ui.open['${k}']=!ui.open['${k}'];renderAll()">${open ? "Kapat" : locked ? "Detay" : "Düzenle"}</button></div>
+    ${open ? `<div class="sedit"><div class="tiny muted" style="margin-bottom:6px">ElevenLabs'e gönderilen açıklama (İngilizce en iyi sonucu verir)</div>
+      <textarea id="p-${k}" style="min-height:64px" ${locked ? "disabled" : ""}>${esc(x.prompt)}</textarea>
+      <div class="row" style="margin-top:8px"><label class="chk">Süre <input id="d-${k}" type="number" min="0.5" max="${kind === "music" ? 600 : 30}" step="0.5" value="${x.duration_seconds ?? 4}" style="width:80px" ${locked ? "disabled" : ""}> sn</label>
+        <label class="chk"><input id="l-${k}" type="checkbox" ${x.loop ? "checked" : ""} ${locked ? "disabled" : ""}> Döngü</label>${locked ? "" : `<button onclick="savePrompt('${kind}','${x.id}')">Açıklamayı kaydet</button>`}</div>
+      ${locked ? `<div class="note">Bu ses kilitli.</div>` : `<div class="row" style="margin-top:12px"><button ${busy || !S.elevenlabs.connected ? "disabled" : ""} onclick="variants('${kind}','${x.id}')">${busy ? "Üretiliyor…" : (kind === "music" ? "2" : "3") + " seçenek üret"}</button>
+        <button class="primary" ${!x.current ? "disabled" : ""} onclick="lockSnd('${kind}','${x.id}')">Şu ankini kilitle</button></div>
+      <div class="note">Seçenek üretmek ElevenLabs kredisi kullanır${kind === "music" ? "; ücretsiz planda müzik, efekt modeliyle 30 sn'lik döngü olarak üretilir" : ""}.</div>
       ${x.variants.map((v, i) => `<div class="var"><button class="icon" onclick="play('${esc(v.url)}')">▶</button><span style="flex:1">Seçenek ${i + 1}</span><button onclick="choose('${kind}','${x.id}','${esc(v.file)}')">Bunu kullan</button></div>`).join("")}`}
-      ${ui.serr[k] ? `<div class="err">${esc(ui.serr[k])}</div>` : ""}
-    </div>` : ""}</div>`;
+      ${ui.serr[k] ? `<div class="err">${esc(ui.serr[k])}</div>` : ""}</div>` : ""}</div>`;
 }
-
 async function soundCall(kind, id, action, extra = {}) {
-  const k = `${kind}:${id}`;
-  ui.serr[k] = "";
-  try { const r = await api(`/api/sound/${action}`, { method: "POST", body: { kind, id, ...extra } }); S.sounds = r.sounds; last.sounds = null; }
-  catch (e) { ui.serr[k] = e.message; }
-  renderSounds();
+  const k = `${kind}:${id}`; ui.serr[k] = "";
+  try { const r = await api(`/api/sound/${action}`, { method: "POST", body: { film: F(), kind, id, ...extra } }); S.sounds = r.sounds; } catch (e) { ui.serr[k] = e.message; }
+  renderAll();
 }
-function savePrompt(kind, id) {
-  const k = `${kind}:${id}`;
-  soundCall(kind, id, "prompt", { prompt: document.getElementById(`p-${k}`).value, duration_seconds: Number(document.getElementById(`d-${k}`).value), loop: document.getElementById(`l-${k}`).checked }).then(() => toast("Açıklama kaydedildi"));
-}
-async function variants(kind, id) {
-  const k = `${kind}:${id}`;
-  ui.sbusy[k] = true; renderSounds();
-  await soundCall(kind, id, "variants");
-  ui.sbusy[k] = false; renderSounds();
-}
+function savePrompt(kind, id) { const k = `${kind}:${id}`; soundCall(kind, id, "prompt", { prompt: document.getElementById(`p-${k}`).value, duration_seconds: Number(document.getElementById(`d-${k}`).value), loop: document.getElementById(`l-${k}`).checked }).then(() => toast("Açıklama kaydedildi")); }
+async function variants(kind, id) { const k = `${kind}:${id}`; ui.sbusy[k] = true; renderAll(); await soundCall(kind, id, "variants"); ui.sbusy[k] = false; renderAll(); }
 function choose(kind, id, file) { soundCall(kind, id, "choose", { file }).then(() => toast("Ses uygulandı")); }
-function lockSound(kind, id) {
-  if (!confirm("Bu ses kilitlensin mi? Kilitli ses bütün bölümlerde aynı kalır ve değiştirilemez.")) return;
-  soundCall(kind, id, "lock").then(() => toast("Ses kilitlendi"));
-}
+function lockSnd(kind, id) { if (!confirm("Bu ses kilitlensin mi? Kilitli ses bütün bölümlerde aynı kalır.")) return; soundCall(kind, id, "lock").then(() => toast("Ses kilitlendi")); }
 
-function renderEps() {
-  const running = S.job?.status === "running";
-  $("#eps").innerHTML = S.episodes.map((e) => {
-    const missing = e.speakers.filter((sp) => S.characters.find((c) => c.id === sp)?.voice?.status !== "locked");
-    const approved = e.status === "approved";
-    const tab = ui.tab[e.id] || (e.final ? "final" : "draft");
-    const vid = tab === "final" ? e.final : e.draft;
-    return `<div class="card" style="grid-column:1/-1">
-      <div class="row between"><div><div class="tiny muted">${esc(e.id)}</div><div class="ep-title">${esc(e.title)}</div></div>
-        ${approved ? `<span class="pill ok"><span class="dot"></span>Onaylı</span>` : `<span class="pill">Taslak aşamasında</span>`}</div>
-      <div class="stats muted small"><span>${e.scenes} sahne</span><span>${e.lines} replik</span></div>
-      ${missing.length ? `<div class="note">Sesi kilitlenmemiş karakterler: ${missing.map((m) => esc(S.characters.find((c) => c.id === m)?.name ?? m)).join(", ")}. Taslak yine üretilir ama seslendirmesiz olur.</div>` : `<div class="note">Bütün karakterlerin sesleri hazır.</div>`}
-      <div class="row" style="margin-top:14px">
-        <button class="primary" ${running ? "disabled" : ""} onclick="job('draft','${e.id}')">${e.draft ? "Taslağı yeniden üret" : "Taslak üret"} · 480p</button>
-        <button ${running || !e.draft || approved ? "disabled" : ""} onclick="approve('${e.id}')">Onayla</button>
-        <button ${running || !approved ? "disabled" : ""} onclick="job('final','${e.id}')">4K render</button>
-      </div>
-      ${e.draft && e.final ? `<div class="tabs"><button class="${tab === "draft" ? "on" : ""}" onclick="ui.tab['${e.id}']='draft';renderEps()">Taslak 480p</button><button class="${tab === "final" ? "on" : ""}" onclick="ui.tab['${e.id}']='final';renderEps()">Final 4K</button></div>` : ""}
-      ${vid ? `<video controls preload="metadata" src="${esc(vid.url)}?v=${vid.mtime}"></video><div class="tiny muted" style="margin-top:6px">${tab === "final" ? "4K final" : "480p taslak"} · ${new Date(vid.mtime).toLocaleString("tr-TR")}</div>` : `<div class="note">Henüz video yok. "Taslak üret" ile başla.</div>`}
-    </div>`;
-  }).join("");
+// ---------- ayarlar ----------
+function renderKey() {
+  const k = S.elevenlabs;
+  const claude = `<div class="row between" style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--b)"><div><b style="font-weight:500">Claude Code</b><div class="note" style="margin-top:2px">${S.claude.available ? `Bağlı (${esc(S.claude.version)}). Yeni film, sezon, bölüm, karakter ve mekânlar bilgisayarındaki Claude Code ile, mevcut aboneliğinle üretilir.` : `Bulunamadı. Claude Code'u kurup terminalde bir kez "claude" yazarak giriş yap, sonra paneli yeniden başlat.`}</div></div>${S.claude.available ? `<span class="pill ok"><span class="dot"></span>Bağlı</span>` : `<span class="pill bad"><span class="dot"></span>Yok</span>`}</div>`;
+  if (k.connected && !ui.editKey) {
+    $("#keyCard").innerHTML = claude + `<div class="row between"><div class="row"><b style="font-weight:500">ElevenLabs</b><span class="pill ok"><span class="dot"></span>Bağlı</span><span class="muted small">${esc(k.hint)}</span></div>
+      <div class="row"><button class="ghost" onclick="ui.editKey=true;renderAll()">Anahtarı değiştir</button><button class="ghost" onclick="removeKey()">Kaldır</button></div></div>`;
+  } else {
+    $("#keyCard").innerHTML = claude + `<b style="font-weight:500">ElevenLabs</b><div class="row" style="margin-top:8px"><input id="keyIn" type="password" placeholder="ElevenLabs API anahtarı" style="flex:1;min-width:220px" autocomplete="off">
+      <button class="primary" onclick="saveKey()">Kaydet</button>${k.connected ? `<button class="ghost" onclick="ui.editKey=false;renderAll()">Vazgeç</button>` : ""}</div>
+      <div class="note">Anahtar yalnızca bu bilgisayardaki .env dosyasına yazılır, GitHub'a gönderilmez.</div>`;
+  }
 }
-async function job(cmd, episode) {
-  try { await api("/api/job", { method: "POST", body: { cmd, episode } }); toast("İşlem başladı"); refresh(); }
-  catch (e) { toast(e.message); }
-}
-async function approve(ep) {
-  if (!confirm("Taslağı izledin ve beğendin mi?\n\nOnaylanan bölüm mühürlenir. Sonradan senaryoda değişiklik yapılırsa 4K için yeniden taslak ve onay gerekir.")) return;
-  job("approve", ep);
-}
+async function saveKey() { const v = $("#keyIn").value.trim(); if (!v) return toast("Önce anahtarı yapıştır"); await api("/api/key", { method: "POST", body: { key: v } }); ui.editKey = false; voices = null; toast("Anahtar kaydedildi"); await refresh(); loadVoices(); }
+async function removeKey() { if (!confirm("ElevenLabs anahtarı bu bilgisayardan silinsin mi?")) return; await api("/api/key", { method: "POST", body: { key: "" } }); voices = null; toast("Anahtar silindi"); renderAll(); }
 
+// ---------- işlem kaydı ----------
+let prevJob = null;
 function renderJob() {
   const j = S.job;
   if (!j) { $("#jobWrap").innerHTML = ""; return; }
+  if (prevJob === "running" && j.status !== "running") { renderAll(); if (j.status === "succeeded") toast(`${j.label} tamamlandı`); }
+  prevJob = j.status;
   const pctLine = [...j.log].reverse().find((l) => /render %\d+/.test(l));
   const pct = pctLine ? Number(pctLine.match(/%(\d+)/)[1]) : j.status === "succeeded" ? 100 : 0;
   const secs = Math.round(((j.endedAt || Date.now()) - j.startedAt) / 1000);
-  const st = j.status === "running" ? `<span class="pill warm"><span class="dot"></span>Sürüyor · ${Math.floor(secs / 60)} dk ${secs % 60} sn</span>`
-    : j.status === "succeeded" ? `<span class="pill ok"><span class="dot"></span>Tamamlandı</span>` : `<span class="pill bad"><span class="dot"></span>Hata</span>`;
+  const st = j.status === "running" ? `<span class="pill warm"><span class="dot"></span>Sürüyor · ${Math.floor(secs / 60)} dk ${secs % 60} sn</span>` : j.status === "succeeded" ? `<span class="pill ok"><span class="dot"></span>Tamamlandı</span>` : `<span class="pill bad"><span class="dot"></span>Hata</span>`;
   const keepBottom = (() => { const l = $("#log"); return !l || l.scrollTop + l.clientHeight >= l.scrollHeight - 20; })();
-  $("#jobWrap").innerHTML = `<h2>Son işlem</h2><div class="card"><div class="row between"><div><b style="font-weight:500">${esc(j.label)}</b>${j.episode ? ` <span class="muted">· ${esc(j.episode)}</span>` : ""}</div>${st}</div>
-    ${j.cmd === "draft" || j.cmd === "final" ? `<div class="bar"><i style="width:${pct}%"></i></div>` : ""}
+  const hidden = ui.jobHidden && j.status !== "running";
+  $("#jobWrap").innerHTML = hidden ? "" : `<div class="card" style="margin-top:16px"><div class="row between"><div><b style="font-weight:500">${esc(j.label)}</b>${j.target ? ` <span class="muted">· ${esc(j.target)}</span>` : ""}</div><div class="row">${st}${j.status !== "running" ? `<button class="ghost" onclick="ui.jobHidden=true;renderJob()">Gizle</button>` : ""}</div></div>
+    ${j.kind === "draft" || j.kind === "final" ? `<div class="bar"><i style="width:${pct}%"></i></div>` : ""}
     <pre class="log" id="log">${esc(j.log.join("\n"))}</pre></div>`;
-  if (keepBottom) { const l = $("#log"); l.scrollTop = l.scrollHeight; }
+  if (j.status === "running") ui.jobHidden = false;
+  if (keepBottom) { const l = $("#log"); if (l) l.scrollTop = l.scrollHeight; }
 }
 
 let timer;
-async function loop() {
-  await refresh();
-  clearTimeout(timer);
-  timer = setTimeout(loop, S?.job?.status === "running" ? 1500 : 8000);
-}
+async function loop() { await refresh(); clearTimeout(timer); timer = setTimeout(loop, running() ? 1500 : 6000); }
 loop().then(loadVoices);
 </script>
 </body>

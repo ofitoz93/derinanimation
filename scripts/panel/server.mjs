@@ -1,78 +1,117 @@
-// Derin üretim paneli. Yalnızca bu bilgisayardan erişilir (127.0.0.1).
+// Stüdyo paneli. Yalnızca bu bilgisayardan erişilir (127.0.0.1).
 //
 //   npm run panel   → http://localhost:4317 adresini açar
 import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
 import { spawn, exec } from "node:child_process";
-import { latestRender, loadEnv, p, readJson, UserError } from "../lib.mjs";
+import { SLUG, allEpisodes, latestRender, listProjects, listSeasons, loadEnv, p, projectDir, publicDir, readJson, UserError } from "../lib.mjs";
 import { lockProblems } from "../locks.mjs";
 import { listVoices, lock as lockVoice, preview as previewVoice } from "../voices.mjs";
 import { chooseVariant, lockSound, makeVariants, setPrompt, soundsState } from "../sounds.mjs";
+import { tempoReport } from "../tempo.mjs";
+import { approve as approveItem, claudeStatus } from "../studio.mjs";
+import { migrate } from "../migrate.mjs";
+import { writeManifest } from "../manifest.mjs";
 
 loadEnv();
+migrate();
+writeManifest({ quiet: true });
 const PORT = Number(process.env.DERIN_PANEL_PORT || 4317);
 const HOST = "127.0.0.1";
+const CLAUDE = claudeStatus();
 
 // ---------- durum ----------
 
-function characters() {
-  const reg = readJson(p("characters", "registry.json"));
-  return reg.characters.map((c) => {
-    const specPath = c.path ? p(c.path, "character.json") : null;
+const mtime = (f) => (fs.existsSync(f) ? fs.statSync(f).mtimeMs : null);
+const previewOf = (film, kind, id) => {
+  const f = publicDir(film, "previews", `${kind}-${id}.png`);
+  return fs.existsSync(f) ? `/files/projects/${film}/previews/${kind}-${id}.png?v=${mtime(f)}` : null;
+};
+
+function characters(film) {
+  const regFile = projectDir(film, "characters", "registry.json");
+  if (!fs.existsSync(regFile)) return [];
+  return readJson(regFile).characters.map((c) => {
+    const specPath = c.path ? projectDir(film, c.path, "character.json") : null;
     const spec = specPath && fs.existsSync(specPath) ? readJson(specPath) : {};
     return {
       id: c.id,
       name: spec.name ?? c.id,
-      role: spec.profile?.role ?? c.role ?? "",
-      summary: spec.profile?.summary ?? "",
+      role: spec.profile?.role ?? "",
       version: c.version ?? null,
       status: c.status,
       palette: spec.palette ?? {},
       signature: spec.signature ?? [],
       voice: c.voice ?? null,
+      preview: previewOf(film, "karakter", c.id),
     };
   });
 }
 
-function episodes() {
-  const dir = p("episodes");
-  return fs
-    .readdirSync(dir)
-    .filter((d) => fs.existsSync(path.join(dir, d, "scenes.json")))
-    .map((d) => {
-      const s = readJson(path.join(dir, d, "scenes.json"));
-      const draft = latestRender(d, "draft");
-      const final = latestRender(d, "final");
-      const lines = s.scenes.reduce((n, sc) => n + (sc.lines?.length ?? 0), 0);
-      return {
-        id: d,
-        title: s.title,
-        status: s.status,
-        approved_at: s.approved_at ?? null,
-        scenes: s.scenes.length,
-        lines,
-        speakers: [...new Set(s.scenes.flatMap((sc) => (sc.lines ?? []).map((l) => l.speaker)))],
-        draft: draft ? { url: `/files/out/${encodeURIComponent(draft.file)}`, mtime: draft.mtime, file: draft.file } : null,
-        final: final ? { url: `/files/out/${encodeURIComponent(final.file)}`, mtime: final.mtime, file: final.file } : null,
-      };
-    });
+function locations(film) {
+  const regFile = projectDir(film, "locations", "registry.json");
+  if (!fs.existsSync(regFile)) return [];
+  return readJson(regFile).locations.map((l) => {
+    const specPath = l.path ? projectDir(film, l.path, "location.json") : null;
+    const spec = specPath && fs.existsSync(specPath) ? readJson(specPath) : {};
+    return { id: l.id, name: spec.name ?? l.id, description: spec.description ?? "", version: l.version ?? null, status: l.status, preview: previewOf(film, "mekan", l.id) };
+  });
 }
 
-function state() {
+function seasons(film) {
+  const eps = allEpisodes().filter((e) => e.project === film);
+  return listSeasons(film).map((s) => ({
+    id: s,
+    hasDoc: fs.existsSync(projectDir(film, "seasons", s, "season.md")),
+    episodes: eps
+      .filter((e) => e.season === s)
+      .map((e) => {
+        const d = readJson(e.scenes);
+        const draft = latestRender(e.compId, "draft");
+        const final = latestRender(e.compId, "final");
+        let tempo = null;
+        try {
+          tempo = tempoReport(e.ref);
+        } catch {}
+        return {
+          id: e.episode,
+          ref: e.ref,
+          title: d.title,
+          number: d.number ?? null,
+          status: d.status,
+          speakers: [...new Set(d.scenes.flatMap((sc) => (sc.lines ?? []).map((l) => l.speaker)))],
+          tempo,
+          draft: draft ? { url: `/files/out/${encodeURIComponent(draft.file)}`, mtime: draft.mtime } : null,
+          final: final ? { url: `/files/out/${encodeURIComponent(final.file)}`, mtime: final.mtime } : null,
+        };
+      }),
+  }));
+}
+
+function state(film) {
+  const films = listProjects().map((id) => {
+    const pj = readJson(projectDir(id, "project.json"));
+    return { id, title: pj.title ?? id, kind: pj.kind ?? "", logline: pj.logline ?? "" };
+  });
+  const current = films.find((f) => f.id === film) ?? films[0] ?? null;
   const key = process.env.ELEVENLABS_API_KEY || "";
-  let locks;
+  let problems;
   try {
-    locks = { problems: lockProblems() };
+    problems = current ? lockProblems(current.id) : [];
   } catch (e) {
-    locks = { problems: [String(e.message ?? e)] };
+    problems = [String(e.message ?? e)];
   }
   return {
+    films,
+    film: current,
+    claude: CLAUDE,
     elevenlabs: { connected: !!key, hint: key ? `••••${key.slice(-4)}` : null },
-    characters: characters(),
-    episodes: episodes(),
-    sounds: soundsState(),
-    locks,
+    characters: current ? characters(current.id) : [],
+    locations: current ? locations(current.id) : [],
+    seasons: current ? seasons(current.id) : [],
+    sounds: current ? soundsState(current.id) : { sfx: [], music: [] },
+    locks: { problems },
     job: publicJob(),
   };
 }
@@ -89,29 +128,18 @@ function saveKey(value) {
   else delete process.env.ELEVENLABS_API_KEY;
 }
 
-// ---------- uzun işler (taslak, onay, final) ----------
-
-const JOBS = {
-  draft: (ep) => ["scripts/produce.mjs", "draft", ep],
-  approve: (ep) => ["scripts/produce.mjs", "approve", ep],
-  final: (ep) => ["scripts/produce.mjs", "final", ep],
-  check: () => ["scripts/locks.mjs", "check"],
-  sounds: () => ["scripts/sounds.mjs", "autofill"],
-};
-const LABELS = { draft: "480p taslak", approve: "Onay", final: "4K final", check: "Kilit kontrolü", sounds: "Eksik efekt ve müzikleri üretme" };
+// ---------- uzun işler ----------
 
 let job = null;
 
 function publicJob() {
   if (!job) return null;
-  return { cmd: job.cmd, label: job.label, episode: job.episode, status: job.status, startedAt: job.startedAt, endedAt: job.endedAt, log: job.log.slice(-300) };
+  return { label: job.label, target: job.target, status: job.status, startedAt: job.startedAt, endedAt: job.endedAt, log: job.log.slice(-400), kind: job.kind };
 }
 
-function startJob(cmd, episode) {
-  if (!JOBS[cmd]) throw new UserError("Bilinmeyen işlem");
-  if (job?.status === "running") throw new UserError(`Şu an "${job.label}" işlemi sürüyor. Bitmesini bekle.`);
-  const args = JOBS[cmd](episode);
-  job = { cmd, label: LABELS[cmd], episode, status: "running", startedAt: Date.now(), endedAt: null, log: [] };
+function startJob(label, kind, args, target) {
+  if (job?.status === "running") throw new UserError(`Şu an "${job.label}" sürüyor. Bitmesini bekle.`);
+  job = { label, kind, target, status: "running", startedAt: Date.now(), endedAt: null, log: [] };
   const current = job;
   const child = spawn(process.execPath, args, { cwd: p(), env: process.env });
   const push = (chunk) => {
@@ -128,7 +156,7 @@ function startJob(cmd, episode) {
         } else current.log[current.log.length - 1] += part;
       }
     }
-    current.log = current.log.filter((l, i, a) => l.trim() !== "" || i === a.length - 1).slice(-600);
+    current.log = current.log.filter((l, i, a) => l.trim() !== "" || i === a.length - 1).slice(-800);
   };
   child.stdout.on("data", push);
   child.stderr.on("data", push);
@@ -138,9 +166,18 @@ function startJob(cmd, episode) {
   });
 }
 
+function saveBrief(text) {
+  if (!text || !String(text).trim()) throw new UserError("İstek metni boş");
+  const dir = p(".studio", "requests");
+  fs.mkdirSync(dir, { recursive: true });
+  const file = path.join(dir, `${Date.now()}.md`);
+  fs.writeFileSync(file, String(text));
+  return file;
+}
+
 // ---------- dosya servisi ----------
 
-const TYPES = { ".html": "text/html; charset=utf-8", ".mp4": "video/mp4", ".mp3": "audio/mpeg", ".js": "text/javascript", ".css": "text/css", ".json": "application/json" };
+const TYPES = { ".html": "text/html; charset=utf-8", ".mp4": "video/mp4", ".mp3": "audio/mpeg", ".png": "image/png", ".js": "text/javascript", ".css": "text/css", ".json": "application/json" };
 
 function serveFile(req, res, file) {
   if (!fs.existsSync(file) || !fs.statSync(file).isFile()) return send(res, 404, { error: "Dosya bulunamadı" });
@@ -158,13 +195,10 @@ function serveFile(req, res, file) {
   }
 }
 
-// İzin verilen klasörlerin dışına çıkılmasını engeller.
 function safeJoin(base, rel) {
   const full = path.resolve(base, decodeURIComponent(rel));
   return full.startsWith(path.resolve(base) + path.sep) ? full : null;
 }
-
-// ---------- yardımcılar ----------
 
 function send(res, code, data) {
   res.writeHead(code, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" });
@@ -186,18 +220,30 @@ function body(req) {
 }
 
 const ID = /^[a-zA-Z0-9_-]{1,64}$/;
+const need = (v, what, re = SLUG) => (re.test(v ?? "") ? v : (() => { throw new UserError(`Geçersiz ${what}`); })());
+const filmOf = (v) => {
+  need(v, "film");
+  if (!listProjects().includes(v)) throw new UserError(`${v} filmi bulunamadı`);
+  return v;
+};
 
 // ---------- yönlendirme ----------
 
 const server = http.createServer(async (req, res) => {
-  // Başka sitelerin bu panele istek atmasını engelle
   const origin = req.headers.origin;
   if (origin && !/^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin)) return send(res, 403, { error: "İzin yok" });
-
   const url = new URL(req.url, `http://${HOST}`);
+  const q = Object.fromEntries(url.searchParams);
   try {
     if (req.method === "GET" && url.pathname === "/") return serveFile(req, res, p("scripts", "panel", "panel.html"));
-    if (req.method === "GET" && url.pathname === "/api/state") return send(res, 200, state());
+    if (req.method === "GET" && url.pathname === "/api/state") return send(res, 200, state(q.film));
+
+    // Okunabilir metinler: sezon tasarımı, film kitabı, senaryo
+    if (req.method === "GET" && url.pathname === "/api/text") {
+      const f = safeJoin(p("projects"), q.path ?? "");
+      if (!f || !f.endsWith(".md") || !fs.existsSync(f)) throw new UserError("Metin bulunamadı");
+      return send(res, 200, { text: fs.readFileSync(f, "utf8") });
+    }
 
     if (req.method === "POST" && url.pathname === "/api/key") {
       const { key } = await body(req);
@@ -208,37 +254,75 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "GET" && url.pathname === "/api/voices") return send(res, 200, { voices: await listVoices() });
 
     if (req.method === "POST" && url.pathname === "/api/voice/preview") {
-      const { character, voiceId } = await body(req);
-      if (!ID.test(character ?? "") || !ID.test(voiceId ?? "")) throw new UserError("Geçersiz karakter ya da ses");
-      const rel = await previewVoice(character, voiceId);
+      const { film, character, voiceId } = await body(req);
+      const rel = await previewVoice(filmOf(film), need(character, "karakter"), need(voiceId, "ses", ID));
       return send(res, 200, { url: `/files/${rel}?t=${Date.now()}` });
     }
 
     if (req.method === "POST" && url.pathname === "/api/voice/lock") {
-      const { character, voiceId } = await body(req);
-      if (!ID.test(character ?? "") || !ID.test(voiceId ?? "")) throw new UserError("Geçersiz karakter ya da ses");
-      lockVoice(character, voiceId);
+      const { film, character, voiceId } = await body(req);
+      lockVoice(filmOf(film), need(character, "karakter"), need(voiceId, "ses", ID));
       return send(res, 200, { ok: true });
     }
 
     if (req.method === "POST" && url.pathname.startsWith("/api/sound/")) {
       const b = await body(req);
-      if (!["sfx", "music"].includes(b.kind) || !ID.test(b.id ?? "")) throw new UserError("Geçersiz ses");
+      const film = filmOf(b.film);
+      if (!["sfx", "music"].includes(b.kind)) throw new UserError("Geçersiz ses türü");
+      need(b.id, "ses", ID);
       const action = url.pathname.slice("/api/sound/".length);
-      if (action === "prompt") setPrompt(b.kind, b.id, { prompt: b.prompt, duration_seconds: Number(b.duration_seconds), loop: b.loop });
-      else if (action === "variants") {
-        if (job?.status === "running" && job.cmd === "sounds") throw new UserError("Otomatik üretim sürüyor; bitince tekrar dene.");
-        await makeVariants(b.kind, b.id, b.kind === "music" ? 2 : 3);
-      } else if (action === "choose") chooseVariant(b.kind, b.id, String(b.file ?? ""));
-      else if (action === "lock") lockSound(b.kind, b.id);
+      if (action === "prompt") setPrompt(film, b.kind, b.id, { prompt: b.prompt, duration_seconds: Number(b.duration_seconds), loop: b.loop });
+      else if (action === "variants") await makeVariants(film, b.kind, b.id, b.kind === "music" ? 2 : 3);
+      else if (action === "choose") chooseVariant(film, b.kind, b.id, String(b.file ?? ""));
+      else if (action === "lock") lockSound(film, b.kind, b.id);
       else throw new UserError("Bilinmeyen işlem");
-      return send(res, 200, { ok: true, sounds: soundsState() });
+      return send(res, 200, { ok: true, sounds: soundsState(film) });
     }
 
+    if (req.method === "POST" && url.pathname === "/api/approve-item") {
+      const { film, kind, id } = await body(req);
+      approveItem(filmOf(film), kind, need(id, "kimlik"));
+      return send(res, 200, { ok: true });
+    }
+
+    // Uzun işler
     if (req.method === "POST" && url.pathname === "/api/job") {
-      const { cmd, episode } = await body(req);
-      if (episode !== undefined && !ID.test(episode)) throw new UserError("Geçersiz bölüm");
-      startJob(cmd, episode);
+      const b = await body(req);
+      const cmd = b.cmd;
+      if (["draft", "approve", "final"].includes(cmd)) {
+        const ref = String(b.ref ?? "");
+        if (!allEpisodes().some((e) => e.ref === ref)) throw new UserError("Bölüm bulunamadı");
+        const labels = { draft: "480p taslak", approve: "Bölüm onayı", final: "4K final" };
+        startJob(labels[cmd], cmd, ["scripts/produce.mjs", cmd, ref], ref);
+      } else if (cmd === "sounds") {
+        const film = filmOf(b.film);
+        startJob("Eksik efekt ve müzikleri üretme", cmd, ["scripts/sounds.mjs", "autofill", film], film);
+      } else if (cmd === "preview") {
+        const film = filmOf(b.film);
+        if (!["karakter", "mekan"].includes(b.kind)) throw new UserError("Geçersiz tür");
+        startJob(`${b.kind === "karakter" ? "Karakter kartı" : "Mekân önizlemesi"} çizimi`, cmd, ["scripts/produce.mjs", "preview", film, b.kind, need(b.id, "kimlik")], `${film}/${b.id}`);
+      } else if (cmd === "new-project") {
+        if (!CLAUDE.available) throw new UserError("Claude Code bulunamadı");
+        const film = need(b.film, "film kimliği");
+        startJob("Yeni film (Claude)", "claude", ["scripts/studio.mjs", "new-project", film, saveBrief(b.brief)], film);
+      } else if (cmd === "new-season") {
+        if (!CLAUDE.available) throw new UserError("Claude Code bulunamadı");
+        const film = filmOf(b.film);
+        startJob("Yeni sezon (Claude)", "claude", ["scripts/studio.mjs", "new-season", film, need(b.season, "sezon"), saveBrief(b.brief)], `${film}/${b.season}`);
+      } else if (cmd === "new-episode") {
+        const film = filmOf(b.film);
+        const brief = String(b.brief ?? "");
+        let isJson = false;
+        try {
+          isJson = Array.isArray(JSON.parse(brief).scenes);
+        } catch {}
+        if (!isJson && !CLAUDE.available) throw new UserError("Claude Code bulunamadı; yalnızca hazır bölüm (JSON) içe aktarılabilir");
+        startJob(isJson ? "Hazır bölümü içe aktarma" : "Yeni bölüm (Claude)", "claude", ["scripts/studio.mjs", "new-episode", film, need(b.season, "sezon"), need(b.episode, "bölüm"), saveBrief(brief)], `${film}/${b.season}/${b.episode}`);
+      } else if (cmd === "new-character" || cmd === "new-location") {
+        if (!CLAUDE.available) throw new UserError("Claude Code bulunamadı");
+        const film = filmOf(b.film);
+        startJob(cmd === "new-character" ? "Yeni karakter (Claude)" : "Yeni mekân (Claude)", "claude", ["scripts/studio.mjs", cmd, film, need(b.id, "kimlik"), saveBrief(b.brief)], `${film}/${b.id}`);
+      } else throw new UserError("Bilinmeyen işlem");
       return send(res, 200, { ok: true });
     }
 
@@ -246,14 +330,8 @@ const server = http.createServer(async (req, res) => {
       const f = safeJoin(p("out"), url.pathname.slice("/files/out/".length));
       return f ? serveFile(req, res, f) : send(res, 403, { error: "İzin yok" });
     }
-    for (const dir of ["sfx", "music"]) {
-      if (req.method === "GET" && url.pathname.startsWith(`/files/${dir}/`)) {
-        const f = safeJoin(p("public", dir), url.pathname.slice(`/files/${dir}/`.length));
-        return f ? serveFile(req, res, f) : send(res, 403, { error: "İzin yok" });
-      }
-    }
-    if (req.method === "GET" && url.pathname.startsWith("/files/audio/")) {
-      const f = safeJoin(p("public", "audio"), url.pathname.slice("/files/audio/".length));
+    if (req.method === "GET" && url.pathname.startsWith("/files/projects/")) {
+      const f = safeJoin(p("public", "projects"), url.pathname.slice("/files/projects/".length));
       return f ? serveFile(req, res, f) : send(res, 403, { error: "İzin yok" });
     }
 
@@ -265,7 +343,7 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, HOST, () => {
   const link = `http://localhost:${PORT}`;
-  console.log(`\n  Derin paneli hazır: ${link}\n  Kapatmak için bu pencerede Ctrl+C\n`);
+  console.log(`\n  Stüdyo paneli hazır: ${link}\n  Claude Code: ${CLAUDE.available ? `bağlı (${CLAUDE.version})` : "bulunamadı"}\n  Kapatmak için bu pencerede Ctrl+C\n`);
   if (process.argv.includes("--no-open")) return;
   const opener = process.platform === "win32" ? `start "" "${link}"` : process.platform === "darwin" ? `open "${link}"` : `xdg-open "${link}"`;
   exec(opener, () => {});

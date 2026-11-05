@@ -1,73 +1,81 @@
 import React from "react";
 import { AbsoluteFill, Audio, Sequence, interpolate, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
-import { KuyuOdasi } from "../../locations/kuyu-odasi/KuyuOdasi";
-import { CAST } from "./castRegistry";
-import { hasMusic, hasSfx, type ScheduledScene } from "./schedule";
+import { CHARACTERS, LOCATIONS } from "../generated/registry";
+import { hasMusic, hasSfx, musicLoops, type ScheduledScene } from "./schedule";
 import { actionOffset, cameraAt, castPosition, clamp01, expressionAt, ramp } from "./timeline";
 import type { Focus, Point } from "./types";
-import catalog from "../../sounds/catalog.json";
 
-const musicLoops = (id: string) => !!(catalog.music as Record<string, { loop?: boolean }>)[id]?.loop;
-
-// Kilitli mekânların kaydı
-const LOCATIONS: Record<string, React.ComponentType<{ light?: { x: number; y: number; lit: boolean; onFloor?: boolean }; width?: number; children?: React.ReactNode }>> = {
-  "kuyu-odasi": KuyuOdasi,
+// Kayıtlı noktalar: senaryoda bir nesnenin başlangıç yeri olarak adıyla kullanılabilir
+const NAMED_POINTS: Record<string, Point> = {
+  "bucket.water": [413, 278],
+  "well.center": [340, 300],
 };
 
-const LOC_W = 680;
-const LOC_H = 400;
-const BUCKET_WATER: Point = [413, 278];
-
-type CastState = {
-  id: string;
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  view: "front" | "side";
-  expression: string;
-  opacity: number;
+// Tasarımı henüz yapılmamış karakter için varsayılan ölçüler
+const DEFAULT_RIG = {
+  baseHeight: 180,
+  ratio: { front: 0.42, side: 0.42 },
+  anchors: {
+    front: { face: [0.5, 0.12], hand: [0.85, 0.55], light: [0.88, 0.6] },
+    side: { face: [0.5, 0.12], hand: [0.85, 0.55], light: [0.88, 0.6] },
+  },
+  props: {} as Record<string, string>,
 };
 
-export const Scene: React.FC<{ scene: ScheduledScene }> = ({ scene }) => {
+type CastState = { id: string; key: string; x: number; y: number; w: number; h: number; view: "front" | "side"; expression: string; opacity: number; known: boolean };
+
+const charKey = (project: string, id: string) => (id.includes("/") ? id : `${project}/${id}`);
+
+export const Scene: React.FC<{ scene: ScheduledScene; project: string }> = ({ scene, project }) => {
   const frame = useCurrentFrame();
   const { fps, width: W, height: H } = useVideoConfig();
   const t = frame / fps;
   const def = scene.def;
 
-  if (def.card) return <TitleCard scene={scene} t={t} />;
+  if (def.card) return <TitleCard scene={scene} t={t} project={project} />;
 
-  // Karakterlerin bu andaki durumu
+  const place = def.location ? LOCATIONS[charKey(project, def.location)] : undefined;
+  const [LOC_W, LOC_H] = place?.size ?? [680, 400];
+
+  // Şu an konuşan karakter (konuşurken hafifçe kıpırdar)
+  const speaking = scene.lines.find((l) => t >= l.start_s && t <= l.start_s + l.dur_s && l.type === "dialogue")?.speaker;
+
   const cast: CastState[] = (def.cast ?? []).map((c) => {
-    const spec = CAST[c.id];
-    const h = spec.baseHeight * (c.scale ?? 1);
-    const w = h * spec.ratio[c.view];
+    const key = charKey(project, c.id);
+    const reg = CHARACTERS[key];
+    const rig = { ...DEFAULT_RIG, ...(reg?.rig ?? {}) };
+    const h = rig.baseHeight * (c.scale ?? 1);
+    const w = h * (rig.ratio?.[c.view] ?? 0.42);
     const [px, py] = castPosition(c, t, scene.dur_s);
     const [ox, oy] = actionOffset(c.action, t);
+    const talk = speaking === c.id ? -Math.abs(Math.sin(t * 8)) * 1.6 : 0;
     const opacity = c.enterAt_s !== undefined ? clamp01((t - c.enterAt_s) / 1) : 1;
-    return { id: c.id, x: px + ox, y: py + oy, w, h, view: c.view, expression: expressionAt(c, t), opacity };
+    return { id: c.id, key, x: px + ox, y: py + oy + talk, w, h, view: c.view, expression: expressionAt(c, t), opacity, known: !!reg };
   });
   const byId = Object.fromEntries(cast.map((c) => [c.id, c]));
 
   const anchorOf = (charId: string, name: string): Point => {
     const c = byId[charId];
     if (!c) return [LOC_W / 2, LOC_H / 2];
-    const a = CAST[charId].anchors[c.view][name] ?? [0.5, 0.5];
+    const rig = CHARACTERS[c.key]?.rig ?? DEFAULT_RIG;
+    const a = rig.anchors?.[c.view]?.[name] ?? DEFAULT_RIG.anchors[c.view][name as "face"] ?? [0.5, 0.5];
     return [c.x + c.w * a[0], c.y + c.h * a[1]];
   };
 
   // Ana ışık: yerde duran ya da bir karakterin taşıdığı fener
   const L = def.light;
   const lit = !!L && (L.lit || (L.lightAt_s !== undefined && t >= L.lightAt_s));
-  const holder = L?.held_by;
-  const lightPos: Point = holder ? anchorOf(holder, "light") : [L?.x ?? 212, L?.y ?? 328];
+  const holder = L?.held_by && byId[L.held_by] ? L.held_by : undefined;
+  const fallbackLight = place?.defaultLight ?? [LOC_W * 0.3, LOC_H * 0.8];
+  const lightPos: Point = holder ? anchorOf(holder, "light") : [L?.x ?? fallbackLight[0], L?.y ?? fallbackLight[1]];
 
-  // Sahne nesneleri (ör. yaprak)
-  const props = (def.props ?? []).map((p) => {
-    const hidden = p.hide_at_s !== undefined && t >= p.hide_at_s;
-    const picked = p.pickup_at_s !== undefined && t >= p.pickup_at_s;
-    const pos: Point = picked ? anchorOf("ada", "hand") : BUCKET_WATER;
-    return { ...p, pos, hidden, picked };
+  // Sahne nesneleri
+  const props = (def.props ?? []).map((pr) => {
+    const hidden = pr.hide_at_s !== undefined && t >= pr.hide_at_s;
+    const picked = pr.pickup_at_s !== undefined && t >= pr.pickup_at_s;
+    const start: Point = Array.isArray(pr.start) ? pr.start : NAMED_POINTS[pr.start] ?? [LOC_W / 2, LOC_H / 2];
+    const pos: Point = picked ? anchorOf(pr.held_by ?? "ada", "hand") : start;
+    return { ...pr, pos, hidden, picked };
   });
 
   const resolve = (f: Focus): Point => {
@@ -75,14 +83,38 @@ export const Scene: React.FC<{ scene: ScheduledScene }> = ({ scene }) => {
     const list = (Array.isArray(f) ? f : [f]) as string[];
     const pts = list.map((s) => {
       const [who, what] = s.split(".");
-      if (who === "prop") return props.find((p) => p.id === what)?.pos ?? [LOC_W / 2, LOC_H / 2];
-      return anchorOf(who, what);
+      if (who === "prop") return props.find((x) => x.id === what)?.pos ?? [LOC_W / 2, LOC_H / 2];
+      return anchorOf(who, what ?? "face");
     });
-    return [pts.reduce((a, p) => a + p[0], 0) / pts.length, pts.reduce((a, p) => a + p[1], 0) / pts.length];
+    return [pts.reduce((a, x) => a + x[0], 0) / pts.length, pts.reduce((a, x) => a + x[1], 0) / pts.length];
   };
 
-  // Kamera
-  const cam = cameraAt(def.camera, t, resolve);
+  // Kamera: elle yazılmış anahtar kareler ya da konuşmayı izleyen otomatik kamera
+  const cam = def.camera_mode === "dialogue" ? dialogueCamera() : cameraAt(def.camera, t, resolve);
+
+  // Otomatik kamera: konuşana yakın plan, ara ara iki kişilik plan, iç seste ve sessizlikte geniş plan
+  function dialogueCamera(): { zoom: number; focus: Point } {
+    const faces = cast.filter((c) => c.opacity > 0.5).map((c) => anchorOf(c.id, "face"));
+    const wide = { zoom: 1.12, focus: (faces.length ? [faces.reduce((a, f) => a + f[0], 0) / faces.length, faces.reduce((a, f) => a + f[1], 0) / faces.length + 40] : [LOC_W / 2, LOC_H / 2]) as Point };
+    let i = -1;
+    scene.lines.forEach((l, j) => {
+      if (l.start_s <= t) i = j;
+    });
+    if (i < 0) return wide;
+    const line = scene.lines[i];
+    if (line.type !== "dialogue" || !byId[line.speaker]) return wide;
+    const drift = 1 + 0.03 * clamp01((t - line.start_s) / Math.max(1, line.dur_s));
+    if (i % 5 === 4) return { zoom: 1.12 * drift, focus: wide.focus };
+    if (i % 5 === 2) {
+      const other = [...scene.lines.slice(0, i)].reverse().find((l) => l.type === "dialogue" && l.speaker !== line.speaker && byId[l.speaker]);
+      if (other) {
+        const a = anchorOf(line.speaker, "face"), b = anchorOf(other.speaker, "face");
+        return { zoom: 1.75 * drift, focus: [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2 + 30] };
+      }
+    }
+    const f = anchorOf(line.speaker, "face");
+    return { zoom: 2.35 * drift, focus: [f[0], f[1] + 18] };
+  }
   const k = W / LOC_W;
   const baseH = LOC_H * k;
   const offY = (H - baseH) / 2;
@@ -92,9 +124,9 @@ export const Scene: React.FC<{ scene: ScheduledScene }> = ({ scene }) => {
   tx = Math.min(0, Math.max(W - W * z, tx));
   ty = Math.min(-offY * z, Math.max(H - (offY + baseH) * z, ty));
 
-  // İkincil soğuk ışık (Saim'in nefes lambası)
+  // İkincil soğuk ışık (ör. Saim'in nefes lambası)
   const S = def.secondary_light;
-  let coldPos: Point = [720, 220];
+  let coldPos: Point = [LOC_W + 40, LOC_H * 0.55];
   let coldK = 0;
   if (S) {
     coldK = ramp(t, S.rampIn_s, 1) * (S.rampOut_s ? 1 - ramp(t, S.rampOut_s, 0) : 1);
@@ -104,26 +136,36 @@ export const Scene: React.FC<{ scene: ScheduledScene }> = ({ scene }) => {
   // Kibrit parlaması: fener yanmadan hemen önce
   const matchK = L?.lightAt_s !== undefined ? (t >= L.lightAt_s - 3 && t < L.lightAt_s ? 0.6 + Math.sin(t * 40) * 0.15 : 0) : 0;
 
-  const Location = def.location ? LOCATIONS[def.location] : null;
-  const fadeK = def.end === "fade_to_black" ? ramp(t, [scene.dur_s - 2.5, scene.dur_s - 0.3], 0) : 0;
+  const fadeOut = def.end === "fade_to_black" ? ramp(t, [scene.dur_s - 2.5, scene.dur_s - 0.3], 0) : 0;
+  const fadeIn = def.start === "fade_from_black" ? 1 - ramp(t, [0, 1.8], 1) : 0;
+  const Location = place?.Component ?? PlaceholderLocation;
+
+  const people = (
+    <>
+      {props.map((pr) => (pr.hidden ? null : <PropShape key={pr.id} type={pr.type} color={pr.color} pos={pr.pos} picked={pr.picked} size={pr.size} />))}
+      {cast.map((c) => {
+        const reg = CHARACTERS[c.key];
+        const holds = holder === c.id || S?.held_by === c.id;
+        if (!reg) return <PlaceholderCharacter key={c.id} name={c.id} x={c.x} y={c.y} w={c.w} h={c.h} opacity={c.opacity} />;
+        const names = reg.rig?.props ?? {};
+        const extra: Record<string, boolean> = {};
+        if (names.holdingLight) extra[names.holdingLight] = holds;
+        if (names.lightLit) extra[names.lightLit] = holder === c.id ? lit : true;
+        return (
+          <g key={c.id} transform={`translate(${c.x} ${c.y})`} opacity={c.opacity}>
+            <reg.Component view={c.view} expression={c.expression} height={c.h} {...extra} />
+          </g>
+        );
+      })}
+    </>
+  );
 
   return (
     <AbsoluteFill style={{ backgroundColor: "#000", overflow: "hidden" }}>
       <div style={{ position: "absolute", left: 0, top: offY, width: W, height: baseH, transformOrigin: "0 0", transform: `translate(${tx}px, ${ty + offY * (z - 1)}px) scale(${z})` }}>
-        {Location && (
-          <Location light={{ x: lightPos[0], y: lightPos[1], lit, onFloor: !holder }} width={W}>
-            {props.map((p) =>
-              p.hidden ? null : (
-                <ellipse key={p.id} cx={p.pos[0]} cy={p.pos[1]} rx={p.picked ? 4 : 5} ry={p.picked ? 6 : 2.4} fill={p.color} />
-              )
-            )}
-            {cast.map((c) => (
-              <g key={c.id} transform={`translate(${c.x} ${c.y})`} opacity={c.opacity}>
-                {CAST[c.id].render({ view: c.view, expression: c.expression, height: c.h, holdingLight: holder === c.id || (S?.held_by === c.id), lightLit: holder === c.id ? lit : true })}
-              </g>
-            ))}
-          </Location>
-        )}
+        <Location light={{ x: lightPos[0], y: lightPos[1], lit, onFloor: !holder }} width={W} label={place ? undefined : def.location ?? ""} size={[LOC_W, LOC_H]}>
+          {people}
+        </Location>
         <svg viewBox={`0 0 ${LOC_W} ${LOC_H}`} width={W} height={baseH} style={{ position: "absolute", inset: 0, mixBlendMode: "screen", pointerEvents: "none" }}>
           <defs>
             <radialGradient id={`cold-${def.id}`} cx={coldPos[0]} cy={coldPos[1]} r={260} gradientUnits="userSpaceOnUse">
@@ -140,10 +182,73 @@ export const Scene: React.FC<{ scene: ScheduledScene }> = ({ scene }) => {
         </svg>
       </div>
 
+      <Caption scene={scene} t={t} />
       <Subtitles scene={scene} t={t} />
-      {fadeK > 0 && <AbsoluteFill style={{ backgroundColor: "#000", opacity: fadeK }} />}
-      <SceneAudio scene={scene} />
+      {fadeIn > 0 && <AbsoluteFill style={{ backgroundColor: "#000", opacity: fadeIn }} />}
+      {fadeOut > 0 && <AbsoluteFill style={{ backgroundColor: "#000", opacity: fadeOut }} />}
+      <SceneAudio scene={scene} project={project} />
     </AbsoluteFill>
+  );
+};
+
+// ---------- yer tutucular: tasarımı henüz onaylanmamış karakter ve mekânlar ----------
+
+const PlaceholderCharacter: React.FC<{ name: string; x: number; y: number; w: number; h: number; opacity: number }> = ({ name, x, y, w, h, opacity }) => (
+  <g transform={`translate(${x} ${y})`} opacity={opacity}>
+    <circle cx={w / 2} cy={h * 0.12} r={h * 0.1} fill="#1c1816" stroke="#6b5d52" strokeWidth={1} />
+    <rect x={w * 0.15} y={h * 0.23} width={w * 0.7} height={h * 0.75} rx={w * 0.2} fill="#1c1816" stroke="#6b5d52" strokeWidth={1} />
+    <text x={w / 2} y={h * 0.62} textAnchor="middle" fontSize={11} fill="#c9b8a6" fontFamily="sans-serif">
+      {name}
+    </text>
+  </g>
+);
+
+type LocProps = { light?: { x: number; y: number; lit: boolean; onFloor?: boolean }; width?: number; label?: string; size?: number[]; children?: React.ReactNode };
+
+const PlaceholderLocation: React.FC<LocProps> = ({ light, width = 1080, label = "", size = [680, 400], children }) => {
+  const [w, h] = size;
+  const R = light?.lit ? 300 : 60;
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} width={width} height={(width * h) / w}>
+      <defs>
+        <radialGradient id="ph-dark" cx={light?.x ?? w / 2} cy={light?.y ?? h * 0.7} r={R} gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#040304" stopOpacity={0} />
+          <stop offset="0.6" stopColor="#040304" stopOpacity={0.6} />
+          <stop offset="1" stopColor="#040304" stopOpacity={0.95} />
+        </radialGradient>
+      </defs>
+      <rect width={w} height={h} fill="#2e2622" />
+      <rect y={h * 0.74} width={w} height={h * 0.26} fill="#211b18" />
+      <text x={w / 2} y={h * 0.2} textAnchor="middle" fontSize={14} fill="#8a7b6e" fontFamily="sans-serif" letterSpacing={2}>
+        {`MEKÂN HAZIR DEĞİL · ${label}`}
+      </text>
+      {children}
+      <rect width={w} height={h} fill="url(#ph-dark)" />
+    </svg>
+  );
+};
+
+const PropShape: React.FC<{ type: string; color: string; pos: Point; picked: boolean; size?: number }> = ({ type, color, pos, picked, size = 5 }) => {
+  if (type === "box") return <rect x={pos[0] - size} y={pos[1] - size} width={size * 2} height={size * 2} rx={1} fill={color} />;
+  if (type === "dot") return <circle cx={pos[0]} cy={pos[1]} r={size} fill={color} />;
+  return <ellipse cx={pos[0]} cy={pos[1]} rx={picked ? size * 0.8 : size} ry={picked ? size * 1.2 : size * 0.48} fill={color} />;
+};
+
+// ---------- yazılar ve ses ----------
+
+const Caption: React.FC<{ scene: ScheduledScene; t: number }> = ({ scene, t }) => {
+  const c = scene.def.caption;
+  const { height: H } = useVideoConfig();
+  if (!c) return null;
+  const u = H / 1080;
+  const from = c.in_s ?? 0.5;
+  const to = c.out_s ?? from + 4;
+  const a = Math.min(clamp01((t - from) / 0.6), clamp01((to - t) / 0.6));
+  if (a <= 0) return null;
+  return (
+    <div style={{ position: "absolute", left: 80 * u, top: 64 * u, opacity: a, fontFamily: "Georgia, serif", fontSize: 30 * u, letterSpacing: 6 * u, color: "#e8dccb", textShadow: `0 ${2 * u}px ${8 * u}px rgba(0,0,0,0.9)` }}>
+      {c.text}
+    </div>
   );
 };
 
@@ -162,7 +267,7 @@ const Subtitles: React.FC<{ scene: ScheduledScene; t: number }> = ({ scene, t })
   );
 };
 
-const SceneAudio: React.FC<{ scene: ScheduledScene }> = ({ scene }) => {
+const SceneAudio: React.FC<{ scene: ScheduledScene; project: string }> = ({ scene, project }) => {
   const { fps } = useVideoConfig();
   const f = (s: number) => Math.round(s * fps);
   const sceneFrames = f(scene.dur_s);
@@ -180,30 +285,32 @@ const SceneAudio: React.FC<{ scene: ScheduledScene }> = ({ scene }) => {
         ) : null
       )}
       {(def.sfx ?? []).map((s, i) =>
-        hasSfx(s.id) ? (
-          <Sequence key={`sfx-${i}`} from={f(s.at_s)} durationInFrames={Math.max(1, (s.loop_until_s ? f(s.loop_until_s) : sceneFrames) - f(s.at_s))}>
-            <Audio src={staticFile(`sfx/${s.id}.mp3`)} loop={!!(s.loop || s.loop_until_s)} volume={0.8} />
+        hasSfx(project, s.id) ? (
+          <Sequence key={`sfx-${i}`} from={f(s.at_s)} durationInFrames={Math.max(1, Math.min(sceneFrames, s.loop_until_s ? f(s.loop_until_s) : sceneFrames) - f(s.at_s))}>
+            <Audio src={staticFile(`projects/${project}/sfx/${s.id}.mp3`)} loop={!!(s.loop || s.loop_until_s)} volume={0.8} />
           </Sequence>
         ) : null
       )}
-      {m && hasMusic(m.id) && (
+      {m && hasMusic(project, m.id) && (
         <Sequence from={f(musicStart)} durationInFrames={Math.max(1, f(musicEnd) - f(musicStart))}>
-          <Audio src={staticFile(`music/${m.id}.mp3`)} loop={musicLoops(m.id)} volume={(fr) => interpolate(fr, [0, fps * 2], [0, 0.5], { extrapolateRight: "clamp" })} />
+          <Audio src={staticFile(`projects/${project}/music/${m.id}.mp3`)} loop={musicLoops(project, m.id)} volume={(fr) => interpolate(fr, [0, fps * 2], [0, 0.5], { extrapolateRight: "clamp" })} />
         </Sequence>
       )}
     </>
   );
 };
 
-const TitleCard: React.FC<{ scene: ScheduledScene; t: number }> = ({ scene, t }) => {
+const TitleCard: React.FC<{ scene: ScheduledScene; t: number; project: string }> = ({ scene, t, project }) => {
   const card = scene.def.card!;
   const { height: H } = useVideoConfig();
   const u = H / 1080;
   const a = clamp01((t - card.in_s) / 1.5);
   return (
-    <AbsoluteFill style={{ backgroundColor: card.background, alignItems: "center", justifyContent: "center" }}>
+    <AbsoluteFill style={{ backgroundColor: card.background, alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
       <div style={{ fontFamily: "Georgia, serif", fontSize: 140 * u, letterSpacing: 40 * u, color: card.color, opacity: a, paddingLeft: 40 * u }}>{card.text}</div>
-      <SceneAudio scene={scene} />
+      {card.subtitle && <div style={{ fontFamily: "Georgia, serif", fontSize: 36 * u, letterSpacing: 8 * u, color: card.color, opacity: a * 0.7, marginTop: 24 * u }}>{card.subtitle}</div>}
+      <Subtitles scene={scene} t={t} />
+      <SceneAudio scene={scene} project={project} />
     </AbsoluteFill>
   );
 };

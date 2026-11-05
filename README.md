@@ -1,23 +1,11 @@
-# Derin
+# Stüdyo
 
-Lumen stilinde, Remotion ile kodla üretilen mini dizi. Senaryo verilir; sistem sahneleri kilitli karakter ve mekânlarla kurar, ElevenLabs ile seslendirir, montajlar ve önce 480p taslak, onaydan sonra 4K final üretir.
+Kodla çizilen animasyon filmleri ve dizileri üreten küçük bir stüdyo. Görüntü Remotion ile, sesler ElevenLabs ile üretilir; yaratıcı işi (bölüm, sezon, karakter, mekân, yeni film) bilgisayarındaki Claude Code yapar. İlk film: **Derin**.
 
-## Klasörler
+## Başlangıç (Windows)
 
-- `characters/` — onaylı ve kilitli karakterler (`registry.json` liste, kilit kuralları ve karakter sesleri)
-- `locations/` — onaylı ve kilitli mekânlar (karakterler mekâna children olarak verilir, ışık katmanı en üsttedir)
-- `episodes/` — bölümler (`senaryo.md` okunur sürüm, `scenes.json` üretim hattının okuduğu sürüm)
-- `src/engine/` — sahne motoru: kamera, ışık, karakter yerleşimi, altyazı, ses
-- `scripts/` — üretim komutları
-- `sounds/catalog.json` — senaryolarda kullanılan her efekt ve müziğin ElevenLabs açıklaması, süresi, döngü ayarı ve durumu
-- `public/sfx/`, `public/music/` — seçilen efekt ve müzik dosyaları (`<id>.mp3`; senaryodaki id ile aynı ad)
-- `locks.json` — kilitli öğelerin ve onaylı bölümlerin mühürleri
-- `out/` — üretilen videolar (GitHub'a gönderilmez)
-
-## Windows'ta ilk kurulum
-
-1. [Node.js](https://nodejs.org) LTS sürümünü kur (20 veya üstü).
-2. Depoyu klonla ve klasöre gir:
+1. [Node.js](https://nodejs.org) LTS ve [Claude Code](https://claude.com/claude-code) kurulu olsun; terminalde bir kez `claude` yazıp giriş yap.
+2. Depoyu indir ve kur:
    ```
    git clone https://github.com/ofitoz93/derinanimation
    cd derinanimation
@@ -27,58 +15,50 @@ Lumen stilinde, Remotion ile kodla üretilen mini dizi. Senaryo verilir; sistem 
    ```
    npm run panel
    ```
+   Tarayıcıda `http://localhost:4317` açılır. Ayarlar'dan ElevenLabs anahtarını ekle.
 
-İlk render sırasında Remotion kendi Chrome'unu ve ffmpeg'ini otomatik indirir; ayrıca bir şey kurman gerekmez.
+İlk render sırasında Remotion kendi Chrome'unu ve ffmpeg'ini indirir.
 
-## Üretim paneli
+## Panelde neler var
 
-`npm run panel` tarayıcıda `http://localhost:4317` adresini açar. Panel yalnızca bu bilgisayardan erişilir; komut satırına gerek kalmadan:
+- **Film seçici ve Yeni film:** Bir fikir yazarsın, Claude aynı stilde yeni bir filmin kitabını ve klasörlerini kurar.
+- **Sezonlar ve bölümler:** "Yeni sezon" sezon tasarımını, "Yeni bölüm" bölümün tam senaryosunu (replikler, efektler, müzik, kamera) yazar. Bölüm promptunu yapıştırman yeterli; hazır bir `scenes.json` yapıştırırsan Claude'a gerek kalmadan eklenir. Her bölümün tempo raporu (süre, diyalog oranı, sessiz aralıklar) görünür.
+- **Taslak → onay → 4K:** Taslak 480p üretilir ve panelde oynar; onaylarsan bölüm mühürlenir, sonra 4K render alınır.
+- **Karakterler ve mekânlar:** "Yeni karakter" / "Yeni mekân" ile Claude tiplemeyi çizer; kartını inceleyip onaylarsın, onaylanan kilitlenir ve hiçbir bölümde değişmez. Henüz tasarlanmamış karakter ve mekânlar taslakta yer tutucuyla görünür.
+- **Sesler:** Her karakter için ElevenLabs sesi seçip kilitlersin. Efekt ve müzikler sahneye uygun açıklamalarla üretilir; seçmediklerini sistem otomatik uygular.
 
-- ElevenLabs API anahtarını ekler (yalnızca yerel `.env` dosyasına yazılır)
-- Hesabındaki sesleri listeler; ▶ ile örneklerini ücretsiz dinletir
-- Seçtiğin sesi karakterin kendi repliğiyle dener ve onaylarsan karaktere kilitler
-- Ses efektlerini ve müziği ElevenLabs ile üretir: her sesin sahneye uygun bir açıklaması hazırdır; 3 seçenek üretip dinler, birini seçer ve kilitlersin. Seçmediklerini sistem taslak üretirken kendisi üretip uygular
-- Bölümün 480p taslağını üretir, ilerlemesini gösterir ve videoyu panelde oynatır
-- Taslağı onaylar ve 4K final render'ı başlatır
+## Klasörler
 
-Paneli kapatmak için açtığın terminal penceresinde Ctrl+C.
+```
+projects/<film>/                 bir film ya da dizi
+  project.json, bible.md         kimlik ve film kitabı
+  characters/, locations/        karakterler ve mekânlar (registry.json + klasörler)
+  sounds/catalog.json            efekt ve müzik açıklamaları
+  seasons/<s1>/season.md         sezon tasarımı
+  seasons/<s1>/episodes/<e01>/   scenes.json (üretim) + senaryo.md (okunur)
+  locks.json                     onaylanan öğelerin mühürleri
+public/projects/<film>/          sesler, efektler, müzik, önizlemeler
+src/engine/                      sahne motoru
+scripts/                         üretim komutları ve panel
+CLAUDE.md                        Claude Code'un uyduğu stüdyo kuralları
+```
 
 ## Komut satırından (isteğe bağlı)
 
-Panelin yaptığı her şey komutla da yapılabilir.
-
-### Sesleri seçme ve kilitleme
-
 ```
-npm run voices:list                       # hesabındaki sesler ve id'leri
-npm run voice:preview -- ada <voice_id>   # deneme kaydı: public/audio/previews/
-npm run voice:lock -- ada <voice_id>      # beğendiğin sesi kilitle
+npm run draft -- derin/s1/e01          # 480p taslak
+npm run approve -- derin/s1/e01        # onay ve mühür
+npm run final -- derin/s1/e01          # 4K final
+npm run tempo -- derin/s1/e01          # tempo raporu
+npm run studio -- script derin/s1/e01  # scenes.json'dan senaryo.md
+npm run studio -- approve derin karakter kerem
+npm run voices:list
+npm run voice:preview -- derin ada <voice_id>
+npm run voice:lock -- derin ada <voice_id>
+node scripts/sounds.mjs autofill derin
+npm run studio                          # diğer stüdyo komutlarının listesi
 ```
-
-Aynısını `saim` için de yap. Kilitli bir ses bir daha değiştirilemez; değişiklik bilinçli bir sürüm kararıdır.
-
-### Efekt ve müzik
-
-```
-node scripts/sounds.mjs list                   # kullanılan sesler ve durumları
-node scripts/sounds.mjs variants sfx damla 3   # bir efekt için 3 seçenek
-node scripts/sounds.mjs autofill pilot         # eksikleri üretip uygula
-```
-
-### Bölüm üretimi
-
-```
-npm run draft -- pilot      # kilit kontrolü → seslendirme → montaj → out/pilot_taslak_480p_<tarih-saat>.mp4
-npm run approve -- pilot    # taslağı beğendiysen bölümü onayla ve mühürle
-npm run final -- pilot      # yalnızca onaylı bölüm için → out/pilot_final_4k_<tarih-saat>.mp4
-```
-
-- Replikler yalnızca metni değiştiğinde yeniden seslendirilir; tekrar taslak almak ElevenLabs kredisini boşa harcamaz.
-- Sahne süreleri seslendirmenin gerçek uzunluğuna göre otomatik uzar.
-- Onaydan sonra senaryo değişirse final render reddedilir; yeni taslak ve yeni onay gerekir.
-
-Sahneleri canlı izlemek ve kare kare gezinmek için: `npm run studio`
 
 ## Kilit kuralı
 
-Sahne üretimi yalnızca `status: locked` karakter ve mekânları kullanır. Kilitli bir öğenin dosyaları değişirse `locks.json` mührü tutmaz ve üretim durur. Değişiklik yeni sürüm olarak önerilir, onaylanır ve `node scripts/locks.mjs seal <id>` ile yeniden mühürlenir.
+Onaylanan karakter, mekân ve sesler kilitlenir. Kilitli bir öğenin dosyaları değişirse `locks.json` mührü tutmaz ve üretim durur. Değişiklik yeni sürüm olarak önerilir ve tekrar onaylanır.

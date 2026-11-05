@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "node scripts/panel/server.mjs",
     "panel": "node scripts/panel/server.mjs",
-    "studio": "remotion studio src/index.ts",
+    "studio": "node scripts/studio.mjs",
     "typecheck": "tsc --noEmit",
     "locks:check": "node scripts/locks.mjs check",
     "voices:list": "node scripts/voices.mjs list",
@@ -16,7 +16,9 @@
     "voices:generate": "node scripts/voices.mjs generate",
     "draft": "node scripts/produce.mjs draft",
     "approve": "node scripts/produce.mjs approve",
-    "final": "node scripts/produce.mjs final"
+    "final": "node scripts/produce.mjs final",
+    "tempo": "node scripts/tempo.mjs",
+    "manifest": "node scripts/manifest.mjs"
   },
   "dependencies": {
     "@remotion/bundler": "4.0.541",
