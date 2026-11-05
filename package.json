@@ -5,6 +5,7 @@
   "type": "module",
   "description": "Derin mini dizisi — lumen stili, Remotion ile kodla üretim hattı",
   "scripts": {
+    "dev": "node scripts/panel/server.mjs",
     "panel": "node scripts/panel/server.mjs",
     "studio": "remotion studio src/index.ts",
     "typecheck": "tsc --noEmit",
