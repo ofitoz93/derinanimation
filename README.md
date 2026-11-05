@@ -25,7 +25,7 @@ Kodla çizilen animasyon filmleri ve dizileri üreten küçük bir stüdyo. Gör
 - **Sezonlar ve bölümler:** "Yeni sezon" sezon tasarımını, "Yeni bölüm" bölümün tam senaryosunu (replikler, efektler, müzik, kamera) yazar. Bölüm promptunu yapıştırman yeterli; hazır bir `scenes.json` yapıştırırsan Claude'a gerek kalmadan eklenir. Her bölümün tempo raporu (süre, diyalog oranı, sessiz aralıklar) görünür.
 - **Taslak → onay → 4K:** Taslak 480p üretilir ve panelde oynar; onaylarsan bölüm mühürlenir, sonra 4K render alınır.
 - **Karakterler ve mekânlar:** "Yeni karakter" / "Yeni mekân" ile Claude tiplemeyi çizer; kartını inceleyip onaylarsın, onaylanan kilitlenir ve hiçbir bölümde değişmez. Henüz tasarlanmamış karakter ve mekânlar taslakta yer tutucuyla görünür.
-- **Sesler:** Her karakter için ElevenLabs sesi seçip kilitlersin. Efekt ve müzikler sahneye uygun açıklamalarla üretilir; seçmediklerini sistem otomatik uygular.
+- **Sesler:** Her karakter için ElevenLabs sesi (hesabından ya da ses kütüphanesinden) seçip kilitlersin. Kilitli bir sesi "Sesi değiştir" ile, uyarıyı onaylayarak değiştirebilirsin; bundan sonraki taslaklar yeni sesle seslendirilir. Efekt ve müzikler sahneye uygun açıklamalarla üretilir; seçmediklerini sistem otomatik uygular, kilitli olanları da onayla değiştirebilirsin.
 
 ## Klasörler
 
@@ -54,7 +54,7 @@ npm run studio -- script derin/s1/e01  # scenes.json'dan senaryo.md
 npm run studio -- approve derin karakter kerem
 npm run voices:list
 npm run voice:preview -- derin ada <voice_id>
-npm run voice:lock -- derin ada <voice_id>
+npm run voice:lock -- derin ada <voice_id>               # kilitli sesi değiştirmek için sonuna --degistir
 node scripts/sounds.mjs autofill derin
 npm run studio                          # diğer stüdyo komutlarının listesi
 ```

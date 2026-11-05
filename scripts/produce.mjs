@@ -95,6 +95,8 @@ async function final(ref) {
   if (s.status !== "approved" || !rec) fail(`${info.ref} henüz onaylanmadı. Önce taslağı izle ve: npm run approve -- ${info.ref}`);
   if (rec.hash !== sceneHash(info.scenes)) fail(`${info.ref} onaydan sonra değiştirilmiş. Yeni bir taslak üretip tekrar onaylaman gerekiyor.`);
   checkLocks(info.project);
+  // Onaydan sonra bir karakterin sesi değiştirildiyse replikler yeni sesle güncellenir
+  if (process.env.ELEVENLABS_API_KEY) await generate(info.ref);
   writeManifest();
   await render(info, "final");
 }

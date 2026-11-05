@@ -154,6 +154,19 @@ export function lockSound(proj, kind, id) {
   ok(`${entry.label} kilitlendi`);
 }
 
+// Kilitli bir efekt/müziği kullanıcı onayıyla yeniden düzenlenebilir hâle getirir.
+// Mevcut dosya yerinde kalır; yeni bir seçenek seçilene kadar bölümlerde o kullanılır.
+export function unlockSound(proj, kind, id) {
+  assertKind(kind);
+  const cat = readCatalog(proj);
+  const entry = cat[kind][id] ?? fail("Katalogda böyle bir ses yok");
+  if (entry.status !== "locked") fail(`${entry.label} zaten kilitli değil`);
+  entry.status = fs.existsSync(fileOf(proj, kind, id)) ? "chosen" : "missing";
+  entry.unlocked_at = new Date().toISOString();
+  saveCatalog(proj, cat);
+  ok(`${entry.label} değişiklik için açıldı`);
+}
+
 export function setPrompt(proj, kind, id, { prompt, duration_seconds, loop }) {
   assertKind(kind);
   const cat = readCatalog(proj);

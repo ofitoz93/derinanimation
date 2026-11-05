@@ -98,15 +98,21 @@ export async function preview(proj, charId, voiceId) {
   return `projects/${proj}/previews/${charId}_${voiceId}.mp3`;
 }
 
-export function lock(proj, charId, voiceId) {
-  if (!proj || !charId || !voiceId) fail("Kullanım: npm run voice:lock -- <film> <karakter> <voice_id>");
+// Sesi kilitler. Kilitli bir ses ancak replace: true ile (kullanıcı uyarıyı onayladıktan sonra)
+// değiştirilir; eski ses geçmişte saklanır, bundan sonraki seslendirmeler yeni sesle yapılır.
+export function lock(proj, charId, voiceId, { replace = false } = {}) {
+  if (!proj || !charId || !voiceId) fail("Kullanım: npm run voice:lock -- <film> <karakter> <voice_id> [--degistir]");
   const reg = readJson(registryPath(proj));
   const c = reg.characters.find((x) => x.id === charId);
   if (!c) fail(`${charId} kayıtlarda yok`);
-  if (c.voice?.status === "locked") fail(`${charId} için ses zaten kilitli (${c.voice.voice_id}). Değiştirmek bir sürüm kararıdır; önce onay alınmalı.`);
-  c.voice = { provider: "elevenlabs", voice_id: voiceId, model: MODEL, settings: BASE_SETTINGS, status: "locked", locked_at: new Date().toISOString() };
+  const old = c.voice?.status === "locked" ? c.voice : null;
+  if (old && !replace) fail(`${charId} için ses zaten kilitli (${old.voice_id}). Değiştirmek için onay gerekir: panelde "Sesi değiştir" ya da komutun sonuna --degistir ekle.`);
+  if (old?.voice_id === voiceId) fail("Bu ses zaten kilitli olan ses");
+  const history = [...(c.voice?.history ?? []), ...(old ? [{ voice_id: old.voice_id, locked_at: old.locked_at, replaced_at: new Date().toISOString() }] : [])];
+  c.voice = { provider: "elevenlabs", voice_id: voiceId, model: MODEL, settings: BASE_SETTINGS, status: "locked", locked_at: new Date().toISOString(), ...(history.length ? { history } : {}) };
   writeJson(registryPath(proj), reg);
-  ok(`${charId} sesi kilitlendi: ${voiceId}`);
+  ok(old ? `${charId} sesi değiştirildi: ${old.voice_id} → ${voiceId}. Bundan sonraki taslaklar yeni sesle seslendirilecek.` : `${charId} sesi kilitlendi: ${voiceId}`);
+  return { replaced: !!old };
 }
 
 export async function generate(ref) {
@@ -151,7 +157,7 @@ if (process.argv[1]?.endsWith("voices.mjs")) {
   await runCli(async () => {
     if (cmd === "list") await list();
     else if (cmd === "preview") await preview(a, b, c);
-    else if (cmd === "lock") lock(a, b, c);
+    else if (cmd === "lock") lock(a, b, c, { replace: process.argv.includes("--degistir") });
     else if (cmd === "generate") await generate(a);
     else fail("Komutlar: list | preview <film> <karakter> <voice_id> | lock <film> <karakter> <voice_id> | generate <film/sezon/bölüm>");
   });

@@ -8,7 +8,7 @@ import { spawn, exec } from "node:child_process";
 import { SLUG, allEpisodes, latestRender, listProjects, listSeasons, loadEnv, p, projectDir, publicDir, readJson, UserError } from "../lib.mjs";
 import { lockProblems } from "../locks.mjs";
 import { addLibraryVoice, listVoices, lock as lockVoice, preview as previewVoice, searchLibrary } from "../voices.mjs";
-import { chooseVariant, lockSound, makeVariants, setPrompt, soundsState } from "../sounds.mjs";
+import { chooseVariant, lockSound, makeVariants, setPrompt, soundsState, unlockSound } from "../sounds.mjs";
 import { tempoReport } from "../tempo.mjs";
 import { approve as approveItem, claudeStatus } from "../studio.mjs";
 import { migrate } from "../migrate.mjs";
@@ -271,9 +271,9 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === "POST" && url.pathname === "/api/voice/lock") {
-      const { film, character, voiceId } = await body(req);
-      lockVoice(filmOf(film), need(character, "karakter"), need(voiceId, "ses", ID));
-      return send(res, 200, { ok: true });
+      const { film, character, voiceId, replace } = await body(req);
+      const r = lockVoice(filmOf(film), need(character, "karakter"), need(voiceId, "ses", ID), { replace: replace === true });
+      return send(res, 200, { ok: true, ...r });
     }
 
     if (req.method === "POST" && url.pathname.startsWith("/api/sound/")) {
@@ -286,6 +286,7 @@ const server = http.createServer(async (req, res) => {
       else if (action === "variants") await makeVariants(film, b.kind, b.id, b.kind === "music" ? 2 : 3);
       else if (action === "choose") chooseVariant(film, b.kind, b.id, String(b.file ?? ""));
       else if (action === "lock") lockSound(film, b.kind, b.id);
+      else if (action === "unlock") unlockSound(film, b.kind, b.id);
       else throw new UserError("Bilinmeyen işlem");
       return send(res, 200, { ok: true, sounds: soundsState(film) });
     }
