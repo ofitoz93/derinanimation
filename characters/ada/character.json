@@ -1,0 +1,62 @@
+{
+  "id": "ada",
+  "name": "Ada",
+  "version": "2.0.0",
+  "status": "locked",
+  "approved_at": "2026-11-05T15:53:00+03:00",
+  "approved_by": "kullanıcı",
+  "style": "lumen",
+  "component": "Ada.tsx",
+  "profile": {
+    "age": 22,
+    "role": "Su bekçisi",
+    "floor": 12,
+    "summary": "Derin'in en alt katındaki su kuyularından sorumlu. Annesi yıllar önce 'yukarı kazarken' yakalanıp Mühürlü Kapı'dan dışarı atıldı.",
+    "temperament": "Sessiz, gözlemci, inatçı. Sorunları elleriyle çözer, otoriteye boyun eğmez."
+  },
+  "proportions": {
+    "head_heights": 5.5,
+    "build": "ince",
+    "height_px_reference": 255
+  },
+  "palette": {
+    "skin": "#c98a62",
+    "skin_shadow": "#a8704f",
+    "hair": "#2b1c14",
+    "bandana": "#2f8f8a",
+    "bandana_shadow": "#1f6663",
+    "vest": "#6a4630",
+    "vest_pocket": "#5a3a27",
+    "shirt": "#cdbd98",
+    "shirt_cuff": "#b8a77f",
+    "pants": "#33404a",
+    "pants_patch": "#2a343c",
+    "boots": "#1e1611",
+    "belt": "#3a2618",
+    "buckle": "#d9a441",
+    "copper_bracelet": "#c8743a",
+    "brass_rod": "#b8892f",
+    "rope": "#8a7350",
+    "eyes": "#1a1210",
+    "lips": "#8c4a3a"
+  },
+  "signature": [
+    "Turkuaz bandana, sağ tarafta düğüm uçları",
+    "Annesinin bakır bileziği, sol bilekte",
+    "Sol omuzdan öne sarkan örgü, ucunda turkuaz bağ"
+  ],
+  "equipment": [
+    "Bakır fener (ana ışık kaynağı)",
+    "Pirinç su ölçme çubuğu, sağ kalçada",
+    "Halat bobini, sol kalçada"
+  ],
+  "views": ["front", "side"],
+  "expressions": ["sakin", "saskin", "kararli", "korkmus"],
+  "lighting_rules": [
+    "Yüz her zaman sıcak ışıkla en az yarı aydınlık olur",
+    "Işığa bakmayan taraf neredeyse siyaha düşer",
+    "Işığa bakan kenarda sıcak kontur ışığı (rim light) bulunur",
+    "Fener elindeyse sahnenin tek ışık kaynağı odur"
+  ],
+  "lock_policy": "Bu dosya ve Ada.tsx kilitlidir. Değişiklik yalnızca yeni sürüm (2.x/3.0) olarak önerilir ve kullanıcı onayı olmadan sahnelerde kullanılmaz."
+}
