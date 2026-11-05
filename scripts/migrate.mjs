@@ -67,8 +67,12 @@ export function migrate() {
 // Bir kez çalışır; işaret dosyası .studio/eski-aktarildi
 export function importLegacyFolder(dir) {
   const marker = p(".studio", "eski-aktarildi");
-  const src = dir ?? process.env.DERIN_OLD_DIR ?? path.join(path.dirname(p()), "derinanimation-eski");
-  if (fs.existsSync(marker) || !fs.existsSync(path.join(src, "package.json")) || path.resolve(src) === path.resolve(p())) return 0;
+  if (fs.existsSync(marker)) return 0;
+  // Eski düzen: kökte characters/registry.json bulunan bir kopya. Yeni kopyanın yanındaki
+  // "derinanimation-eski" ya da "derinanimation" klasörüne bakılır (kendisi hariç).
+  const isOld = (d) => d && path.resolve(d) !== path.resolve(p()) && fs.existsSync(path.join(d, "package.json")) && fs.existsSync(path.join(d, "characters", "registry.json"));
+  const src = [dir, process.env.DERIN_OLD_DIR, path.join(path.dirname(p()), "derinanimation-eski"), path.join(path.dirname(p()), "derinanimation")].find(isOld);
+  if (!src) return 0;
   const from = (...parts) => path.join(src, ...parts);
   const notes = [];
 
