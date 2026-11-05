@@ -270,7 +270,7 @@ function soundRow(kind, x) {
         <button ${busy || !S.elevenlabs.connected ? "disabled" : ""} onclick="variants('${kind}','${x.id}')">${busy ? "Üretiliyor…" : (kind === "music" ? "2" : "3") + " seçenek üret"}</button>
         <button class="primary" ${!x.current ? "disabled" : ""} onclick="lockSound('${kind}','${x.id}')">Şu ankini kilitle</button>
       </div>
-      <div class="note">Seçenek üretmek ElevenLabs kredisi kullanır${kind === "music" ? "; müzik, efektten daha fazla kredi harcar" : ""}. Önce açıklamayı kaydetmeyi unutma.</div>
+      <div class="note">Seçenek üretmek ElevenLabs kredisi kullanır${kind === "music" ? "; müzik, efektten daha fazla kredi harcar. ElevenLabs ücretsiz planında müzik API kapalı olduğu için müzik, efekt modeliyle 30 sn'lik döngü olarak üretilir" : ""}. Önce açıklamayı kaydetmeyi unutma.</div>
       ${x.variants.map((v, i) => `<div class="var"><button class="icon" onclick="play('${esc(v.url)}')">▶</button><span style="flex:1">Seçenek ${i + 1}</span><button onclick="choose('${kind}','${x.id}','${esc(v.file)}')">Bunu kullan</button></div>`).join("")}`}
       ${ui.serr[k] ? `<div class="err">${esc(ui.serr[k])}</div>` : ""}
     </div>` : ""}</div>`;

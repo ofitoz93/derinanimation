@@ -53,31 +53,53 @@ function ensureEntry(cat, kind, id) {
   return cat[kind][id];
 }
 
+class PlanError extends Error {}
+
 async function elevenBinary(pathname, body) {
   const res = await fetch(API + pathname, { method: "POST", headers: { "xi-api-key": key(), "Content-Type": "application/json" }, body: JSON.stringify(body) });
   if (!res.ok) {
     const text = await res.text();
-    if (pathname.startsWith("/music") && (res.status === 401 || res.status === 403)) fail(`Müzik üretimi hesabının planında açık olmayabilir (${res.status}). Ayrıntı: ${text}`);
+    if (pathname.startsWith("/music") && [401, 402, 403].includes(res.status)) throw new PlanError(text);
     fail(`ElevenLabs hatası ${res.status}: ${text}`);
   }
   return Buffer.from(await res.arrayBuffer());
 }
 
-async function generateAudio(kind, entry) {
-  const useMusic = kind === "music" && (entry.generator ?? "music") === "music";
-  if (useMusic) {
-    return elevenBinary("/music", {
-      prompt: entry.prompt,
-      music_length_ms: Math.round(Math.min(600, Math.max(3, entry.duration_seconds ?? 40)) * 1000),
-      force_instrumental: true,
-    });
-  }
-  return elevenBinary("/sound-generation?output_format=mp3_44100_128", {
-    text: entry.prompt,
-    duration_seconds: Math.min(30, Math.max(0.5, entry.duration_seconds ?? 4)),
-    loop: !!entry.loop,
+// Müzik API'si ücretli planlarda açık. Kapalıysa bir kez denenir, sonra bu
+// çalıştırma boyunca doğrudan ses efekti modeline geçilir.
+let musicApiBlocked = false;
+
+const sfxRequest = (prompt, seconds, loop) =>
+  elevenBinary("/sound-generation?output_format=mp3_44100_128", {
+    text: prompt,
+    duration_seconds: Math.min(30, Math.max(0.5, seconds)),
+    loop,
     prompt_influence: 0.4,
   });
+
+// { audio, via } döner. via: "music" | "sfx" | "sfx_fallback"
+async function generateAudio(kind, entry) {
+  const wantsMusic = kind === "music" && (entry.generator ?? "music") === "music";
+  if (wantsMusic && !musicApiBlocked) {
+    try {
+      const audio = await elevenBinary("/music", {
+        prompt: entry.prompt,
+        music_length_ms: Math.round(Math.min(600, Math.max(3, entry.duration_seconds ?? 40)) * 1000),
+        force_instrumental: true,
+      });
+      return { audio, via: "music" };
+    } catch (e) {
+      if (!(e instanceof PlanError)) throw e;
+      musicApiBlocked = true;
+      console.log("\n  • Müzik API'si bu hesabın planında kapalı; müzikler ses efekti modeliyle 30 sn'lik döngüler olarak üretilecek.");
+    }
+  }
+  if (wantsMusic) {
+    const audio = await sfxRequest(`${entry.prompt}. Ambient music bed, seamless loop, no sudden hits`, 30, true);
+    return { audio, via: "sfx_fallback" };
+  }
+  const audio = await sfxRequest(entry.prompt, entry.duration_seconds ?? 4, !!entry.loop);
+  return { audio, via: "sfx" };
 }
 
 function assertKind(kind) {
@@ -97,10 +119,10 @@ export async function makeVariants(kind, id, count = 3) {
   const variants = [];
   for (let i = 1; i <= count; i++) {
     process.stdout.write(`  ${id} seçenek ${i}/${count}… `);
-    const buf = await generateAudio(kind, entry);
+    const { audio, via } = await generateAudio(kind, entry);
     const rel = `${DIRS[kind]}/variants/${id}_${stamp}_${i}.mp3`;
-    fs.writeFileSync(p("public", rel), buf);
-    variants.push({ file: rel });
+    fs.writeFileSync(p("public", rel), audio);
+    variants.push({ file: rel, via });
     console.log("hazır");
   }
   entry.variants = variants;
@@ -152,24 +174,33 @@ export async function autofill(episode) {
   const used = usedSounds();
   const cat = readCatalog();
   let made = 0;
+  const failed = [];
   for (const kind of ["sfx", "music"]) {
     for (const [id, eps] of Object.entries(used[kind])) {
       if (episode && !eps.has(episode)) continue;
       const entry = ensureEntry(cat, kind, id);
       if (entry.status === "locked" || fs.existsSync(fileOf(kind, id))) continue;
       process.stdout.write(`  ${entry.label} üretiliyor… `);
-      const buf = await generateAudio(kind, entry);
-      fs.mkdirSync(path.dirname(fileOf(kind, id)), { recursive: true });
-      fs.writeFileSync(fileOf(kind, id), buf);
-      entry.status = "auto";
-      entry.auto_at = new Date().toISOString();
-      saveCatalog(cat);
-      console.log("uygulandı");
-      made++;
+      // Bir sesin hatası diğerlerini durdurmaz; sonda topluca bildirilir.
+      try {
+        const { audio, via } = await generateAudio(kind, entry);
+        fs.mkdirSync(path.dirname(fileOf(kind, id)), { recursive: true });
+        fs.writeFileSync(fileOf(kind, id), audio);
+        entry.status = "auto";
+        entry.auto_at = new Date().toISOString();
+        entry.generated_via = via;
+        saveCatalog(cat);
+        console.log(via === "sfx_fallback" ? "uygulandı (efekt modeliyle döngü)" : "uygulandı");
+        made++;
+      } catch (e) {
+        console.log("başarısız");
+        failed.push(`${entry.label}: ${e.message ?? e}`);
+      }
     }
   }
   saveCatalog(cat);
-  ok(made ? `${made} ses otomatik üretilip uygulandı` : "Eksik ses yok");
+  ok(made ? `${made} ses otomatik üretilip uygulandı` : "Üretilecek yeni ses yok");
+  if (failed.length) console.log(`\n• Üretilemeyen sesler (taslak bunlarsız devam eder):\n  - ${failed.join("\n  - ")}`);
 }
 
 // Panel için: kullanılan her sesin durumu
