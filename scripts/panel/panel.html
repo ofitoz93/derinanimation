@@ -123,7 +123,7 @@ const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 let S = null, voices = null, voicesErr = "";
 let film = new URLSearchParams(location.search).get("film") || (() => { try { return localStorage.getItem("film"); } catch { return null; } })();
-const ui = { open: {}, picks: {}, filter: {}, preview: {}, busy: {}, err: {}, tab: {}, editKey: false, docs: {}, sbusy: {}, serr: {}, forms: {} };
+const ui = { lib: {}, open: {}, picks: {}, filter: {}, preview: {}, busy: {}, err: {}, tab: {}, editKey: false, docs: {}, sbusy: {}, serr: {}, forms: {} };
 let audioEl = new Audio();
 
 async function api(url, opts = {}) {
@@ -307,21 +307,61 @@ function voiceSection(c) {
   if (voicesErr) return `<div class="err">${esc(voicesErr)}</div><button style="margin-top:8px" onclick="loadVoices()">Tekrar dene</button>`;
   if (!voices) return `<div class="muted small">Sesler yükleniyor…</div>`;
   if (!ui.open[`v-${c.id}`]) return `<div class="row between"><div class="muted small">Ses seçilmedi</div><button onclick="ui.open['v-${c.id}']=true;renderAll()">Ses seç</button></div>`;
-  const f = (ui.filter[c.id] || "").toLowerCase();
-  const list = voices.filter((v) => !f || (v.name + " " + labels(v)).toLowerCase().includes(f));
   const pick = ui.picks[c.id];
-  return `<div class="tiny muted">Ses seç · ${voices.length} ses</div>
-    <input id="f-${c.id}" placeholder="Ara: isim, cinsiyet, aksan" value="${esc(ui.filter[c.id] || "")}" oninput="ui.filter['${c.id}']=this.value;ui.focus='${c.id}';renderAll()" style="width:100%;margin-top:8px">
+  const lib = (ui.lib[c.id] ??= { tab: "mine", search: "", language: "tr", gender: "", age: "", results: null, loading: false, err: "", page: 0, hasMore: false });
+  const tabs = `<div class="tabs" style="margin-top:0"><button class="${lib.tab === "mine" ? "on" : ""}" onclick="ui.lib['${c.id}'].tab='mine';renderAll()">Hesabım · ${voices.length}</button><button class="${lib.tab === "lib" ? "on" : ""}" onclick="ui.lib['${c.id}'].tab='lib';renderAll()">Ses kütüphanesi</button></div>`;
+  let body;
+  if (lib.tab === "mine") {
+    const f = (ui.filter[c.id] || "").toLowerCase();
+    const list = voices.filter((v) => !f || (v.name + " " + labels(v)).toLowerCase().includes(f));
+    body = `<input id="f-${c.id}" placeholder="Ara: isim, cinsiyet, aksan" value="${esc(ui.filter[c.id] || "")}" oninput="ui.filter['${c.id}']=this.value;ui.focus='${c.id}';renderAll()" style="width:100%;margin-top:10px">
     <div class="vlist">${list.map((v) => `<div class="vrow ${pick === v.voice_id ? "sel" : ""}">
       ${v.preview_url ? `<button class="icon" title="Örneği dinle (ücretsiz)" onclick="play('${esc(v.preview_url)}')">▶</button>` : `<span style="width:34px"></span>`}
       <div class="nm"><b>${esc(v.name)}</b><span class="tiny muted">${esc(labels(v) || v.category || "")}</span></div>
-      <button onclick="ui.picks['${c.id}']='${esc(v.voice_id)}';ui.preview['${c.id}']=null;ui.err['${c.id}']='';renderAll()">${pick === v.voice_id ? "Seçildi" : "Seç"}</button></div>`).join("") || `<div class="vrow muted small">Eşleşen ses yok</div>`}</div>
+      <button onclick="ui.picks['${c.id}']='${esc(v.voice_id)}';ui.preview['${c.id}']=null;ui.err['${c.id}']='';renderAll()">${pick === v.voice_id ? "Seçildi" : "Seç"}</button></div>`).join("") || `<div class="vrow muted small">Eşleşen ses yok</div>`}</div>`;
+  } else {
+    const opt = (k, v, t) => `<option value="${v}" ${lib[k] === v ? "selected" : ""}>${t}</option>`;
+    body = `<div class="row" style="margin-top:10px">
+        <input placeholder="Ara: derin, yaşlı, anlatıcı…" value="${esc(lib.search)}" oninput="ui.lib['${c.id}'].search=this.value" onkeydown="if(event.key==='Enter')searchLib('${c.id}',0)" style="flex:1;min-width:160px">
+        <select onchange="ui.lib['${c.id}'].language=this.value">${opt("language", "tr", "Türkçe")}${opt("language", "", "Tüm diller")}${opt("language", "en", "İngilizce")}</select>
+        <select onchange="ui.lib['${c.id}'].gender=this.value">${opt("gender", "", "Cinsiyet")}${opt("gender", "female", "Kadın")}${opt("gender", "male", "Erkek")}${opt("gender", "neutral", "Nötr")}</select>
+        <select onchange="ui.lib['${c.id}'].age=this.value">${opt("age", "", "Yaş")}${opt("age", "young", "Genç")}${opt("age", "middle_aged", "Orta yaş")}${opt("age", "old", "Yaşlı")}</select>
+        <button onclick="searchLib('${c.id}',0)" ${lib.loading ? "disabled" : ""}>${lib.loading ? "Aranıyor…" : "Ara"}</button></div>
+      ${lib.err ? `<div class="err">${esc(lib.err)}</div>` : ""}
+      ${lib.results ? `<div class="vlist">${lib.results.map((v, i) => `<div class="vrow">
+        ${v.preview_url ? `<button class="icon" title="Örneği dinle (ücretsiz)" onclick="play('${esc(v.preview_url)}')">▶</button>` : `<span style="width:34px"></span>`}
+        <div class="nm"><b>${esc(v.name)}</b><span class="tiny muted">${esc([v.labels.gender, v.labels.age, v.labels.accent, v.labels.tone].filter(Boolean).join(" · "))}</span></div>
+        <button onclick="addLib('${c.id}',${i})">Ekle ve seç</button></div>`).join("") || `<div class="vrow muted small">Sonuç yok; filtreleri gevşetmeyi dene.</div>`}</div>
+        <div class="row" style="margin-top:8px">${lib.page > 0 ? `<button class="ghost" onclick="searchLib('${c.id}',${lib.page - 1})">← Önceki</button>` : ""}${lib.hasMore ? `<button class="ghost" onclick="searchLib('${c.id}',${lib.page + 1})">Sonraki →</button>` : ""}</div>` : `<div class="note">ElevenLabs'in ses kütüphanesinde binlerce ses var. Dil, cinsiyet ve yaşa göre süzüp ▶ ile ücretsiz dinleyebilirsin. Beğendiğin ses hesabına eklenir ve bu karakter için seçilir.</div>`}`;
+  }
+  return `<div class="tiny muted" style="margin-bottom:8px">Ses seç</div>${tabs}${body}
     ${pick ? `<div class="chosen"><div class="tiny muted">Seçilen</div><div>${esc(voiceName(pick))}</div>
       <div class="row" style="margin-top:10px"><button ${ui.busy[c.id] ? "disabled" : ""} onclick="tryVoice('${c.id}')">${ui.busy[c.id] ? "Hazırlanıyor…" : "Kendi repliğiyle dene"}</button>
       <button class="primary" onclick="lockVoice('${c.id}')">Bu sesi kilitle</button></div>
       <div class="note">Deneme, karakterin senaryodaki bir cümlesini bu sesle okutur ve az miktarda kredi kullanır. ▶ ile dinlemek ücretsizdir.</div>
       ${ui.preview[c.id] ? `<audio controls autoplay src="${esc(ui.preview[c.id])}"></audio>` : ""}
       ${ui.err[c.id] ? `<div class="err">${esc(ui.err[c.id])}</div>` : ""}</div>` : ""}`;
+}
+async function searchLib(id, page) {
+  const lib = ui.lib[id];
+  lib.loading = true; lib.err = ""; renderAll();
+  try {
+    const q = new URLSearchParams({ search: lib.search, language: lib.language, gender: lib.gender, age: lib.age, page: String(page) });
+    const r = await api(`/api/voices/library?${q}`);
+    lib.results = r.voices; lib.hasMore = r.hasMore; lib.page = page;
+  } catch (e) { lib.err = e.message; }
+  lib.loading = false; renderAll();
+}
+async function addLib(id, i) {
+  const lib = ui.lib[id], v = lib.results[i];
+  lib.err = ""; lib.loading = true; renderAll();
+  try {
+    const r = await api("/api/voices/add", { method: "POST", body: { publicOwnerId: v.public_owner_id, voiceId: v.voice_id, name: v.name } });
+    voices = (await api("/api/voices")).voices;
+    ui.picks[id] = r.voice_id; ui.preview[id] = null; ui.err[id] = ""; lib.tab = "mine";
+    toast(`${v.name} hesabına eklendi`);
+  } catch (e) { lib.err = `${e.message}${/40[23]/.test(e.message) ? " — Kütüphane seslerini API ile kullanmak ya da daha fazla ses eklemek planına bağlı olabilir." : ""}`; }
+  lib.loading = false; renderAll();
 }
 async function loadVoices() {
   if (!S?.elevenlabs.connected) return;

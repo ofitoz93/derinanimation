@@ -52,6 +52,37 @@ export async function listVoices() {
   return voices.map((v) => ({ voice_id: v.voice_id, name: v.name, labels: v.labels ?? {}, category: v.category, preview_url: v.preview_url }));
 }
 
+// ElevenLabs ses kütüphanesi (topluluğun paylaştığı sesler): dil, cinsiyet, yaş ve aramayla
+export async function searchLibrary({ search = "", language = "", gender = "", age = "", page = 0 } = {}) {
+  const q = new URLSearchParams({ page_size: "30", page: String(page) });
+  if (search) q.set("search", search);
+  if (language) q.set("language", language);
+  if (gender) q.set("gender", gender);
+  if (age) q.set("age", age);
+  const data = await api(`/shared-voices?${q}`);
+  return {
+    hasMore: !!data.has_more,
+    voices: (data.voices ?? []).map((v) => ({
+      voice_id: v.voice_id,
+      public_owner_id: v.public_owner_id,
+      name: v.name,
+      labels: { accent: v.accent, gender: v.gender, age: v.age, tone: v.descriptive, use: v.use_case },
+      language: v.language,
+      description: v.description ?? "",
+      preview_url: v.preview_url,
+    })),
+  };
+}
+
+// Kütüphanedeki bir sesi hesaba ekler; eklenen sesin hesaptaki kimliğini döner
+export async function addLibraryVoice(publicOwnerId, voiceId, name) {
+  const data = await api(`/voices/add/${encodeURIComponent(publicOwnerId)}/${encodeURIComponent(voiceId)}`, {
+    method: "POST",
+    body: JSON.stringify({ new_name: name || "Derin sesi" }),
+  });
+  return data.voice_id;
+}
+
 async function list() {
   const voices = await listVoices();
   for (const v of voices) console.log(`${v.voice_id}  ${v.name}  ${Object.values(v.labels ?? {}).join(", ")}`);

@@ -7,7 +7,7 @@ import path from "node:path";
 import { spawn, exec } from "node:child_process";
 import { SLUG, allEpisodes, latestRender, listProjects, listSeasons, loadEnv, p, projectDir, publicDir, readJson, UserError } from "../lib.mjs";
 import { lockProblems } from "../locks.mjs";
-import { listVoices, lock as lockVoice, preview as previewVoice } from "../voices.mjs";
+import { addLibraryVoice, listVoices, lock as lockVoice, preview as previewVoice, searchLibrary } from "../voices.mjs";
 import { chooseVariant, lockSound, makeVariants, setPrompt, soundsState } from "../sounds.mjs";
 import { tempoReport } from "../tempo.mjs";
 import { approve as approveItem, claudeStatus } from "../studio.mjs";
@@ -252,6 +252,17 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === "GET" && url.pathname === "/api/voices") return send(res, 200, { voices: await listVoices() });
+
+    if (req.method === "GET" && url.pathname === "/api/voices/library") {
+      const pick = (v, re) => (re.test(v ?? "") ? v : "");
+      return send(res, 200, await searchLibrary({ search: String(q.search ?? "").slice(0, 80), language: pick(q.language, /^[a-z]{2}$/), gender: pick(q.gender, /^(male|female|neutral)$/), age: pick(q.age, /^(young|middle_aged|old)$/), page: Math.min(50, Number(q.page) || 0) }));
+    }
+
+    if (req.method === "POST" && url.pathname === "/api/voices/add") {
+      const { publicOwnerId, voiceId, name } = await body(req);
+      const id = await addLibraryVoice(need(publicOwnerId, "ses sahibi", /^[a-zA-Z0-9_-]{1,128}$/), need(voiceId, "ses", ID), String(name ?? "").slice(0, 60));
+      return send(res, 200, { voice_id: id });
+    }
 
     if (req.method === "POST" && url.pathname === "/api/voice/preview") {
       const { film, character, voiceId } = await body(req);
