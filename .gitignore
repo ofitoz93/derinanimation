@@ -6,4 +6,9 @@ public/audio/previews/
 public/sfx/variants/
 public/music/variants/
 .studio/
-public/projects/*/previews/*.mp3
+
+# Her bilgisayarda yeniden üretilen dosyalar
+src/generated/
+public/projects/*/previews/
+public/projects/*/sfx/variants/
+public/projects/*/music/variants/

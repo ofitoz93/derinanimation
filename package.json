@@ -5,10 +5,11 @@
   "type": "module",
   "description": "Derin mini dizisi — lumen stili, Remotion ile kodla üretim hattı",
   "scripts": {
+    "postinstall": "node scripts/manifest.mjs",
     "dev": "node scripts/panel/server.mjs",
     "panel": "node scripts/panel/server.mjs",
     "studio": "node scripts/studio.mjs",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "node scripts/manifest.mjs && tsc --noEmit",
     "locks:check": "node scripts/locks.mjs check",
     "voices:list": "node scripts/voices.mjs list",
     "voice:preview": "node scripts/voices.mjs preview",
