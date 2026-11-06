@@ -1,0 +1,28 @@
+{
+  "_not": "Ağız çizim ölçüleri. Karakter dosyaları kilitli olduğu için ağız, motor tarafından yüzün üstüne çizilir. Yeni karakter eklenince buraya da eklenir.",
+  "ada": {
+    "skin": "#c98a62", "lips": "#8c4a3a",
+    "front": { "box": [140, 60, 100, 262], "at": [190, 111.5], "size": 1, "cover": true },
+    "side": { "box": [236, 155, 112, 182], "at": [286.5, 188], "size": 0.85, "cover": false }
+  },
+  "saim": {
+    "skin": "#b99a82", "lips": "#4a3c37",
+    "front": { "box": [136, 56, 108, 258], "at": [190, 97], "size": 0.9, "cover": true },
+    "side": { "box": [428, 56, 80, 258], "at": [460, 98], "size": 0.8, "cover": true }
+  },
+  "kerem": {
+    "skin": "#d8a37c", "lips": "#8c4a3a",
+    "front": { "box": [140, 60, 100, 262], "at": [190, 115], "size": 1, "cover": true },
+    "side": { "box": [240, 60, 100, 262], "at": [307.5, 112], "size": 0.85, "cover": true }
+  },
+  "yaman": {
+    "skin": "#c08f6d", "lips": "#7a4a3c",
+    "front": { "box": [0, 0, 120, 240], "at": [60, 51.5], "size": 1, "cover": "#a97d5e" },
+    "side": { "box": [0, 0, 90, 240], "at": [55, 51.5], "size": 0.9, "cover": "#a97d5e" }
+  },
+  "nur-ana": {
+    "skin": "#c9a083", "lips": "#94574a",
+    "front": { "box": [130, 100, 120, 220], "at": [190, 150], "size": 0.9, "cover": true },
+    "side": { "box": [255, 100, 100, 220], "at": [316, 152], "size": 0.8, "cover": true }
+  }
+}

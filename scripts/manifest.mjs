@@ -86,20 +86,23 @@ export function writeManifest({ quiet = false } = {}) {
     const tp = path.join(e.audioDir, "timing.json");
     if (!fs.existsSync(tp)) continue;
     for (const [id, v] of Object.entries(readJson(tp))) {
-      if (fs.existsSync(p("public", v.file))) audio[`${e.compId}/${id}`] = { file: v.file, duration: v.duration };
+      if (fs.existsSync(p("public", v.file))) audio[`${e.compId}/${id}`] = { file: v.file, duration: v.duration, ...(v.cues ? { cues: v.cues } : {}) };
     }
   }
   const mp3s = (proj, dir) => (fs.existsSync(publicDir(proj, dir)) ? fs.readdirSync(publicDir(proj, dir)).filter((f) => f.endsWith(".mp3")).map((f) => f.replace(/\.mp3$/, "")) : []);
   const sfx = {};
   const music = {};
   const loops = {};
+  const mouths = {};
   for (const proj of listProjects()) {
+    const lip = projectDir(proj, "lipsync.json");
+    if (fs.existsSync(lip)) for (const [id, m] of Object.entries(readJson(lip))) if (!id.startsWith("_")) mouths[`${proj}/${id}`] = m;
     sfx[proj] = mp3s(proj, "sfx");
     music[proj] = mp3s(proj, "music");
     const cat = projectDir(proj, "sounds", "catalog.json");
     loops[proj] = fs.existsSync(cat) ? Object.fromEntries(Object.entries(readJson(cat).music ?? {}).map(([id, m]) => [id, !!m.loop])) : {};
   }
-  writeJson(p("src", "generated", "assets.json"), { audio, sfx, music, musicLoops: loops });
+  writeJson(p("src", "generated", "assets.json"), { audio, sfx, music, musicLoops: loops, mouths });
   if (!quiet) ok(`Envanter güncellendi (${eps.length} bölüm, ${cast.length} karakter, ${places.length} mekân, ${Object.keys(audio).length} replik sesi)`);
 }
 

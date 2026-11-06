@@ -10,7 +10,19 @@ export const lineKey = (compId: string, sceneId: string, index: number) => `${co
 
 export const estimateLineSeconds = (text: string) => Math.max(1.2, text.length / 13 + 0.4);
 
-export type ScheduledLine = Line & { key: string; start_s: number; dur_s: number; audio?: string };
+// Replik biter bitmez kesilmesin: söz bittikten sonra kısa bir kuyruk (nefes, ağız yumuşakça kapanır,
+// altyazı birkaç an kalır) ve noktalamaya göre değişen bir duraklama bırakılır.
+export const LINE_TAIL_S = 0.2;
+export const pauseAfter = (text: string) => {
+  const t = text.trim().replace(/["”')»]+$/, "");
+  if (/(…|\.\.\.)$/.test(t)) return 0.9; // yarım kalan cümle: uzun bekleyiş
+  if (/\.$/.test(t)) return 0.65;
+  if (/\?$/.test(t)) return 0.6;
+  if (/!$/.test(t)) return 0.5;
+  return 0.45;
+};
+
+export type ScheduledLine = Line & { key: string; start_s: number; dur_s: number; audio?: string; cues?: number[][] };
 
 export type ScheduledScene = {
   def: SceneDef;
@@ -24,7 +36,7 @@ export function scheduleScene(compId: string, def: SceneDef): { lines: Scheduled
   const lines = (def.lines ?? []).map((line, i) => {
     const key = lineKey(compId, def.id, i);
     const a = assets.audio[key];
-    const dur = a ? a.duration : estimateLineSeconds(line.text);
+    const dur = (a ? a.duration : estimateLineSeconds(line.text)) + LINE_TAIL_S;
     const start = line.at_s ?? cursor;
     cursor = start + dur + 0.6;
     return { ...line, key, start_s: start, dur_s: dur, audio: a?.file };
@@ -47,3 +59,4 @@ export function scheduleEpisode(compId: string, ep: EpisodeDef): { scenes: Sched
 export const hasSfx = (project: string, id: string) => !!assets.sfx[project]?.includes(id);
 export const hasMusic = (project: string, id: string) => !!assets.music[project]?.includes(id);
 export const musicLoops = (project: string, id: string) => !!assets.musicLoops?.[project]?.[id];
+export const mouthRigOf = (key: string) => assets.mouths?.[key];

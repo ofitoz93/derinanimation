@@ -1,7 +1,8 @@
 import React from "react";
 import { AbsoluteFill, Audio, Sequence, interpolate, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { CHARACTERS, LOCATIONS } from "../generated/registry";
-import { hasMusic, hasSfx, musicLoops, type ScheduledScene } from "./schedule";
+import { SpeakingMouth } from "./Mouth";
+import { hasMusic, hasSfx, mouthRigOf, musicLoops, type ScheduledScene } from "./schedule";
 import { actionOffset, cameraAt, castPosition, clamp01, expressionAt, ramp } from "./timeline";
 import type { Focus, Point } from "./types";
 
@@ -42,7 +43,8 @@ export const Scene: React.FC<{ scene: ScheduledScene; project: string }> = ({ sc
   const [LOC_W, LOC_H] = place?.size ?? [680, 400];
 
   // Şu an konuşan karakter (konuşurken hafifçe kıpırdar)
-  const speaking = scene.lines.find((l) => t >= l.start_s && t <= l.start_s + l.dur_s && l.type === "dialogue")?.speaker;
+  const speakingLine = scene.lines.find((l) => t >= l.start_s && t <= l.start_s + l.dur_s && l.type === "dialogue");
+  const speaking = speakingLine?.speaker;
 
   const cast: CastState[] = (def.cast ?? []).map((c) => {
     const key = charKey(project, c.id);
@@ -140,6 +142,14 @@ export const Scene: React.FC<{ scene: ScheduledScene; project: string }> = ({ sc
   // Kibrit parlaması: fener yanmadan hemen önce
   const matchK = L?.lightAt_s !== undefined ? (t >= L.lightAt_s - 3 && t < L.lightAt_s ? 0.6 + Math.sin(t * 40) * 0.15 : 0) : 0;
 
+  // Ortam aydınlığı: karanlık mekânlarda fener dışında kalan yerler tamamen kararmasın.
+  // Kilitli mekân dosyalarına dokunmadan, üstte ekran-karışımlı yumuşak bir dolgu ışığı eklenir.
+  // Fener yanmıyorsa (bilerek karanlık anlar) dolgu yarıya iner; sahnede "ambient": 0 yazılırsa kapanır.
+  const ambK = (def.ambient ?? 1) * (lit ? 1 : 0.45);
+  // Gama < 1: koyu tonlar (gölgedeki yüzler, duvarlar) çizgileri korunarak açılır, vurgular neredeyse aynı kalır
+  const gamma = 1 / (1 + 0.8 * ambK);
+  const faceFills = cast.filter((c) => c.opacity > 0.4 && c.known).map((c) => ({ id: c.id, at: anchorOf(c.id, "face"), a: c.opacity }));
+
   const fadeOut = def.end === "fade_to_black" ? ramp(t, [scene.dur_s - 2.5, scene.dur_s - 0.3], 0) : 0;
   const fadeIn = def.start === "fade_from_black" ? 1 - ramp(t, [0, 1.8], 1) : 0;
   const Location = place?.Component ?? PlaceholderLocation;
@@ -158,6 +168,17 @@ export const Scene: React.FC<{ scene: ScheduledScene; project: string }> = ({ sc
         return (
           <g key={c.id} transform={`translate(${c.x} ${c.y})`} opacity={c.opacity}>
             <reg.Component view={c.view} expression={c.expression} height={c.h} {...extra} />
+            {speakingLine?.speaker === c.id && speakingLine.cues?.length && mouthRigOf(c.key) ? (
+              <SpeakingMouth
+                rig={mouthRigOf(c.key)!}
+                view={c.view}
+                cues={speakingLine.cues}
+                lt={t - speakingLine.start_s}
+                remain={speakingLine.start_s + speakingLine.dur_s - t}
+                w={c.w}
+                h={c.h}
+              />
+            ) : null}
           </g>
         );
       })}
@@ -167,9 +188,20 @@ export const Scene: React.FC<{ scene: ScheduledScene; project: string }> = ({ sc
   return (
     <AbsoluteFill style={{ backgroundColor: "#000", overflow: "hidden" }}>
       <div style={{ position: "absolute", left: 0, top: offY, width: W, height: baseH, transformOrigin: "0 0", transform: `translate(${tx}px, ${ty + offY * (z - 1)}px) scale(${z})` }}>
+        <svg width={0} height={0} style={{ position: "absolute" }} aria-hidden>
+          <filter id={`amb-gamma-${def.id}`} colorInterpolationFilters="sRGB">
+            <feComponentTransfer>
+              <feFuncR type="gamma" amplitude={1} exponent={gamma} offset={0} />
+              <feFuncG type="gamma" amplitude={1} exponent={gamma} offset={0} />
+              <feFuncB type="gamma" amplitude={1.04} exponent={gamma} offset={0} />
+            </feComponentTransfer>
+          </filter>
+        </svg>
+        <div style={{ filter: ambK > 0 ? `url(#amb-gamma-${def.id})` : undefined }}>
         <Location light={{ x: lightPos[0], y: lightPos[1], lit, onFloor: !holder }} width={W} label={place ? undefined : def.location ?? ""} size={[LOC_W, LOC_H]}>
           {people}
         </Location>
+        </div>
         <svg viewBox={`0 0 ${LOC_W} ${LOC_H}`} width={W} height={baseH} style={{ position: "absolute", inset: 0, mixBlendMode: "screen", pointerEvents: "none" }}>
           <defs>
             <radialGradient id={`cold-${def.id}`} cx={coldPos[0]} cy={coldPos[1]} r={260} gradientUnits="userSpaceOnUse">
@@ -181,6 +213,15 @@ export const Scene: React.FC<{ scene: ScheduledScene; project: string }> = ({ sc
               <stop offset="1" stopColor="#ff8030" stopOpacity={0} />
             </radialGradient>
           </defs>
+          {ambK > 0 && (
+            <g opacity={ambK}>
+              <rect width={LOC_W} height={LOC_H} fill="#26303d" opacity={0.22} />
+              <rect width={LOC_W} height={LOC_H} fill={`url(#amb-warm-${def.id})`} />
+              {faceFills.map((f) => (
+                <rect key={f.id} width={LOC_W} height={LOC_H} fill={`url(#amb-face-${def.id}-${f.id})`} opacity={f.a} />
+              ))}
+            </g>
+          )}
           {coldK > 0 && <rect width={LOC_W} height={LOC_H} fill={`url(#cold-${def.id})`} opacity={coldK} />}
           {matchK > 0 && <rect width={LOC_W} height={LOC_H} fill={`url(#match-${def.id})`} opacity={matchK} />}
         </svg>

@@ -86,6 +86,8 @@ export type SceneDef = {
   // "dialogue": kamera konuşanı otomatik izler (anahtar kareler yok sayılır)
   camera_mode?: "dialogue";
   lines?: Line[];
+  // Ortam aydınlığı çarpanı (varsayılan 1; 0 = eski, yalnızca fenerli karanlık görünüm)
+  ambient?: number;
   sfx?: Sfx[];
   music?: Music;
   card?: { text: string; color: string; background: string; in_s: number; subtitle?: string };
@@ -107,8 +109,19 @@ export type EpisodeDef = {
 };
 
 export type Assets = {
-  audio: Record<string, { file: string; duration: number }>;
+  audio: Record<string, { file: string; duration: number; cues?: number[][] }>;
   sfx: Record<string, string[]>;
   music: Record<string, string[]>;
   musicLoops: Record<string, Record<string, boolean>>;
+  // Karakterin ağız çizim ölçüleri (projects/<film>/lipsync.json)
+  mouths?: Record<string, MouthRig>;
 };
+
+// Ağız çizimi: kilitli karakter dosyalarına dokunmadan, yüzün üstüne motor çizer.
+export type MouthView = {
+  box: number[]; // karakterin o görünüşteki viewBox değeri [x, y, genişlik, yükseklik]
+  at: number[]; // ağzın merkezi [x, y] (viewBox koordinatı)
+  size?: number; // ağız ölçeği
+  cover?: boolean | string; // eski ağzı örter (true: ten rengi, metin: renk); çizili ağız yoksa false
+};
+export type MouthRig = { skin: string; lips: string; inner?: string; front: MouthView; side: MouthView };

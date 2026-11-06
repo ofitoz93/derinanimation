@@ -10,6 +10,16 @@ import { readJson, resolveEpisode, runCli } from "./lib.mjs";
 export const RULES = { maxSilence_s: 6, minDialogue: 0.6, maxVo: 0.15, maxScene_s: 120 };
 
 const estimate = (text) => Math.max(1.2, text.length / 13 + 0.4);
+// src/engine/schedule.ts ile aynı olmalı: söz sonrası kuyruk ve noktalamaya göre duraklama
+const TAIL = 0.2;
+const pauseAfter = (text) => {
+  const t = text.trim().replace(/["”')»]+$/, "");
+  if (/(…|\.\.\.)$/.test(t)) return 0.9;
+  if (/\.$/.test(t)) return 0.65;
+  if (/\?$/.test(t)) return 0.6;
+  if (/!$/.test(t)) return 0.5;
+  return 0.45;
+};
 
 export function tempoReport(ref) {
   const info = resolveEpisode(ref);
@@ -25,9 +35,9 @@ export function tempoReport(ref) {
   for (const s of ep.scenes) {
     let cursor = 1.5;
     const lines = (s.lines ?? []).map((l, i) => {
-      const dur = timing[`${s.id}_${i}`]?.duration ?? estimate(l.text);
+      const dur = (timing[`${s.id}_${i}`]?.duration ?? estimate(l.text)) + TAIL;
       const start = l.at_s ?? cursor;
-      cursor = start + dur + 0.6;
+      cursor = start + dur + pauseAfter(l.text);
       return { ...l, start, dur };
     });
     const lastEnd = lines.reduce((m, l) => Math.max(m, l.start + l.dur + 1.5), 0);

@@ -5,6 +5,7 @@
 //   npm run voice:lock -- derin ada <voice_id>        → sesi Ada'ya bağlar ve kilitler
 //   npm run voices:generate -- derin/s1/e01           → bölümün tüm repliklerini seslendirir
 import fs from "node:fs";
+import { cuesFromAlignment } from "./lipsync.mjs";
 import { allEpisodes, fail, loadEnv, ok, p, projectDir, publicDir, readJson, resolveEpisode, runCli, sha256, writeJson } from "./lib.mjs";
 
 loadEnv();
@@ -42,7 +43,10 @@ async function tts(voiceId, text, settings) {
   });
   const ends = data.alignment?.character_end_times_seconds ?? [];
   const duration = ends.length ? ends[ends.length - 1] + 0.15 : text.length / 13;
-  return { audio: Buffer.from(data.audio_base64, "base64"), duration };
+  // Ağız hareketi için harf zamanlamasından anahtar kareler
+  const al = data.alignment;
+  const cues = al?.characters?.length ? cuesFromAlignment(al.characters, al.character_start_times_seconds ?? [], ends) : undefined;
+  return { audio: Buffer.from(data.audio_base64, "base64"), duration, cues };
 }
 
 const registryPath = (proj) => projectDir(proj, "characters", "registry.json");
@@ -178,9 +182,9 @@ export async function generate(ref) {
         }
         throw e;
       }
-      const { audio, duration } = result;
+      const { audio, duration, cues } = result;
       fs.writeFileSync(p("public", file), audio);
-      timing[id] = { file, duration, textHash };
+      timing[id] = { file, duration, textHash, ...(cues ? { cues } : {}) };
       console.log(`${duration.toFixed(1)} sn`);
       made++;
     }
