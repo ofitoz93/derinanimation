@@ -11,6 +11,7 @@ import { addLibraryVoice, listVoices, lock as lockVoice, preview as previewVoice
 import { chooseVariant, lockSound, makeVariants, setPrompt, soundsState, unlockSound } from "../sounds.mjs";
 import { tempoReport } from "../tempo.mjs";
 import { approve as approveItem, claudeStatus } from "../studio.mjs";
+import { readiness } from "../readiness.mjs";
 import { migrate } from "../migrate.mjs";
 import { writeManifest } from "../manifest.mjs";
 
@@ -71,8 +72,12 @@ function seasons(film) {
         const draft = latestRender(e.compId, "draft");
         const final = latestRender(e.compId, "final");
         let tempo = null;
+        let ready = null;
         try {
           tempo = tempoReport(e.ref);
+        } catch {}
+        try {
+          ready = readiness(e.ref);
         } catch {}
         return {
           id: e.episode,
@@ -82,6 +87,7 @@ function seasons(film) {
           status: d.status,
           speakers: [...new Set(d.scenes.flatMap((sc) => (sc.lines ?? []).map((l) => l.speaker)))],
           tempo,
+          ready,
           draft: draft ? { url: `/files/out/${encodeURIComponent(draft.file)}`, mtime: draft.mtime } : null,
           final: final ? { url: `/files/out/${encodeURIComponent(final.file)}`, mtime: final.mtime } : null,
         };
@@ -306,6 +312,11 @@ const server = http.createServer(async (req, res) => {
         if (!allEpisodes().some((e) => e.ref === ref)) throw new UserError("Bölüm bulunamadı");
         const labels = { draft: "480p taslak", approve: "Bölüm onayı", final: "4K final" };
         startJob(labels[cmd], cmd, ["scripts/produce.mjs", cmd, ref], ref);
+      } else if (cmd === "design-missing") {
+        if (!CLAUDE.available) throw new UserError("Claude Code bulunamadı");
+        const ref = String(b.ref ?? "");
+        if (!allEpisodes().some((e) => e.ref === ref)) throw new UserError("Bölüm bulunamadı");
+        startJob("Eksik karakter ve mekânları tasarlama (Claude)", "claude", ["scripts/studio.mjs", "design-missing", ref], ref);
       } else if (cmd === "sounds") {
         const film = filmOf(b.film);
         startJob("Eksik efekt ve müzikleri üretme", cmd, ["scripts/sounds.mjs", "autofill", film], film);

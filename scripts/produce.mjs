@@ -15,6 +15,7 @@ import { autofill } from "./sounds.mjs";
 import { writeManifest } from "./manifest.mjs";
 import { tempoReport } from "./tempo.mjs";
 import { migrate } from "./migrate.mjs";
+import { assertDraftReady, assertFinalReady, readiness } from "./readiness.mjs";
 import { fail, latestRender, loadEnv, newRenderPath, ok, p, pruneRenders, publicDir, readJson, resolveEpisode, runCli, sha256, writeJson } from "./lib.mjs";
 
 loadEnv();
@@ -65,6 +66,10 @@ async function draft(ref) {
   migrate();
   const info = resolveEpisode(ref);
   checkLocks(info.project);
+  // Tasarlanmamış karakter ya da mekân varsa yer tutucuyla taslak üretilmez
+  const ready = assertDraftReady(info.ref);
+  const pending = [...ready.draftCharacters, ...ready.draftLocations];
+  if (pending.length) console.log(`• Onay bekleyen tasarımlar (taslakta görünür, onaydan önce kilitlenmeli): ${pending.join(", ")}`);
   if (process.env.ELEVENLABS_API_KEY) {
     await generate(info.ref);
     if (process.env.DERIN_AUTO_SOUNDS !== "0") await autofill(info.project, `${info.season}/${info.episode}`);
@@ -78,6 +83,7 @@ async function draft(ref) {
 function approve(ref) {
   const info = resolveEpisode(ref);
   if (!latestRender(info.compId, "draft")) fail(`Önce taslak üretilmeli: npm run draft -- ${info.ref}`);
+  assertFinalReady(info.ref, "onaylanamaz");
   const s = readJson(info.scenes);
   s.status = "approved";
   s.approved_at = new Date().toISOString();
@@ -94,6 +100,7 @@ async function final(ref) {
   const rec = readLocks(info.project).episodes[`${info.season}/${info.episode}`];
   if (s.status !== "approved" || !rec) fail(`${info.ref} henüz onaylanmadı. Önce taslağı izle ve: npm run approve -- ${info.ref}`);
   if (rec.hash !== sceneHash(info.scenes)) fail(`${info.ref} onaydan sonra değiştirilmiş. Yeni bir taslak üretip tekrar onaylaman gerekiyor.`);
+  assertFinalReady(info.ref, "için 4K render yapılamaz");
   checkLocks(info.project);
   // Onaydan sonra bir karakterin sesi değiştirildiyse replikler yeni sesle güncellenir
   if (process.env.ELEVENLABS_API_KEY) await generate(info.ref);

@@ -49,7 +49,7 @@ Karanlık, tek ışık kaynaklı, gerilimli. Sahnelerin çoğu neredeyse siyah; 
 | --- | --- |
 | `id`, `name` | `s01`, `s02`… ve kısa Türkçe ad |
 | `duration_s` | En kısa süre. Sahne repliklere göre kendiliğinden uzar; replik yoğun sahnelerde küçük tut |
-| `location` | Mekân id'si (ör. `kuyu-odasi`). Henüz tasarlanmamış bir mekân da yazılabilir; taslakta yer tutucu oda çizilir |
+| `location` | Mekân id'si (ör. `kuyu-odasi`). Henüz tasarlanmamış bir mekân da yazılabilir, ama bölümün taslağı ancak o mekân tasarlandıktan sonra üretilir |
 | `light` | Ana ışık. Yerde: `{"type":"lantern","x":212,"y":328,"onFloor":true,"lit":true}`. Bir karakterin elinde: `{"type":"lantern","held_by":"ada","lit":true}`. Sonradan yanan: `"lit":false,"lightAt_s":12` |
 | `secondary_light` | İkinci, soğuk ışık: `{"type":"cold","from":"offscreen_right","rampIn_s":[4,30]}` ya da `{"type":"cold","held_by":"saim","rampOut_s":[40,46]}` |
 | `cast` | Sahnedeki karakterler (aşağıda) |
@@ -79,7 +79,7 @@ Mekânlar 680 × 400 birimlik bir sahnedir. Zemin yaklaşık y = 300–335. Kuyu
 - `view`: `front` ya da `side`. Ada yandan sağa, Saim sola bakar; karşılıklı konuşmada Ada solda, Saim sağda.
 - `expression`: karakterin `character.json` → `expressions` listesinden. Konuşan karakter motor tarafından hafifçe kıpırdatılır.
 - `action`: `carve_notch`, `turn_pulley`, `hide_leaf_then_pour` (küçük beden hareketleri).
-- Henüz tasarlanmamış bir karakter de yazılabilir; taslakta adıyla bir siluet çizilir.
+- Henüz tasarlanmamış bir karakter de yazılabilir; panel onu "eksik tasarım" olarak gösterir ve tasarlanmadan taslak üretilmez. Böyle karakterlerin kimliğini film kitabındaki adıyla tutarlı seç (ör. `nur-ana`).
 
 ### Replikler (`lines`)
 
@@ -122,7 +122,7 @@ Müzikte `"generator":"music"` (uzun ortam müziği) ya da `"generator":"sfx"` (
 2. `seasons/<s>/episodes/<e>/scenes.json` dosyasını yaz. Hedef süre kullanıcının istediği; belirtilmemişse 15–18 dakika (yaklaşık 180–230 replik).
 3. Yeni efekt ve müzikleri kataloğa ekle.
 4. `node scripts/tempo.mjs <ref>` uyarısız olana kadar düzelt, `node scripts/studio.mjs script <ref>` ile `senaryo.md` üret, `npm run typecheck` çalıştır.
-5. Kısa bir özet ver: süre, sahne ve replik sayısı, henüz tasarlanmamış karakter ve mekânlar.
+5. Kısa bir özet ver: süre, sahne ve replik sayısı, henüz tasarlanmamış karakter ve mekânlar (`node scripts/readiness.mjs <ref>` listeler; bunları sen tasarlama, kullanıcı panelden "Eksikleri tasarla" ile başlatır).
 
 ### Yeni sezon
 

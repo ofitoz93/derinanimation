@@ -237,9 +237,9 @@ async function toggleDoc(key, path) {
 }
 
 function episodeRow(e) {
-  const missing = e.speakers.filter((sp) => S.characters.find((c) => c.id === sp)?.voice?.status !== "locked");
-  const unknown = e.speakers.filter((sp) => !S.characters.some((c) => c.id === sp));
   const approved = e.status === "approved";
+  const canDraft = e.ready ? e.ready.canDraft : true;
+  const canFinal = e.ready ? e.ready.canFinal : true;
   const tab = ui.tab[e.ref] || (e.final ? "final" : "draft");
   const vid = tab === "final" ? e.final : e.draft;
   const t = e.tempo;
@@ -249,18 +249,45 @@ function episodeRow(e) {
       ${approved ? `<span class="pill ok"><span class="dot"></span>Onaylı</span>` : `<span class="pill">Taslak aşamasında</span>`}</div>
     ${t ? `<div class="stats muted small"><span>${Math.floor(t.total_s / 60)} dk ${t.total_s % 60} sn</span><span>${t.scenes} sahne</span><span>${t.lines} replik</span><span>diyalog %${Math.round(t.dialogueRatio * 100)}</span>${t.ok ? `<span class="pill ok">Tempo uygun</span>` : `<span class="pill warm" title="${esc(t.warnings.join("\n"))}">Tempo: ${t.warnings.length} uyarı</span>`}</div>
       ${!t.ok ? `<ul class="warnlist">${t.warnings.map((w) => `<li>${esc(w)}</li>`).join("")}</ul>` : ""}` : ""}
-    ${unknown.length ? `<div class="note">Henüz tasarlanmamış karakterler: ${unknown.map(esc).join(", ")}. Taslakta yer tutucu siluetle görünürler.</div>` : ""}
-    ${missing.length ? `<div class="note">Sesi kilitlenmemiş: ${missing.map((m) => esc(S.characters.find((c) => c.id === m)?.name ?? m)).join(", ")}. Bu replikler seslendirmesiz kalır.</div>` : ""}
+    ${readyBox(e)}
     <div class="row" style="margin-top:12px">
-      <button class="primary" ${running() ? "disabled" : ""} onclick="job({cmd:'draft',ref:'${e.ref}'})">${e.draft ? "Taslağı yeniden üret" : "Taslak üret"} · 480p</button>
-      <button ${running() || !e.draft || approved ? "disabled" : ""} onclick="approveEp('${e.ref}')">Onayla</button>
-      <button ${running() || !approved ? "disabled" : ""} onclick="job({cmd:'final',ref:'${e.ref}'})">4K render</button>
+      <button class="primary" ${running() || !canDraft ? "disabled" : ""} ${!canDraft ? `title="Önce eksik karakter ve mekânları tasarla"` : ""} onclick="job({cmd:'draft',ref:'${e.ref}'})">${e.draft ? "Taslağı yeniden üret" : "Taslak üret"} · 480p</button>
+      <button ${running() || !e.draft || approved || !canFinal ? "disabled" : ""} ${!canFinal ? `title="Bütün karakter, mekân ve sesler onaylanmadan onaylanamaz"` : ""} onclick="approveEp('${e.ref}')">Onayla</button>
+      <button ${running() || !approved || !canFinal ? "disabled" : ""} onclick="job({cmd:'final',ref:'${e.ref}'})">4K render</button>
       <button class="ghost" onclick="toggleDoc('${dk}','${esc(e.ref.split("/")[0])}/seasons/${esc(e.ref.split("/")[1])}/episodes/${esc(e.ref.split("/")[2])}/senaryo.md')">${ui.docs[dk] ? "Senaryoyu kapat" : "Senaryoyu oku"}</button>
     </div>
     ${ui.docs[dk] ? `<div class="doc">${esc(ui.docs[dk])}</div>` : ""}
     ${e.draft && e.final ? `<div class="tabs"><button class="${tab === "draft" ? "on" : ""}" onclick="ui.tab['${e.ref}']='draft';renderAll()">Taslak 480p</button><button class="${tab === "final" ? "on" : ""}" onclick="ui.tab['${e.ref}']='final';renderAll()">Final 4K</button></div>` : ""}
     ${vid ? `<video controls preload="metadata" src="${esc(vid.url)}?v=${vid.mtime}"></video><div class="tiny muted" style="margin-top:6px">${tab === "final" ? "4K final" : "480p taslak"} · ${new Date(vid.mtime).toLocaleString("tr-TR")}</div>` : ""}
   </div>`;
+}
+// Bölümün üretime hazır olma durumu: eksikler taslağı, onaysızlar onayı ve 4K'yı engeller
+function readyBox(e) {
+  const r = e.ready;
+  if (!r) return "";
+  const nm = (id) => esc(S.characters.find((c) => c.id === id)?.name ?? id);
+  const pl = (id) => esc(S.locations.find((l) => l.id === id)?.name ?? id);
+  const missing = r.missingCharacters.length + r.missingLocations.length;
+  if (missing) {
+    return `<div class="chosen" style="border-color:#5a2a22;background:var(--bad-bg);margin-top:12px">
+      <div class="row between"><b style="font-weight:500;color:var(--bad)">Taslak üretilemez: ${missing} eksik tasarım</b>
+        <button class="primary" ${!S.claude.available || running() ? "disabled" : ""} onclick="designMissing('${e.ref}', ${missing})">Eksikleri tasarla (${missing})</button></div>
+      ${r.missingCharacters.length ? `<div class="note">Karakterler: ${r.missingCharacters.map(nm).join(", ")}</div>` : ""}
+      ${r.missingLocations.length ? `<div class="note">Mekânlar: ${r.missingLocations.map(pl).join(", ")}</div>` : ""}
+      <div class="note">Bölümde geçen ama henüz tasarlanmamış karakter ve mekânlar var. Claude her birini film kitabına ve bölümdeki repliklere bakarak tasarlar; sonra kartlarını inceleyip onaylarsın.${!S.claude.available ? " (Claude Code bulunamadı.)" : ""}</div></div>`;
+  }
+  const waiting = [...r.draftCharacters.map(nm), ...r.draftLocations.map(pl)];
+  if (waiting.length || r.unvoiced.length) {
+    return `<div class="chosen" style="border-color:#5a4024;background:var(--warm-bg);margin-top:12px">
+      <b style="font-weight:500;color:var(--warm)">Taslak üretilebilir; onay ve 4K için eksikler var</b>
+      ${waiting.length ? `<div class="note">Onay bekleyen tasarımlar: ${waiting.join(", ")}. Kartlarını inceleyip "Onayla ve kilitle" de.</div>` : ""}
+      ${r.unvoiced.length ? `<div class="note">Sesi kilitlenmemiş konuşanlar: ${r.unvoiced.map(nm).join(", ")}. Taslakta bu replikler seslendirmesiz kalır.</div>` : ""}</div>`;
+  }
+  return `<div class="stats small" style="margin-top:8px"><span class="pill ok"><span class="dot"></span>Bütün karakter, mekân ve sesler hazır</span></div>`;
+}
+function designMissing(ref, n) {
+  if (!confirm(`Claude ${n} eksik tasarımı sırayla yapacak (her biri birkaç dakika sürebilir).\n\nBittiğinde her birinin kartını Karakterler ve Mekânlar bölümünde inceleyip onaylaman gerekecek. Başlatılsın mı?`)) return;
+  job({ cmd: "design-missing", ref });
 }
 async function job(body) { try { await api("/api/job", { method: "POST", body: { film: F(), ...body } }); toast("İşlem başladı"); renderAll(); } catch (e) { toast(e.message); } }
 function approveEp(ref) {

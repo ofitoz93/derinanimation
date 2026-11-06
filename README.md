@@ -23,8 +23,8 @@ Kodla çizilen animasyon filmleri ve dizileri üreten küçük bir stüdyo. Gör
 
 - **Film seçici ve Yeni film:** Bir fikir yazarsın, Claude aynı stilde yeni bir filmin kitabını ve klasörlerini kurar.
 - **Sezonlar ve bölümler:** "Yeni sezon" sezon tasarımını, "Yeni bölüm" bölümün tam senaryosunu (replikler, efektler, müzik, kamera) yazar. Bölüm promptunu yapıştırman yeterli; hazır bir `scenes.json` yapıştırırsan Claude'a gerek kalmadan eklenir. Her bölümün tempo raporu (süre, diyalog oranı, sessiz aralıklar) görünür.
-- **Taslak → onay → 4K:** Taslak 480p üretilir ve panelde oynar; onaylarsan bölüm mühürlenir, sonra 4K render alınır.
-- **Karakterler ve mekânlar:** "Yeni karakter" / "Yeni mekân" ile Claude tiplemeyi çizer; kartını inceleyip onaylarsın, onaylanan kilitlenir ve hiçbir bölümde değişmez. Henüz tasarlanmamış karakter ve mekânlar taslakta yer tutucuyla görünür.
+- **Taslak → onay → 4K:** Taslak 480p üretilir ve panelde oynar; onaylarsan bölüm mühürlenir, sonra 4K render alınır. Bölümde tasarlanmamış karakter ya da mekân varsa taslak üretilmez; panel eksikleri listeler ve "Eksikleri tasarla" ile Claude'a tasarlatır. Onay ve 4K için bütün karakter ve mekânların onaylı, konuşanların sesinin kilitli olması gerekir.
+- **Karakterler ve mekânlar:** "Yeni karakter" / "Yeni mekân" ile Claude tiplemeyi çizer; kartını inceleyip onaylarsın, onaylanan kilitlenir ve hiçbir bölümde değişmez.
 - **Sesler:** Her karakter için ElevenLabs sesi (hesabından ya da ses kütüphanesinden) seçip kilitlersin. Kilitli bir sesi "Sesi değiştir" ile, uyarıyı onaylayarak değiştirebilirsin; bundan sonraki taslaklar yeni sesle seslendirilir. Efekt ve müzikler sahneye uygun açıklamalarla üretilir; seçmediklerini sistem otomatik uygular, kilitli olanları da onayla değiştirebilirsin.
 
 ## Klasörler
@@ -51,6 +51,8 @@ npm run approve -- derin/s1/e01        # onay ve mühür
 npm run final -- derin/s1/e01          # 4K final
 npm run tempo -- derin/s1/e01          # tempo raporu
 npm run studio -- script derin/s1/e01  # scenes.json'dan senaryo.md
+npm run studio -- design-missing derin/s1/e01   # eksik karakter ve mekânları tasarlat
+node scripts/readiness.mjs derin/s1/e01         # bölüm üretime hazır mı
 npm run studio -- approve derin karakter kerem
 npm run voices:list
 npm run voice:preview -- derin ada <voice_id>

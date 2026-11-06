@@ -8,6 +8,7 @@
 //   node scripts/studio.mjs new-episode <film> <s1> <e02> <istek.md>   (istek hazır bir scenes.json da olabilir)
 //   node scripts/studio.mjs new-character <film> <id> <istek.md>
 //   node scripts/studio.mjs new-location <film> <id> <istek.md>
+//   node scripts/studio.mjs design-missing derin/s1/e01          → bölümün eksik karakter ve mekânlarını tasarlatır
 //   node scripts/studio.mjs approve <film> <karakter|mekan> <id>
 //   node scripts/studio.mjs claude-check
 import fs from "node:fs";
@@ -221,15 +222,19 @@ async function newEpisode(film, season, episode, briefFile) {
   const t = tempoReport(info.ref);
   console.log(`• ${Math.floor(t.total_s / 60)} dk ${t.total_s % 60} sn · ${t.scenes} sahne · ${t.lines} replik · diyalog %${Math.round(t.dialogueRatio * 100)}`);
   for (const w of t.warnings) console.log(`  ! ${w}`);
-  ok(`Bölüm hazır: ${info.ref}. Panelden taslağını üretebilirsin.`);
+  const { readiness } = await import("./readiness.mjs");
+  const r = readiness(info.ref);
+  const todo = [...r.missingCharacters, ...r.missingLocations];
+  if (todo.length) ok(`Bölüm hazır: ${info.ref}. Taslaktan önce tasarlanması gerekenler: ${todo.join(", ")} (panelde "Eksikleri tasarla").`);
+  else ok(`Bölüm hazır: ${info.ref}. Panelden taslağını üretebilirsin.`);
 }
 
-async function newCharacter(film, id, briefFile) {
+async function newCharacter(film, id, briefFile, briefText) {
   slug(film, "film");
   slug(id, "karakter kimliği");
   const reg = readJson(projectDir(film, "characters", "registry.json"));
   if (reg.characters.some((c) => c.id === id)) fail(`${film}/${id} zaten kayıtlı`);
-  const brief = readBrief(briefFile);
+  const brief = briefText ?? readBrief(briefFile);
   await runClaude(header(`${film} filmi için "${id}" kimlikli yeni bir karakter tasarla.`) + `CLAUDE.md → Yeni karakter adımlarını izle. Klasör: projects/${film}/characters/${id}/. Durum "draft" olmalı.\n\nKullanıcının isteği:\n${brief}`);
   const after = readJson(projectDir(film, "characters", "registry.json")).characters.find((c) => c.id === id);
   if (!after) fail("Claude Code karakteri registry.json'a eklemedi");
@@ -237,17 +242,88 @@ async function newCharacter(film, id, briefFile) {
   ok(`Karakter taslağı hazır: ${film}/${id}. Panelde kartını inceleyip onaylayabilirsin.`);
 }
 
-async function newLocation(film, id, briefFile) {
+async function newLocation(film, id, briefFile, briefText) {
   slug(film, "film");
   slug(id, "mekân kimliği");
   const reg = readJson(projectDir(film, "locations", "registry.json"));
   if (reg.locations.some((c) => c.id === id)) fail(`${film}/${id} zaten kayıtlı`);
-  const brief = readBrief(briefFile);
+  const brief = briefText ?? readBrief(briefFile);
   await runClaude(header(`${film} filmi için "${id}" kimlikli yeni bir mekân tasarla.`) + `CLAUDE.md → Yeni mekân adımlarını izle. Klasör: projects/${film}/locations/${id}/. Durum "draft" olmalı.\n\nKullanıcının isteği:\n${brief}`);
   const after = readJson(projectDir(film, "locations", "registry.json")).locations.find((c) => c.id === id);
   if (!after) fail("Claude Code mekânı registry.json'a eklemedi");
   writeManifest({ quiet: true });
   ok(`Mekân taslağı hazır: ${film}/${id}. Panelde önizlemesini inceleyip onaylayabilirsin.`);
+}
+
+// ---------- bölümün eksiklerini tasarlama ----------
+
+// Film kitabı ve sezon tasarımında bir adın geçtiği satırlar
+function mentions(film, season, words) {
+  const files = [projectDir(film, "bible.md"), projectDir(film, "seasons", season, "season.md")].filter((f) => fs.existsSync(f));
+  const re = new RegExp(words.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"), "i");
+  const out = [];
+  for (const f of files) for (const line of fs.readFileSync(f, "utf8").split(/\r?\n/)) if (line.trim() && re.test(line)) out.push(line.trim().replace(/^([-*]|\d+\.)\s+/, ""));
+  return [...new Set(out)].slice(0, 12);
+}
+
+const titleCase = (id) => id.split("-").map((w) => w.charAt(0).toLocaleUpperCase("tr") + w.slice(1)).join(" ");
+
+function characterBrief(info, ep, id, use) {
+  const name = titleCase(id);
+  const lines = ep.scenes.flatMap((s) => (s.lines ?? []).filter((l) => l.speaker === id).map((l) => `- (${s.id}) "${l.text}"${l.delivery ? ` [${l.delivery}]` : ""}`));
+  const scenes = ep.scenes.filter((s) => use.scenes.has(s.id)).map((s) => `${s.id} ${s.name}${s.location ? ` (${s.location})` : ""}`);
+  const lights = ep.scenes.filter((s) => s.light?.held_by === id || s.secondary_light?.held_by === id).map((s) => s.id);
+  return [
+    `Bu karakter ${info.ref} bölümünde geçiyor ama henüz tasarlanmamış. Kimlik "${id}", büyük ihtimalle adı "${name}".`,
+    `Film kitabında ve sezon tasarımında geçtiği yerler:\n${mentions(info.project, info.season, [name, id]).map((l) => `- ${l}`).join("\n") || "- (geçmiyor; bölümdeki repliklerinden çıkar)"}`,
+    `Sahneleri: ${scenes.join(", ")}`,
+    use.appears ? "" : "Not: Bu bölümde ekranda görünmüyor, yalnızca sesi duyuluyor; yine de tam tasarla.",
+    lights.length ? `Bu sahnelerde ışık taşıyor (${lights.join(", ")}): rig'e light anchor ve props ekle.` : "",
+    `Replikleri (kişiliğini ve konuşma tarzını buradan anla):\n${lines.slice(0, 14).join("\n")}`,
+    "Var olan kilitli karakterlerle aynı lumen stilinde, oranlarda ve çizim yapısında olsun; siluet, renk ve ışık imzasıyla onlardan kolayca ayırt edilsin.",
+  ].filter(Boolean).join("\n\n");
+}
+
+function locationBrief(info, ep, id, sceneIds) {
+  const name = titleCase(id);
+  const scenes = ep.scenes.filter((s) => sceneIds.has(s.id));
+  const detail = scenes.map((s) => {
+    const cast = (s.cast ?? []).map((c) => `${c.id} (x ${c.x ?? c.path?.[0]?.[0]}, y ${c.y ?? c.path?.[0]?.[1]})`).join(", ");
+    const light = s.light ? (s.light.held_by ? `ışık ${s.light.held_by} elinde` : `ışık yerde (${s.light.x}, ${s.light.y})`) : "ışık yok";
+    const cold = s.secondary_light ? ", ikinci soğuk ışık var" : "";
+    const sample = (s.lines ?? []).slice(0, 4).map((l) => `"${l.text}"`).join(" ");
+    return `- ${s.id} ${s.name}${s.caption ? ` — yazı: ${s.caption.text}` : ""}; ${light}${cold}; karakterler: ${cast}. Örnek replikler: ${sample}`;
+  });
+  return [
+    `Bu mekân ${info.ref} bölümünde kullanılıyor ama henüz tasarlanmamış. Kimlik "${id}" (${name}).`,
+    `Film kitabında ve sezon tasarımında ilgili satırlar:\n${mentions(info.project, info.season, [name, ...id.split("-").filter((w) => w.length > 3)]).map((l) => `- ${l}`).join("\n") || "- (doğrudan geçmiyor; sahnelerden çıkar)"}`,
+    `Kullanıldığı sahneler (karakter konumları senaryoda bu koordinatlara göre yazıldı; zemin y ≈ 300–335 olmalı ki ayakları zemine bassın):\n${detail.join("\n")}`,
+    "Kilitli kuyu odasıyla aynı stilde, 680 × 400 sahne; yerdeki ışık noktasını defaultLight olarak ver.",
+  ].join("\n\n");
+}
+
+// Bölümde geçen ama tasarlanmamış her karakter ve mekânı sırayla Claude'a tasarlatır
+async function designMissing(ref) {
+  const { readiness, episodeNeeds } = await import("./readiness.mjs");
+  const r = readiness(ref);
+  const { info, ep, chars, places } = episodeNeeds(ref);
+  const todo = [...r.missingCharacters.map((id) => ["karakter", id]), ...r.missingLocations.map((id) => ["mekan", id])];
+  if (!todo.length) return ok(`${info.ref} için tasarlanacak eksik yok`);
+  console.log(`• Tasarlanacak: ${todo.map(([k, id]) => `${id} (${k})`).join(", ")}\n`);
+  const failed = [];
+  for (const [i, [kind, id]] of todo.entries()) {
+    console.log(`\n▶ ${i + 1}/${todo.length} · ${id} (${kind})`);
+    try {
+      if (kind === "karakter") await newCharacter(info.project, id, null, characterBrief(info, ep, id, chars.get(id)));
+      else await newLocation(info.project, id, null, locationBrief(info, ep, id, places.get(id)));
+    } catch (e) {
+      console.log(`  ✖ ${id}: ${e.message}`);
+      failed.push(id);
+    }
+  }
+  writeManifest({ quiet: true });
+  if (failed.length) fail(`Tasarlanamayanlar: ${failed.join(", ")}. Tekrar deneyebilirsin; başarılı olanlar korunur.`);
+  ok(`Eksikler tasarlandı. Panelde her birinin kartını inceleyip onayla; sonra taslak üretebilirsin.`);
 }
 
 // Kullanıcı onayı: taslağı kilitler ve mühürler
@@ -282,7 +358,8 @@ if (process.argv[1]?.endsWith("studio.mjs")) {
     else if (cmd === "new-character") await newCharacter(a, b, c);
     else if (cmd === "new-location") await newLocation(a, b, c);
     else if (cmd === "approve") approve(a, b, c);
+    else if (cmd === "design-missing") await designMissing(a);
     else if (cmd === "claude-check") console.log(claudeStatus());
-    else fail("Komutlar: script | new-project | new-season | new-episode | new-character | new-location | approve | claude-check");
+    else fail("Komutlar: script | new-project | new-season | new-episode | new-character | new-location | design-missing | approve | claude-check");
   });
 }
