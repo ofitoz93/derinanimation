@@ -15,6 +15,38 @@
         212,
         328
       ]
+    },
+    {
+      "id": "koridor-12",
+      "version": "1.0.0",
+      "status": "locked",
+      "path": "locations/koridor-12",
+      "component": "Koridor12.tsx",
+      "export": "Koridor12",
+      "size": [
+        680,
+        400
+      ],
+      "defaultLight": [
+        212,
+        328
+      ]
+    },
+    {
+      "id": "nur-ana-odasi",
+      "version": "1.0.0",
+      "status": "locked",
+      "path": "locations/nur-ana-odasi",
+      "component": "NurAnaOdasi.tsx",
+      "export": "NurAnaOdasi",
+      "size": [
+        680,
+        400
+      ],
+      "defaultLight": [
+        335,
+        300
+      ]
     }
   ],
   "rules": [

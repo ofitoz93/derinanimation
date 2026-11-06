@@ -1,0 +1,69 @@
+{
+  "id": "nur-ana",
+  "name": "Nur Ana",
+  "version": "1.0.0",
+  "status": "locked",
+  "style": "lumen",
+  "component": "NurAna.tsx",
+  "profile": {
+    "age": 84,
+    "role": "12. katın en yaşlısı, hikâye bekçisi",
+    "floor": 12,
+    "summary": "Gözleri az görür ama ayak seslerinden herkesi tanır. Kurucuların hikâyelerini ve Uyku Türküsü'nü bilir; Leyla'yı tanırdı. Odasında mum yakar.",
+    "temperament": "Sakin, esprili, masal anlatır gibi konuşur; deyimler, eski kelimeler ve 'evladım' ile. Hakikati dolambaçlı söyler, bazı sorularda susar."
+  },
+  "proportions": {
+    "head_heights": 5,
+    "build": "kısa, yuvarlak, kamburlaşmış; geniş şal omuzları büyük gösterir",
+    "height_px_reference": 208,
+    "posture": "Öne eğik, bastona yaslı; baş hafif yukarı kalkık, sesi dinler gibi"
+  },
+  "palette": {
+    "skin": "#c9a083",
+    "skin_shadow": "#a67f65",
+    "hair": "#e3ddd2",
+    "hair_shadow": "#b9b2a6",
+    "eyes": "#2a2a2c",
+    "eye_milky": "#c9d0d2",
+    "lips": "#94574a",
+    "shawl": "#6b4a73",
+    "shawl_shadow": "#503656",
+    "shawl_fringe": "#a58aa9",
+    "dress": "#4d5646",
+    "dress_shadow": "#3c4437",
+    "hem": "#7a6a4c",
+    "apron": "#bfb394",
+    "slippers": "#3a2c22",
+    "cane": "#7b5632",
+    "cane_grip": "#b8892f",
+    "candle_holder": "#a8793a",
+    "candle": "#e8dcc0",
+    "wrinkle": "#8d6a55"
+  },
+  "signature": [
+    "Mor-erik, saçaklı büyük şal; omuzlarda yığılır",
+    "Tepede gümüş beyazı topuz, alnında ince bir başörtü bandı",
+    "Süt mavisi donuk gözler; elinde pirinç mumluk, öbür elinde ahşap baston"
+  ],
+  "equipment": [
+    "Pirinç tutacaklı ahşap baston",
+    "Mum ve pirinç mumluk (ana ışık kaynağı, küçük ve titrek)"
+  ],
+  "views": [
+    "front",
+    "side"
+  ],
+  "expressions": [
+    "sakin",
+    "gulumseyen",
+    "duraksayan",
+    "huzunlu"
+  ],
+  "lighting_rules": [
+    "Mum elindeyse sahnenin tek ışık kaynağı odur; ışık küçük ve titrek, yarıçapı kısa",
+    "Yüz her zaman sıcak ışıkla en az yarı aydınlık olur; ışığa bakmayan taraf neredeyse siyaha düşer",
+    "Beyaz saç ve topuz mum ışığını yakalar, şalın saçakları ince bir kontur parıltısı verir",
+    "Siluet: Ada'dan, Saim'den ve Kerem'den kısa; yuvarlak, geniş şallı, kambur ve bastonlu"
+  ],
+  "approved_at": "2026-11-06T15:21:04.224Z"
+}

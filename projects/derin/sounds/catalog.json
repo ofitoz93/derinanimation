@@ -6,119 +6,153 @@
       "prompt": "A single water droplet falling into a deep stone well, soft plink with a long hollow echo inside a small rock cave, quiet and intimate",
       "duration_seconds": 3,
       "loop": false,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:26:01.758Z",
+      "generated_via": "sfx"
     },
     "uguldu": {
       "label": "Havalandırma uğultusu",
       "prompt": "Low constant hum of distant ventilation shafts deep underground, airy rumbling drone in a rock tunnel, no melody, steady",
       "duration_seconds": 20,
       "loop": true,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:25:59.658Z",
+      "generated_via": "sfx"
     },
     "kibrit": {
       "label": "Kibrit çakılması",
       "prompt": "Wooden match struck against a rough box and igniting, sharp scratch then small flame flare, close-up, quiet cave room",
       "duration_seconds": 2.5,
       "loop": false,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:26:07.654Z",
+      "generated_via": "sfx"
     },
     "fitil": {
       "label": "Fenerin tutuşması",
       "prompt": "Oil lantern wick catching flame, soft whoosh and gentle crackle, small metal lantern door clicking shut",
       "duration_seconds": 3,
       "loop": false,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:26:10.077Z",
+      "generated_via": "sfx"
     },
     "pirinc_tas": {
       "label": "Duvara çentik kazıma",
       "prompt": "Brass rod scraping and carving a notch into a stone wall, slow deliberate scratches, grit falling, close-up in a quiet cave",
       "duration_seconds": 6,
       "loop": false,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:26:16.321Z",
+      "generated_via": "sfx"
     },
     "ayak_sesi_ada": {
       "label": "Ada'nın ayak sesleri",
       "prompt": "Light footsteps of a young woman in worn leather boots walking slowly on a gritty stone floor in a small cave room",
       "duration_seconds": 8,
       "loop": false,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:26:37.622Z",
+      "generated_via": "sfx"
     },
     "makara_gicirti": {
       "label": "Makara gıcırtısı",
       "prompt": "Old wooden well pulley creaking rhythmically as a rope is pulled hand over hand, rope straining, steady repeating squeak",
       "duration_seconds": 10,
       "loop": true,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:26:19.779Z",
+      "generated_via": "sfx"
     },
     "kova_tas": {
       "label": "Kovanın taşa konması",
       "prompt": "Heavy wooden bucket full of water set down on a stone well rim, dull wooden knock and water sloshing inside",
       "duration_seconds": 2.5,
       "loop": false,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:26:22.252Z",
+      "generated_via": "sfx"
     },
     "ayak_sesi_merdiven_yanki": {
       "label": "Merdivenden inen ayak sesleri",
       "prompt": "Slow heavy measured footsteps descending stone stairs, echoing down a narrow underground stairwell, getting closer, ominous",
       "duration_seconds": 15,
       "loop": true,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:26:42.157Z",
+      "generated_via": "sfx"
     },
     "su_dokulme": {
       "label": "Suyun kuyuya dökülmesi",
       "prompt": "A bucket of water poured back into a deep stone well, splashing that echoes far below, then dripping",
       "duration_seconds": 4,
       "loop": false,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:26:51.215Z",
+      "generated_via": "sfx"
     },
     "nefes_lambasi_tisilti": {
       "label": "Nefes lambasının tıslaması",
       "prompt": "Quiet steady hiss of a small gas lamp flame, faint high whisper of burning gas, cold and constant",
       "duration_seconds": 10,
       "loop": true,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:26:46.101Z",
+      "generated_via": "sfx"
     },
     "ayak_sesi_uzaklasan": {
       "label": "Uzaklaşan ayak sesleri",
       "prompt": "Unhurried footsteps of a man in soft shoes walking away up stone stairs, fading into the distance with echo",
       "duration_seconds": 6,
       "loop": false,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:26:48.663Z",
+      "generated_via": "sfx"
     },
     "metal_izgara": {
       "label": "Havalandırma ızgarasına vurma",
       "prompt": "Knuckles tapping on a metal ventilation grate from inside a narrow duct, hollow tinny echo, playful rhythm",
       "duration_seconds": 2,
       "loop": false,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:26:05.147Z",
+      "generated_via": "sfx"
     },
     "merdiven_tirmanma": {
       "label": "Demir merdivenden inme",
       "prompt": "Someone climbing down an old iron rung ladder inside a stone shaft, boots on metal rungs, slight creak, then landing on stone",
       "duration_seconds": 5,
       "loop": false,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:26:13.090Z",
+      "generated_via": "sfx"
     },
     "kalabalik_ugultu": {
       "label": "Pay kuyruğu kalabalığı",
       "prompt": "Low murmur of a tired crowd waiting in line in a cramped underground stone corridor, shuffling feet, distant coughs, no clear words",
       "duration_seconds": 20,
       "loop": true,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:26:28.231Z",
+      "generated_via": "sfx"
     },
     "oksuruk": {
       "label": "Uzaktan öksürük",
       "prompt": "A child coughing weakly somewhere down a stone corridor, echoing, sad",
       "duration_seconds": 3,
       "loop": false,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:26:30.084Z",
+      "generated_via": "sfx"
     },
     "mum_citirti": {
       "label": "Mum çıtırtısı",
       "prompt": "Small candle flame softly crackling and fluttering in a tiny quiet stone room, very intimate and close",
       "duration_seconds": 15,
       "loop": true,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:26:34.827Z",
+      "generated_via": "sfx"
     }
   },
   "music": {
@@ -128,7 +162,9 @@
       "prompt": "Dark minimal ambient drone for an underground mystery, one low sustained cello note with faint air texture, slow, no percussion, no melody",
       "duration_seconds": 60,
       "loop": true,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:26:58.762Z",
+      "generated_via": "music"
     },
     "ince_nota_gerilim": {
       "label": "İnce gerilim notası",
@@ -136,7 +172,9 @@
       "prompt": "Thin high violin harmonic held very softly, fragile suspense, sparse and still, a sense of wonder and danger, no percussion",
       "duration_seconds": 45,
       "loop": true,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:27:05.694Z",
+      "generated_via": "music"
     },
     "drone_yogun": {
       "label": "Yoğun drone",
@@ -144,7 +182,9 @@
       "prompt": "Intense low dark ambient drone slowly rising in tension, deep brass swells and sub bass pulse, suspense thriller, someone approaching",
       "duration_seconds": 40,
       "loop": true,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:27:26.001Z",
+      "generated_via": "music"
     },
     "derin_vurus": {
       "label": "Derin vuruş",
@@ -152,7 +192,9 @@
       "prompt": "Single deep cinematic boom hit, low and heavy, followed by a long dark reverb tail fading to silence",
       "duration_seconds": 8,
       "loop": false,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:27:28.288Z",
+      "generated_via": "sfx"
     },
     "nur_ana_tema": {
       "label": "Nur Ana teması",
@@ -160,7 +202,9 @@
       "prompt": "Sparse melancholic Anatolian folk lullaby on a single plucked long-necked lute, slow and tender, candlelit storytelling mood, no percussion",
       "duration_seconds": 60,
       "loop": true,
-      "status": "missing"
+      "status": "auto",
+      "auto_at": "2026-11-06T15:27:18.966Z",
+      "generated_via": "music"
     }
   }
 }

@@ -1,0 +1,74 @@
+{
+  "id": "yaman",
+  "name": "Yaman",
+  "version": "1.0.0",
+  "status": "locked",
+  "style": "lumen",
+  "component": "Yaman.tsx",
+  "profile": {
+    "age": 34,
+    "role": "Divan muhafızlarının başı",
+    "floor": 1,
+    "summary": "Pay kuyruklarını ve nöbetleri yöneten muhafız başı. Kız kardeşi 'dışarı atıldı'; bunu hiç konuşmaz, ama kayıtları ezbere bilir. Emir veren sert sesinin altında yorgun ve vicdanlı bir adam var.",
+    "temperament": "Kuru, sıkılmış, işine bağlı; mesafeli konuşur. Sertliği bir kalkandır. Kimse duymayacakken sesi alçalır, sözleriyle uyarır."
+  },
+  "proportions": {
+    "head_heights": 6,
+    "build": "kısa, geniş omuzlu, kalın boyunlu, ağır adımlı",
+    "height_px_reference": 240,
+    "posture": "Dimdik; ağırlık topuklarda, bir eli kemerde ya da fenerde"
+  },
+  "palette": {
+    "skin": "#c08f6d",
+    "skin_shadow": "#9c6f52",
+    "stubble": "#5a4a40",
+    "brows": "#2e231e",
+    "scar": "#a5604f",
+    "jacket": "#3d4a4f",
+    "jacket_shadow": "#2c373b",
+    "armor": "#56606a",
+    "armor_dark": "#3a424a",
+    "sash": "#c9962e",
+    "sash_shadow": "#9a7020",
+    "trousers": "#262b2e",
+    "belt": "#1c1815",
+    "buckle": "#a8a49a",
+    "pouch": "#6b4a2e",
+    "token": "#d8d2b8",
+    "gloves": "#2a2420",
+    "boots": "#15110f",
+    "eyes": "#120e0c",
+    "lips": "#7a4a3c",
+    "lamp_glass": "#a9cfdc",
+    "lamp_flame": "#e8f6ff",
+    "lamp_frame": "#4a5058"
+  },
+  "signature": [
+    "Kazınmış baş, kalın kaşlar ve sol kaşı kesen ince yara izi",
+    "Omuzdan çapraz inen hardal sarısı muhafız kuşağı",
+    "Kemerde asılı jeton kesesi",
+    "Gri-yeşil çelik plakalı deri yelek; kısa ve çok geniş omuzlu siluet"
+  ],
+  "equipment": [
+    "Muhafız feneri: soğuk beyaz-mavi alevli, demir çerçeveli el feneri (Divan malı)",
+    "Jeton kesesi (kemerde)",
+    "Kısa nöbet sopası (sol kalçada)"
+  ],
+  "views": [
+    "front",
+    "side"
+  ],
+  "expressions": [
+    "sikilmis",
+    "sert",
+    "duraksayan",
+    "uyarici"
+  ],
+  "lighting_rules": [
+    "Kendi feneri soğuk ve sabittir; yüzü alttan ve yandan soğuk aydınlanır, kaş altları koyu kalır",
+    "Ada'nın sıcak feneri yanındaysa yüzünün Ada'ya bakan yarısı sıcaklaşır; ikili ışık onun kararsızlığını gösterir",
+    "Plakalar ışığı sert, ince bir çizgiyle yansıtır; hardal kuşak karanlıkta bile seçilir",
+    "Siluet: Ada'dan ve Saim'den kısa ve çok daha geniş; Kerem'den sağlam; kazınmış baş ve çapraz kuşak ayırt eder"
+  ],
+  "approved_at": "2026-11-06T15:21:06.054Z"
+}

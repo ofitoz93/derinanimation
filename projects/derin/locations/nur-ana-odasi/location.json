@@ -1,0 +1,89 @@
+{
+  "id": "nur-ana-odasi",
+  "name": "Nur Ana'nın Odası",
+  "version": "1.0.0",
+  "status": "locked",
+  "style": "lumen",
+  "component": "NurAnaOdasi.tsx",
+  "canvas": {
+    "width": 680,
+    "height": 400
+  },
+  "description": "Kayaya oyulmuş, eşyayla dolu küçük bir oda. Nur Ana burada otururken ziyaretçiler kapıda bekler; yerdeki tek fener her şeyi turuncuya boyar.",
+  "elements": {
+    "door": {
+      "area": [
+        28,
+        150,
+        100,
+        320
+      ],
+      "note": "Sol kenarda alçak ahşap kapı. Kerem kapıda dikilir."
+    },
+    "rug": {
+      "center": [
+        335,
+        322
+      ],
+      "note": "Yere serilmiş, solmuş kilim; fener üstünde durur. Konuklar bunun üstüne oturur (Leyla'nın yeri)."
+    },
+    "armchair": {
+      "area": [
+        370,
+        190,
+        470,
+        320
+      ],
+      "note": "Sağda yüksek sırtlı eski koltuk; Nur Ana burada oturur."
+    },
+    "shelves": {
+      "area": [
+        500,
+        80,
+        650,
+        280
+      ],
+      "note": "Sağ duvarda kavanoz, defter ve kurutulmuş ot dizili raflar."
+    },
+    "hanging_herbs": {
+      "area": [
+        150,
+        0,
+        330,
+        90
+      ],
+      "note": "Tavandan sarkan kurutulmuş otlar ve ipler."
+    },
+    "default_lantern": [
+      335,
+      300
+    ]
+  },
+  "palette": {
+    "wall": "#3a2f2a",
+    "wall_dark": "#312823",
+    "wall_light": "#463a33",
+    "chisel": "#241c18",
+    "floor": "#2b2420",
+    "rug": "#5a2f2a",
+    "rug_stripe": "#8a6a3a",
+    "wood": "#4a3424",
+    "wood_dark": "#382619",
+    "chair": "#4b2c2a",
+    "chair_dark": "#331e1d",
+    "jar": "#6a8a7a",
+    "herb": "#6b6a3a",
+    "iron": "#2b2b2e",
+    "darkness": "#040304"
+  },
+  "lighting_rules": [
+    "Tek ışık yerdeki fenerdir; sıcak, aşağıdan yukarı vurur",
+    "Fener sönükse oda neredeyse tamamen karanlıktır",
+    "Karakterler mekânın içinde, ışık katmanının altında çizilir"
+  ],
+  "sound_bed": [
+    "Hafif ateş/fitil çıtırtısı",
+    "Uzaktan boru uğultusu"
+  ],
+  "approved_at": "2026-11-06T15:25:51.582Z"
+}

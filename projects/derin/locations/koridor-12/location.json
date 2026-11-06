@@ -1,0 +1,64 @@
+{
+  "id": "koridor-12",
+  "name": "Koridor 12",
+  "version": "1.0.0",
+  "status": "locked",
+  "style": "lumen",
+  "component": "Koridor12.tsx",
+  "canvas": {
+    "width": 680,
+    "height": 400
+  },
+  "description": "12. katın ana koridoru ve pay kuyruğu. Kayaya oyulmuş uzun, alçak bir geçit; sağ uçta jeton penceresi, zeminde sırayı belirleyen kazınmış çizgiler. Kuyu odasının sıcak, yalnız dünyasına karşılık burası kalabalık ve denetimli.",
+  "elements": {
+    "ceiling_beams": "Üstte aralıklı ahşap kirişler ve sarkan boru hattı",
+    "doors": "Sol ve orta duvarda kapalı demir bantlı kapılar, üstlerinde kat numarası plakaları",
+    "queue_marks": "Zeminde sıra bekleyenler için kazınmış çizgiler (x = 90–420)",
+    "token_window": {
+      "area": [
+        470,
+        150,
+        610,
+        300
+      ],
+      "note": "Sağda jeton/pay penceresi ve tezgâh. Yaman burada durur; üstündeki soğuk lamba düzeni ve kontrolü simgeler"
+    },
+    "cold_lamp": [
+      540,
+      96
+    ],
+    "default_lantern": [
+      212,
+      328
+    ]
+  },
+  "palette": {
+    "wall": "#34302f",
+    "wall_dark": "#2b2827",
+    "wall_light": "#3e3a39",
+    "chisel": "#201d1c",
+    "floor": "#252120",
+    "floor_line": "#4a413a",
+    "beam": "#3f2e21",
+    "pipe": "#2f3438",
+    "door": "#2e2926",
+    "door_band": "#1f1d1e",
+    "plate": "#6a6358",
+    "counter": "#3a312b",
+    "iron": "#2b2b2e",
+    "cold": "#8fc8ff",
+    "darkness": "#040304"
+  },
+  "lighting_rules": [
+    "Ana ışık sıcak fenerdir; yerde ya da bir karakterin elinde olabilir",
+    "Sağdaki jeton penceresinde soğuk bir lamba vardır; ikinci ışık olarak çok hafif soğuk bir hale verir",
+    "Fener sönükse koridor neredeyse karanlıktır; yalnızca soğuk lambanın zayıf halesi kalır",
+    "Karakterler mekânın içinde, ışık katmanının altında çizilir"
+  ],
+  "sound_bed": [
+    "Uzaktan kalabalık mırıltısı",
+    "Boru uğultusu",
+    "Jeton şıngırtısı"
+  ],
+  "approved_at": "2026-11-06T15:21:15.288Z"
+}

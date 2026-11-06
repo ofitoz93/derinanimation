@@ -14,6 +14,31 @@
       "version": "1.0.0",
       "hash": "72dd4497b9599ba6b4e0ff9cc1dc7234808b5a19d35a726c38e81863012f02e1",
       "sealed_at": "2026-11-05T13:17:49.007Z"
+    },
+    "kerem": {
+      "version": "1.0.0",
+      "hash": "130c8860cc61edc9d1039faa4b0f83b97ded29195ac8dea1c93508c4a7ea944d",
+      "sealed_at": "2026-11-06T15:21:01.893Z"
+    },
+    "nur-ana": {
+      "version": "1.0.0",
+      "hash": "dca0010dabc8b7c8050300fa5838473dc526f63814fb3e8c8074b8698a3ba59a",
+      "sealed_at": "2026-11-06T15:21:04.227Z"
+    },
+    "yaman": {
+      "version": "1.0.0",
+      "hash": "cc4a77c6c36320702f051ae0b3f655fd4e52d3d628636d581996f5f89fb533c8",
+      "sealed_at": "2026-11-06T15:21:06.057Z"
+    },
+    "koridor-12": {
+      "version": "1.0.0",
+      "hash": "a109b2f163cd69419e91e16092e931998c107d26d4df056e0926f772188238ee",
+      "sealed_at": "2026-11-06T15:21:15.292Z"
+    },
+    "nur-ana-odasi": {
+      "version": "1.0.0",
+      "hash": "7dbb0c7a84ad0e0b2eb4ae66d44e9db2575e585f2075a06730011e3dd575d431",
+      "sealed_at": "2026-11-06T15:25:51.585Z"
     }
   },
   "episodes": {}

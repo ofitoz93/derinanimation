@@ -1,0 +1,68 @@
+{
+  "id": "kerem",
+  "name": "Kerem",
+  "version": "1.0.0",
+  "status": "locked",
+  "style": "lumen",
+  "component": "Kerem.tsx",
+  "profile": {
+    "age": 24,
+    "role": "Havalandırma tamircisi",
+    "floor": 12,
+    "summary": "Ada'nın çocukluk arkadaşı. Havalandırma borularında yaşar gibi çalışır. Küçük kardeşi Emre'nin ilacını Divan verdiği için Divan'a borçludur.",
+    "temperament": "Esprili, çok konuşan, abartan; şakayla korkusunu saklar. Korkak görünür ama sadıktır, gerektiğinde kendini feda eder."
+  },
+  "proportions": {
+    "head_heights": 6,
+    "build": "uzun, sıska, hafif kambur; omuzlar düşük",
+    "height_px_reference": 255,
+    "posture": "Hafif öne eğik, eller sürekli hareket halinde"
+  },
+  "palette": {
+    "skin": "#d8a37c",
+    "skin_shadow": "#b4805d",
+    "hair": "#4a2a1c",
+    "coverall": "#5f6b4a",
+    "coverall_shadow": "#48533a",
+    "coverall_patch": "#53603f",
+    "soot": "#3a4030",
+    "undershirt": "#b9ae92",
+    "scarf": "#c25a2b",
+    "scarf_shadow": "#98441e",
+    "goggle_rim": "#8a5a2a",
+    "goggle_glass": "#9fb7a8",
+    "belt": "#3a2a1c",
+    "buckle": "#9a9a94",
+    "steel": "#9aa0a2",
+    "steel_dark": "#6c7274",
+    "boots": "#231a14",
+    "eyes": "#1a1210",
+    "lips": "#8c4a3a"
+  },
+  "signature": [
+    "Alnında yukarı itilmiş pirinç çerçeveli havalandırma gözlüğü",
+    "Boynunda pas turuncusu fular; ucu omzundan sarkar",
+    "Zeytin yeşili, isli tulum; dizlerde yamalar, kemerde İngiliz anahtarı"
+  ],
+  "equipment": [
+    "Çelik İngiliz anahtarı (sağ kalçada)",
+    "Havalandırma ızgarası tornavidası (göğüs cebinde)"
+  ],
+  "views": [
+    "front",
+    "side"
+  ],
+  "expressions": [
+    "alayci",
+    "korkmus",
+    "endiseli",
+    "aci"
+  ],
+  "lighting_rules": [
+    "Çoğu zaman ışık taşımaz; Ada'nın fenerinin sıcak ışığıyla, boru içinde ise tek yönden aydınlanır",
+    "Yüz her zaman sıcak ışıkla en az yarı aydınlık olur; ışığa bakmayan taraf neredeyse siyaha düşer",
+    "Gözlük camı ışığı küçük bir parıltıyla yansıtır",
+    "Siluet: Ada'dan uzun ve kambur, Saim'den kısa ve dağınık; kıvırcık saç ve sarkan fular ayırt eder"
+  ],
+  "approved_at": "2026-11-06T15:21:01.890Z"
+}
