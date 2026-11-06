@@ -29,7 +29,7 @@ export function episodeNeeds(ref) {
 }
 
 export function readiness(ref) {
-  const { info, chars, places } = episodeNeeds(ref);
+  const { info, ep, chars, places } = episodeNeeds(ref);
   const regChars = new Map(registry(info.project, "characters", "characters").map((c) => [c.id, c]));
   const regPlaces = new Map(registry(info.project, "locations", "locations").map((l) => [l.id, l]));
 
@@ -37,11 +37,24 @@ export function readiness(ref) {
   const draftCharacters = [...chars.keys()].filter((id) => regChars.get(id)?.status === "draft");
   const missingLocations = [...places.keys()].filter((id) => !regPlaces.has(id));
   const draftLocations = [...places.keys()].filter((id) => regPlaces.get(id)?.status === "draft");
+  // Senaryoda karakterin tanımadığı ifadeler (motor ilk ifadeye düşer ama yanlış duygu görünür)
+  const expressionIssues = [];
+  for (const [id, c] of regChars) {
+    if (!chars.has(id) || !c.path) continue;
+    const specFile = projectDir(info.project, c.path, "character.json");
+    const allowed = fs.existsSync(specFile) ? readJson(specFile).expressions ?? [] : [];
+    if (!allowed.length) continue;
+    const used = new Set();
+    for (const s of ep.scenes)
+      for (const k of s.cast ?? []) if (k.id === id) [k.expression, ...(k.expressionAt ?? []).map((x) => x.expression)].forEach((e) => e && used.add(e));
+    const bad = [...used].filter((e) => !allowed.includes(e));
+    if (bad.length) expressionIssues.push({ id, bad, allowed });
+  }
   const unvoiced = [...chars.entries()].filter(([id, u]) => u.speaks && regChars.has(id) && regChars.get(id).voice?.status !== "locked").map(([id]) => id);
 
   const canDraft = missingCharacters.length === 0 && missingLocations.length === 0;
   const canFinal = canDraft && draftCharacters.length === 0 && draftLocations.length === 0 && unvoiced.length === 0;
-  return { ref: info.ref, missingCharacters, draftCharacters, missingLocations, draftLocations, unvoiced, canDraft, canFinal };
+  return { ref: info.ref, missingCharacters, draftCharacters, missingLocations, draftLocations, unvoiced, expressionIssues, canDraft, canFinal };
 }
 
 const list = (a) => a.join(", ");

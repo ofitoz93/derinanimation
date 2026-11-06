@@ -22,6 +22,10 @@ const DEFAULT_RIG = {
   props: {} as Record<string, string>,
 };
 
+// Karakterin tanımadığı bir ifade istenirse (ör. senaryoda "sakin", karakterde "sikilmis")
+// çizim çökmesin diye karakterin ilk ifadesine düşülür. Senaryodaki uyumsuzluğu readiness bildirir.
+const safeExpression = (wanted: string, allowed?: string[]) => (!allowed?.length || allowed.includes(wanted) ? wanted : allowed[0]);
+
 type CastState = { id: string; key: string; x: number; y: number; w: number; h: number; view: "front" | "side"; expression: string; opacity: number; known: boolean };
 
 const charKey = (project: string, id: string) => (id.includes("/") ? id : `${project}/${id}`);
@@ -50,7 +54,7 @@ export const Scene: React.FC<{ scene: ScheduledScene; project: string }> = ({ sc
     const [ox, oy] = actionOffset(c.action, t);
     const talk = speaking === c.id ? -Math.abs(Math.sin(t * 8)) * 1.6 : 0;
     const opacity = c.enterAt_s !== undefined ? clamp01((t - c.enterAt_s) / 1) : 1;
-    return { id: c.id, key, x: px + ox, y: py + oy + talk, w, h, view: c.view, expression: expressionAt(c, t), opacity, known: !!reg };
+    return { id: c.id, key, x: px + ox, y: py + oy + talk, w, h, view: c.view, expression: safeExpression(expressionAt(c, t), reg?.expressions), opacity, known: !!reg };
   });
   const byId = Object.fromEntries(cast.map((c) => [c.id, c]));
 

@@ -285,7 +285,8 @@ function readyBox(e) {
       ${waiting.length ? `<div class="note">Onay bekleyen tasarımlar: ${waiting.join(", ")}. Kartlarını inceleyip "Onayla ve kilitle" de.</div>` : ""}
       ${r.unvoiced.length ? `<div class="note">Sesi kilitlenmemiş konuşanlar: ${r.unvoiced.map(nm).join(", ")}. Taslakta bu replikler seslendirmesiz kalır.</div>` : ""}</div>`;
   }
-  return `<div class="stats small" style="margin-top:8px"><span class="pill ok"><span class="dot"></span>Bütün karakter, mekân ve sesler hazır</span></div>`;
+  const exprNote = (r.expressionIssues ?? []).map((x) => `${nm(x.id)}: senaryodaki "${esc(x.bad.join(", "))}" bu karakterde yok (var olanlar: ${esc(x.allowed.join(", "))}); ilk ifade gösterilir.`);
+  return `<div class="stats small" style="margin-top:8px"><span class="pill ok"><span class="dot"></span>Bütün karakter, mekân ve sesler hazır</span></div>${exprNote.length ? `<div class="note">${exprNote.join("<br>")}</div>` : ""}`;
 }
 function designMissing(ref, n) {
   if (!confirm(`Claude ${n} eksik tasarımı sırayla yapacak (her biri birkaç dakika sürebilir).\n\nBittiğinde her birinin kartını Karakterler ve Mekânlar bölümünde inceleyip onaylaman gerekecek. Başlatılsın mı?`)) return;

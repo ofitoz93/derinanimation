@@ -205,7 +205,7 @@
         {
           "id": "kerem",
           "view": "side",
-          "expression": "sakin",
+          "expression": "alayci",
           "path": [
             [
               700,
@@ -220,7 +220,21 @@
             0,
             5
           ],
-          "scale": 0.9
+          "scale": 0.9,
+          "expressionAt": [
+            {
+              "at_s": 45.9,
+              "expression": "endiseli"
+            },
+            {
+              "at_s": 77.7,
+              "expression": "alayci"
+            },
+            {
+              "at_s": 83.8,
+              "expression": "korkmus"
+            }
+          ]
         }
       ],
       "lines": [
@@ -407,10 +421,16 @@
         {
           "id": "kerem",
           "view": "side",
-          "expression": "sakin",
+          "expression": "alayci",
           "x": 120,
           "y": 150,
-          "scale": 0.9
+          "scale": 0.9,
+          "expressionAt": [
+            {
+              "at_s": 56.2,
+              "expression": "endiseli"
+            }
+          ]
         }
       ],
       "lines": [
@@ -556,7 +576,7 @@
         {
           "id": "kerem",
           "view": "side",
-          "expression": "sakin",
+          "expression": "endiseli",
           "x": 205,
           "y": 150,
           "scale": 0.9
@@ -672,10 +692,24 @@
         {
           "id": "kerem",
           "view": "side",
-          "expression": "sakin",
+          "expression": "korkmus",
           "x": 160,
           "y": 150,
-          "scale": 0.9
+          "scale": 0.9,
+          "expressionAt": [
+            {
+              "at_s": 30.8,
+              "expression": "aci"
+            },
+            {
+              "at_s": 53.9,
+              "expression": "endiseli"
+            },
+            {
+              "at_s": 69.5,
+              "expression": "korkmus"
+            }
+          ]
         }
       ],
       "end": "fade_to_black",
@@ -843,10 +877,20 @@
         {
           "id": "kerem",
           "view": "side",
-          "expression": "sakin",
+          "expression": "endiseli",
           "x": 110,
           "y": 150,
-          "scale": 0.9
+          "scale": 0.9,
+          "expressionAt": [
+            {
+              "at_s": 24.7,
+              "expression": "aci"
+            },
+            {
+              "at_s": 53.7,
+              "expression": "korkmus"
+            }
+          ]
         },
         {
           "id": "ada",
@@ -869,10 +913,24 @@
         {
           "id": "yaman",
           "view": "front",
-          "expression": "sakin",
+          "expression": "sikilmis",
           "x": 450,
           "y": 138,
-          "scale": 0.98
+          "scale": 0.98,
+          "expressionAt": [
+            {
+              "at_s": 21.0,
+              "expression": "sert"
+            },
+            {
+              "at_s": 41.5,
+              "expression": "duraksayan"
+            },
+            {
+              "at_s": 48.4,
+              "expression": "uyarici"
+            }
+          ]
         }
       ],
       "lines": [
@@ -1011,10 +1069,16 @@
         {
           "id": "kerem",
           "view": "side",
-          "expression": "sakin",
+          "expression": "alayci",
           "x": 70,
           "y": 150,
-          "scale": 0.9
+          "scale": 0.9,
+          "expressionAt": [
+            {
+              "at_s": 31.0,
+              "expression": "endiseli"
+            }
+          ]
         },
         {
           "id": "ada",
@@ -1033,10 +1097,24 @@
         {
           "id": "nur-ana",
           "view": "front",
-          "expression": "sakin",
+          "expression": "gulumseyen",
           "x": 400,
           "y": 178,
-          "scale": 0.82
+          "scale": 0.82,
+          "expressionAt": [
+            {
+              "at_s": 25.9,
+              "expression": "huzunlu"
+            },
+            {
+              "at_s": 34.0,
+              "expression": "sakin"
+            },
+            {
+              "at_s": 84.7,
+              "expression": "duraksayan"
+            }
+          ]
         }
       ],
       "lines": [
@@ -1175,10 +1253,16 @@
         {
           "id": "kerem",
           "view": "side",
-          "expression": "sakin",
+          "expression": "endiseli",
           "x": 70,
           "y": 150,
-          "scale": 0.9
+          "scale": 0.9,
+          "expressionAt": [
+            {
+              "at_s": 62.1,
+              "expression": "korkmus"
+            }
+          ]
         },
         {
           "id": "ada",
@@ -1197,10 +1281,24 @@
         {
           "id": "nur-ana",
           "view": "front",
-          "expression": "sakin",
+          "expression": "huzunlu",
           "x": 400,
           "y": 178,
-          "scale": 0.82
+          "scale": 0.82,
+          "expressionAt": [
+            {
+              "at_s": 39.4,
+              "expression": "duraksayan"
+            },
+            {
+              "at_s": 65.9,
+              "expression": "gulumseyen"
+            },
+            {
+              "at_s": 72.5,
+              "expression": "sakin"
+            }
+          ]
         }
       ],
       "lines": [
@@ -1339,7 +1437,7 @@
         {
           "id": "kerem",
           "view": "side",
-          "expression": "sakin",
+          "expression": "korkmus",
           "path": [
             [
               -60,
@@ -1354,7 +1452,17 @@
             0,
             2.5
           ],
-          "scale": 0.9
+          "scale": 0.9,
+          "expressionAt": [
+            {
+              "at_s": 29.5,
+              "expression": "alayci"
+            },
+            {
+              "at_s": 41.5,
+              "expression": "endiseli"
+            }
+          ]
         }
       ],
       "lines": [
@@ -1469,7 +1577,7 @@
         {
           "id": "kerem",
           "view": "side",
-          "expression": "sakin",
+          "expression": "korkmus",
           "x": 110,
           "y": 150,
           "scale": 0.9
@@ -1657,7 +1765,7 @@
         {
           "id": "kerem",
           "view": "side",
-          "expression": "sakin",
+          "expression": "korkmus",
           "x": 110,
           "y": 150,
           "scale": 0.9
@@ -1812,7 +1920,7 @@
         {
           "id": "kerem",
           "view": "side",
-          "expression": "sakin",
+          "expression": "korkmus",
           "path": [
             [
               110,
@@ -1827,7 +1935,17 @@
             49.1,
             52.1
           ],
-          "scale": 0.9
+          "scale": 0.9,
+          "expressionAt": [
+            {
+              "at_s": 16.0,
+              "expression": "aci"
+            },
+            {
+              "at_s": 42.6,
+              "expression": "aci"
+            }
+          ]
         }
       ],
       "lines": [

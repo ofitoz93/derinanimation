@@ -70,6 +70,7 @@ async function draft(ref) {
   const ready = assertDraftReady(info.ref);
   const pending = [...ready.draftCharacters, ...ready.draftLocations];
   if (pending.length) console.log(`• Onay bekleyen tasarımlar (taslakta görünür, onaydan önce kilitlenmeli): ${pending.join(", ")}`);
+  for (const x of ready.expressionIssues) console.log(`• ${x.id}: senaryodaki "${x.bad.join(", ")}" ifadesi bu karakterde yok; "${x.allowed[0]}" gösterilecek (olanlar: ${x.allowed.join(", ")})`);
   if (process.env.ELEVENLABS_API_KEY) {
     await generate(info.ref);
     if (process.env.DERIN_AUTO_SOUNDS !== "0") await autofill(info.project, `${info.season}/${info.episode}`);
